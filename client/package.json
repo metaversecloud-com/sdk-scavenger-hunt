@@ -1,5 +1,5 @@
 {
-  "name": "@rnd-boilerplate/client",
+  "name": "@scanvenger-hunt/client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,9 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.0",
+    "axios": "^1.4.0",
+    "install": "^0.13.0",
+    "npm": "^9.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "axios": "^1.4.0"
+    "react-router-dom": "^6.14.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.37",
