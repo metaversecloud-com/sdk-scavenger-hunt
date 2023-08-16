@@ -6,38 +6,26 @@ import { Credentials } from "../utils/types";
 
 export async function answerChallenge(req, res) {
   try {
-    const answer = req.body.answer;
+    const answer = req.body.answer.toLowerCase();
     const credentials = credentialsFromQuery(req);
-    const { dataObject } = (await new DroppedAssetFactory(myTopiaInstance).get(
-      credentials.assetId,
-      credentials.urlSlug,
-      {
-        credentials,
-      },
-    )) as any;
 
-    const dt = new DroppedAssetFactory(myTopiaInstance);
-    await dt.get(credentials.assetId, credentials.urlSlug, { credentials });
-    await dt.create(credentials.assetId, credentials.urlSlug, { credentials });
 
-    const { challenge, analytics } = dataObject;
-
+    const mainChallenge = new DroppedAssetFactory(myTopiaInstance)
+    const { dataObject } = await mainChallenge.get(credentials.assetId, credentials.urlSlug, { credentials });
+    
+    const { challenge, analytics } = dataObject as any;
+  
     const isCorrect = challenge.answer === answer;
+    console.log(isCorrect);
+    if (!isCorrect) return res.json({ isCorrect: false });
 
-    if (!isCorrect) res.json({ isCorrect: false });
-
-    const { isAdmin, profileId, username } = await getProfile(credentials);
+    const { profileId } = await getProfile(credentials);
     const student = analytics.progress.find((s) => s.studentId === profileId);
 
+    console.log(student);
     student.challengeDone = true;
 
-    const writeObject = await new DroppedAssetFactory(myTopiaInstance).create(
-      credentials.assetId,
-      credentials.urlSlug,
-      {
-        credentials,
-      },
-    );
+    const writeObject = await mainChallenge.create(credentials.assetId, credentials.urlSlug, { credentials });
 
     await writeObject.updateDataObject({ analytics });
     await dropLeaves(credentials);

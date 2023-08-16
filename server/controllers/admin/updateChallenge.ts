@@ -9,19 +9,21 @@ export async function updateChallenge(req, res) {
     const writeObject = await new DroppedAssetFactory(myTopiaInstance).create(credentials.assetId, credentials.urlSlug, {
       credentials,
     });
-  
+    
+    const lowerCaseAnswer = answer.toLowerCase();
+
     await writeObject.updateDataObject({
       ...writeObject.dataObject,
       challenge: {
         text,
-        answer,
+        lowerCaseAnswer,
       },
     });
   
     res.json({
       scavengerHunt: {
         text,
-        answer,
+        lowerCaseAnswer,
       },
     });
   }
