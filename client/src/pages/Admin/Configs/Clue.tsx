@@ -40,6 +40,31 @@ const fixedClueImages = [
     image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_7.png",
     text: "Clue image seven",
   },
+  {
+    id: 7,
+    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_8.png",
+    text: "Clue image eight",
+  },
+  {
+    id: 8,
+    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_9.png",
+    text: "Clue image nine",
+  },
+  {
+    id: 9,
+    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_10.png",
+    text: "Clue image ten",
+  },
+  {
+    id: 10,
+    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_11.png",
+    text: "Clue image eleven",
+  },
+  {
+    id: 11,
+    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_12.png",
+    text: "Clue image twelve",
+  }
 ];
 
 function ClueConfiguration() {

@@ -6,12 +6,6 @@ import myTopiaInstance from "../../utils/topiaInstance.js";
 export async function loadConfiguration(req, res) {
   const credentials = credentialsFromQuery(req);
   try {
-    // const world = new WorldFactory(myTopiaInstance).create(credentials.urlSlug, { credentials });
-    // const { sceneDropIds } = (await world.fetchSceneDropIds()) as any;
-
-    // console.log("these are the scene ids", sceneDropIds)
-    // const assetsList = (await world.fetchDroppedAssetsBySceneDropId({ sceneDropId: sceneDropIds[0] })) as any;
-
     const assetsList = await getDroppedAssetByNameFromSceneDropId(
       ["Web Image Asset", "scavengerHuntChallenge"],
       credentials,

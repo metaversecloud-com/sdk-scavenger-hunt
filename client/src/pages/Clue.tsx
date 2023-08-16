@@ -85,7 +85,7 @@ const Clue = () => {
         >
           <img
             style={{ height: "70px", width: "49px", borderRadius: "10%" }}
-            src={"https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_3.png"}
+            src={"https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_Start.png"}
           />
           <div>Great Job! You have unlocked the final challenge question. Go back, to the first sign to continue.</div>
         </div>
