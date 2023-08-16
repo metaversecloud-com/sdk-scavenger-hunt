@@ -8,7 +8,7 @@ function Challenge() {
   const [hasCompleted, setHasCompleted] = useState(true);
   const [answer, setAnswer] = useState("");
   const [answeredChallenge, setAnsweredChallenge] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [incorrectAnswer, setIncorrectAnswer] = useState(-1);
   const [loading, setLoading] = useState(true);
   const [answering, setAnswering] = useState(false);
@@ -31,7 +31,7 @@ function Challenge() {
     async function getChallenge() {
       const res = await axios.get(`/backend/challenge${document.location.search}`);
       setQuestion(res.data.challenge.text);
-      // setHasCompleted(res.data.hasCompletedClues);
+      setHasCompleted(res.data.hasCompletedClues);
       setAnsweredChallenge(res.data.hasCompletedChallenge);
       setIsAdmin(res.data.isAdmin);
       setLoading(false)
@@ -53,7 +53,7 @@ function Challenge() {
     <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", padding: "40px" }}>
       <img
         style={{ height: "100px", width: "70px", borderRadius: "10%" }}
-        src={"https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_3.png"}
+        src={"https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_Start.png"}
       />
       <div style={{ padding: "10px" }}>
         <h3 style={{ marginBottom: "0px" }}>National Parks</h3>
