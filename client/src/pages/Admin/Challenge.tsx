@@ -1,16 +1,17 @@
-import { Button, LinearProgress, TextField } from "@mui/material";
+import { Button, CircularProgress, LinearProgress, TextField } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function Challenge() {
   const [question, setQuestion] = useState("");
-  const [hasCompleted, setHasCompleted] = useState(false);
+  const [hasCompleted, setHasCompleted] = useState(true);
   const [answer, setAnswer] = useState("");
   const [answeredChallenge, setAnsweredChallenge] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true);
   const [incorrectAnswer, setIncorrectAnswer] = useState(-1);
   const [loading, setLoading] = useState(true);
+  const [answering, setAnswering] = useState(false);
 
   const incorrectAnswerRotation = [
     "Try one more time!",
@@ -30,7 +31,7 @@ function Challenge() {
     async function getChallenge() {
       const res = await axios.get(`/backend/challenge${document.location.search}`);
       setQuestion(res.data.challenge.text);
-      setHasCompleted(res.data.hasCompletedClues);
+      // setHasCompleted(res.data.hasCompletedClues);
       setAnsweredChallenge(res.data.hasCompletedChallenge);
       setIsAdmin(res.data.isAdmin);
       setLoading(false)
@@ -40,11 +41,12 @@ function Challenge() {
   }, []);
 
   const completeChallenge = async () => {
-    setIncorrectAnswer(Math.floor(Math.random() * 5));
+    setIncorrectAnswer(-1);
+    setAnswering(true);
     const res = await axios.post(`/backend/answerChallenge${document.location.search}`, { answer });
+    if(!res.data.isCorrect) setIncorrectAnswer(Math.floor(Math.random() * 5));
     setAnsweredChallenge(res.data.isCorrect);
-
-    return false;
+    setAnswering(false);
   };
 
   const rHeader = () => (
@@ -126,9 +128,11 @@ function Challenge() {
                 style={{ marginTop: "10px", alignSelf: "center", justifySelf: "center" }}
                 variant="outlined"
                 onClick={completeChallenge}
+                disabled={answering}
               >
-                Submit
+                Submit { answering && <CircularProgress /> }
               </Button>
+              
             </div>
             {incorrectAnswer >= 0 && (
               <div style={{ marginTop: "100px", color: "red" }}>{incorrectAnswerRotation[incorrectAnswer]}</div>
