@@ -16,13 +16,11 @@ export async function answerChallenge(req, res) {
     const { challenge, analytics } = dataObject as any;
   
     const isCorrect = challenge.answer === answer;
-    console.log(isCorrect);
     if (!isCorrect) return res.json({ isCorrect: false });
 
     const { profileId } = await getProfile(credentials);
     const student = analytics.progress.find((s) => s.studentId === profileId);
 
-    console.log(student);
     student.challengeDone = true;
 
     const writeObject = await mainChallenge.create(credentials.assetId, credentials.urlSlug, { credentials });
@@ -94,7 +92,6 @@ export async function dropLeaves(credentials: Credentials) {
       position: newPosition,
       urlSlug: credentials.urlSlug,
     });
-    // console.log(newPosition);
   } catch (error) {
     console.error(error);
   }

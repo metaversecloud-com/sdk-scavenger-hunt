@@ -1,15 +1,4 @@
 import express from "express";
-// import {
-//   loadClue,
-//   loadConfiguration,
-//   loadAnalytics,
-//   loadChallenge,
-//   answerChallenge,
-//   updateClue,
-//   loadClueWithId,
-//   updateChallenge,
-// } from "./controllers/index.js";
-
 import { loadClue } from "./controllers/clue.js";
 import { loadChallenge } from "./controllers/challenge.js";
 import { loadConfiguration } from "./controllers/admin/config.js";
