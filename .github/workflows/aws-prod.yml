@@ -1,4 +1,4 @@
-name: AWS-Deploy
+name: AWS-Deploy-Push-Prod
 
 on:
   workflow_dispatch:
@@ -66,6 +66,6 @@ jobs:
       #     docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $GCP_ARTIFACTORY/$GCP_PROJECT_ID/$GCP_REPOSITORY:$IMAGE_TAG
       #     docker push $GCP_ARTIFACTORY/$GCP_PROJECT_ID/$GCP_REPOSITORY:$IMAGE_TAG
   
-      - name: Publish
-        run: |
-          aws ecs update-service --service $IMAGE_TAG-svc --force-new-deployment --cluster SDK-Example-CLS
+      # - name: Publish
+      #   run: |
+      #     aws ecs update-service --service $IMAGE_TAG-svc --force-new-deployment --cluster SDK-Example-CLS
