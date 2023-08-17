@@ -8,12 +8,12 @@ export async function loadClue(req, res) {
 
   try {
     const assetsList = await getDroppedAssetByNameFromSceneDropId(
-      ["Web Image Asset", "scavengerHuntChallenge"],
+      ["Web Image Asset", "National Parks Scavenger Hunt Sign"],
       credentials,
     );
 
     const clueAssets = assetsList.find((a) => a.name === "Web Image Asset").assets;
-    const challengeAsset = assetsList.find((a) => a.name === "scavengerHuntChallenge").assets;
+    const challengeAsset = assetsList.find((a) => a.name === "National Parks Scavenger Hunt Sign").assets;
 
     const mainAsset = await new DroppedAssetFactory(myTopiaInstance).get(credentials.assetId, credentials.urlSlug, {
       credentials,

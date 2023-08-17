@@ -7,12 +7,12 @@ export async function loadConfiguration(req, res) {
   const credentials = credentialsFromQuery(req);
   try {
     const assetsList = await getDroppedAssetByNameFromSceneDropId(
-      ["Web Image Asset", "scavengerHuntChallenge"],
+      ["Web Image Asset", "National Parks Scavenger Hunt Sign"],
       credentials,
     );
 
     const webImageAssets = assetsList.find((a) => a.name === "Web Image Asset").assets;
-    const challengeAsset = assetsList.find((a) => a.name === "scavengerHuntChallenge").assets[0];
+    const challengeAsset = assetsList.find((a) => a.name === "National Parks Scavenger Hunt Sign").assets[0];
 
     const assets = await Promise.all(
       webImageAssets.map(async (asset) => {

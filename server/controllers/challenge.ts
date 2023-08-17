@@ -71,14 +71,14 @@ export async function dropLeaves(credentials: Credentials) {
     },
   ];
 
-  const leafIds = ["UB1taPsgEd1v2DQ2n3ju", "4mQhBJSvmfqVCM4TRSeC", "ObZTPYJHo7BEWEEfKB2F", "tgcFjLbjqeEeQEzXVeO8"];
+  const leafIds = ["RefFztR1rfPYz1X5As32", "dspPw18vBt2kWlqjsiRX", "ayWgwlGQtUfqr0rndcap", "TTIep8tnNZJWOWE5oZnK"];
 
   try {
     const world = new WorldFactory(myTopiaInstance).create(credentials.urlSlug, { credentials });
 
-    const assetsList = await getDroppedAssetByNameFromSceneDropId(["treeBG"], credentials);
+    const assetsList = await getDroppedAssetByNameFromSceneDropId(["National Parks Stamp"], credentials);
 
-    const { position } = assetsList.find((a) => a.name === "treeBG").assets[0];
+    const { position } = assetsList.find((a) => a.name === "National Parks Stamp").assets[0];
 
     const leafAssetToPlace = Math.floor(Math.random() * leafIds.length);
     const newAsset = new AssetFactory(myTopiaInstance).create(leafIds[leafAssetToPlace], { credentials });
