@@ -1,56 +1,5 @@
 import { Divider } from "@mui/material";
-import { useEffect } from "react";
-import axios from "axios";
 import { Link, Outlet } from "react-router-dom";
-
-// const scavengerHunt = {
-//   target: {
-//     img: "",
-//     text: "",
-//     droppedAssetID: "",
-//   },
-//   clues: [
-//     {
-//       droppedAssetID: "",
-//       text: "",
-//       img: "",
-//     },
-//   ],
-
-//   analytics: {},
-// };
-
-// const clueMockData = [
-//   {
-//     image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_1.png",
-//     text: "Clue one",
-//     selected: 10,
-//     index: 10,
-//   },
-//   {
-//     image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_2.png",
-//     text: "Clue two",
-//     selected: 10,
-//     index: 10,
-//   },
-//   {
-//     image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_4.png",
-//     text: "Clue three",
-//     selected: 10,
-//     index: 10,
-//   },
-// ];
-
-// const challengeMock = [
-//   {
-//     image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_3.png",
-//     text: "Question",
-//     selected: 1,
-//     index: 1,
-//   },
-// ];
-
-// const targetImages = [];
 
 function App() {
 
