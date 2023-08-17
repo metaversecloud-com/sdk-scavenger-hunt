@@ -44,7 +44,7 @@ export async function loadClue(req, res) {
         userName: username,
         studentId: profileId,
         cluesFound: [credentials.assetId],
-        challegeDone: false,
+        challengeDone: false,
       });
     }
 
