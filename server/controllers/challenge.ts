@@ -71,7 +71,7 @@ export async function dropLeaves(credentials: Credentials) {
     },
   ];
 
-  const leafIds = ["RefFztR1rfPYz1X5As32", "dspPw18vBt2kWlqjsiRX", "ayWgwlGQtUfqr0rndcap", "TTIep8tnNZJWOWE5oZnK"];
+  const leafIds = ["pTGwDHbiqJfzc1lw7Xmu", "85gY9RrYh2llukwc3lr9", "C0qRlkJXqm8xGETLmjqE", "9RANIeC83o7yvcNjrGpO"];
 
   try {
     const world = new WorldFactory(myTopiaInstance).create(credentials.urlSlug, { credentials });

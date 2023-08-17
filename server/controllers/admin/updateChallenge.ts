@@ -16,14 +16,14 @@ export async function updateChallenge(req, res) {
       ...writeObject.dataObject,
       challenge: {
         text,
-        lowerCaseAnswer,
+        answer: lowerCaseAnswer,
       },
     });
   
     res.json({
       scavengerHunt: {
         text,
-        lowerCaseAnswer,
+        answer: lowerCaseAnswer,
       },
     });
   }
