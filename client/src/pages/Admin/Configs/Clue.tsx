@@ -7,62 +7,62 @@ import axios from "axios";
 const fixedClueImages = [
   {
     id: 0,
-    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_1.png",
+    image: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_1.png",
     text: "Clue image one",
   },
   {
     id: 1,
-    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_2.png",
+    image: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_2.png",
     text: "Clue image two",
   },
   {
     id: 2,
-    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_3.png",
+    image: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_3.png",
     text: "Clue image three",
   },
   {
     id: 3,
-    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_4.png",
+    image: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_4.png",
     text: "Clue image four",
   },
   {
     id: 4,
-    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_5.png",
+    image: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_5.png",
     text: "Clue image five",
   },
   {
     id: 5,
-    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_6.png",
+    image: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_6.png",
     text: "Clue image six",
   },
   {
     id: 6,
-    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_7.png",
+    image: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_7.png",
     text: "Clue image seven",
   },
   {
     id: 7,
-    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_8.png",
+    image: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_8.png",
     text: "Clue image eight",
   },
   {
     id: 8,
-    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_9.png",
+    image: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_9.png",
     text: "Clue image nine",
   },
   {
     id: 9,
-    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_10.png",
+    image: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_10.png",
     text: "Clue image ten",
   },
   {
     id: 10,
-    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_11.png",
+    image: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_11.png",
     text: "Clue image eleven",
   },
   {
     id: 11,
-    image: "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_12.png",
+    image: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_12.png",
     text: "Clue image twelve",
   }
 ];
