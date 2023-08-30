@@ -1,6 +1,8 @@
 name: AWS-Deploy-Push-Prod
 
 on:
+  push:
+    branches: [prod-k12]
   workflow_dispatch:
 env:
   REGISTRY: '368076259134.dkr.ecr.us-east-1.amazonaws.com'
@@ -41,16 +43,16 @@ jobs:
         run: |
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v1'
-        with:
-          workload_identity_provider: 'projects/1095363050582/locations/global/workloadIdentityPools/workload-identity-pool/providers/github-provider'
-          service_account: 'terraform-99@topia-gcp.iam.gserviceaccount.com'
+      # - id: 'auth'
+      #   uses: 'google-github-actions/auth@v1'
+      #   with:
+      #     workload_identity_provider: 'projects/1095363050582/locations/global/workloadIdentityPools/workload-identity-pool/providers/github-provider'
+      #     service_account: 'terraform-99@topia-gcp.iam.gserviceaccount.com'
   
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v1'
-        with:
-          version: '>= 363.0.0'
+      # - name: 'Set up Cloud SDK'
+      #   uses: 'google-github-actions/setup-gcloud@v1'
+      #   with:
+      #     version: '>= 363.0.0'
 
       # - name: Login to GAR
       #   uses: docker/login-action@v2.2.0
