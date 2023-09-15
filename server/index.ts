@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import 'dotenv/config'
 import router from "./routes.js";
 import cors from "cors";
-
+import { connectDB } from "./db/index.js";
 
 function checkEnvVariables() {
   const requiredEnvVariables = ["INSTANCE_DOMAIN", "INSTANCE_PROTOCOL", "INTERACTIVE_KEY", "INTERACTIVE_SECRET"];
@@ -42,7 +42,7 @@ if (process.env.NODE_ENV === "development") {
   })
 }
 
-
+connectDB();
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
