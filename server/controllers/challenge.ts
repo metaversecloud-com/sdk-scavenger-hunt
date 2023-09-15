@@ -3,6 +3,7 @@ import { getDroppedAssetByNameFromSceneDropId, getProfile } from "../utils/commo
 import { credentialsFromQuery } from "../utils/credsFromQuery.js";
 import myTopiaInstance from "../utils/topiaInstance.js";
 import { Credentials } from "../utils/types";
+import { AnalyticsModel } from "../db/AnalyticsModel.js";
 
 export async function answerChallenge(req, res) {
   try {
@@ -118,6 +119,26 @@ export async function loadChallenge(req, res) {
 
     const webImageAssets = assetsList[0].assets
     const { isAdmin, profileId } = await getProfile(credentials);
+
+    if(isAdmin) {
+
+      const analyticsData = {
+        totalCluesInWorld: webImageAssets.length,
+        URLSlug: credentials.urlSlug,
+        progressData: analytics.progress 
+      }
+
+      const filter = { URLSlug: credentials.urlSlug };
+
+      // const anaylticsModel = new AnalyticsModel(analyticsData);
+      
+      try {
+       await AnalyticsModel.findOneAndUpdate(filter, analyticsData, { upsert: true });
+
+      } catch (error) {
+        console.error(error)
+      } 
+    }
 
     const student = analytics.progress.find((s) => s.studentId === profileId);
     const hasCompletedClues = student ? student.cluesFound.length === webImageAssets.length : false;
