@@ -1,95 +1,76 @@
-import { LinearProgress } from "@mui/material";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+// components
+import Loading from "@/components/Loading";
+
+// utils
+import { backendAPI } from "@/utils/backendAPI";
 
 const Clue = () => {
-  const { id } = useParams();
-  const [clue, setClue] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [cluesFound, setCluesFound] = useState<string>("");
+  const [totalClues, setTotalClues] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [text, setText] = useState<string>("");
+  const [keyAssetImage, setKeyAssetImage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const getClue = async () => {
-      const res = await axios.get(`/backend/clue/${id}${document.location.search}`);
-      setClue(res.data);
-      setLoading(false);
-    };
-
     getClue();
-  }, [id]);
+  }, []);
 
-  if (loading)
-    return (
-      <div style={{ padding: "20px" }}>
-        Loading...
-        <LinearProgress />
-      </div>
-    );
+  const getClue = async () => {
+    try {
+      await backendAPI.get(`/clue`).then((result: any) => {
+        const { cluesFound, totalClues, imageUrl, text, keyAssetImage } = result.data;
+        setCluesFound(cluesFound);
+        setTotalClues(totalClues);
+        setImageUrl(imageUrl);
+        setText(text);
+        setKeyAssetImage(keyAssetImage);
+      }).finally(() => setIsLoading(false));
+    } catch (error) {
+      console.log(error);
+      navigate("*");
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) return <Loading />;
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        flexDirection: "column",
-        alignItems: "center",
-        backgroundColor: "white",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          flexWrap: "wrap",
-          padding: "40px",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <img style={{ height: "120px", width: "70px", borderRadius: "10%" }} src={clue && clue.assetImage} />
-        <div style={{ padding: "10px", textAlign: "center" }}>
-          <h3 style={{ marginBottom: "5px" }}>Congratulations!</h3>
-          <div> You have found a clue!</div>
-          <div>
-            Completed {clue && clue.cluesFound} of {clue && clue.totalClues}
-          </div>
+    <div className="container p-6">
+      <div style={{ padding: "10px", textAlign: "center" }}>
+        <h3 style={{ marginBottom: "5px" }}>Congratulations!</h3>
+        <div> You have found a clue!</div>
+        <div>
+          Completed {cluesFound} of {totalClues}
         </div>
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          flexWrap: "wrap",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: "10px",
-        }}
-      >
-        <img style={{ height: "300px", width: "300px", borderRadius: "10%" }} src={clue && clue.image} />
-        <div style={{ maxWidth: "80%", paddingTop: "1rem", textAlign: "center" }}>{clue && clue.text}</div>
-      </div>
-      {clue.cluesFound === clue.totalClues && (
+      <div className="container mt-6">
+        <img
+          className="m-auto"
+          style={{ maxHeight: "300px", borderRadius: "10%" }}
+          src={imageUrl}
+        />
         <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-            marginTop: "100px",
-            marginLeft: "10px",
-            marginRight: "10px",
-            padding: "30px",
-            textAlign: "center",
-            border: "1px solid black",
-            borderRadius: "10px",
-          }}
+          style={{ maxWidth: "80%", paddingTop: "1rem", textAlign: "center" }}
         >
-          <img
-            style={{ height: "70px", width: "49px", borderRadius: "10%" }}
-            src={"https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_Start.png"}
-          />
-          <div>Great Job! You have unlocked the final challenge question. Go back, to the first sign to continue.</div>
+          {text}
         </div>
-      )}
+        {cluesFound === totalClues && (
+          <div className="container mt-10 flex items-center justify-start">
+            <div className="flex flex-col">
+              <img src={keyAssetImage} />
+            </div>
+            <div className="flex flex-col">
+              Great Job! You have unlocked the final challenge question. Go
+              back, to the first sign to continue.
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
