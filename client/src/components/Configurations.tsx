@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // components
 import Loading from "@/components/Loading";
@@ -8,45 +9,56 @@ import { backendAPI } from "@/utils/backendAPI";
 import EditClue from "./EditClue";
 
 export const Configurations = () => {
+  const navigate = useNavigate();
   const [clues, setClues] = useState([]);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedClue, setSelectedClue] = useState(null);
 
   useEffect(() => {
     const getConfigList = async () => {
-      const res = await backendAPI.get(`/admin/config`);
-
-      console.log("🚀 ~ file: Configurations.tsx:23 ~ res:", res.data)
-      const clues = res.data.clues.map(
-        (asset: { imageUrl: any; text: any; id: any }, i: number) => {
-          return {
-            imageUrl: asset.imageUrl,
-            text: asset.text || `Clue ${i + 1}`,
-            assetId: asset.id,
-          };
-        }
-      );
-
-      setQuestion(res.data.challenge.text);
-      setAnswer(res.data.challenge.answer);
-      setClues(clues);
-      setLoading(false);
+      try {
+        await backendAPI.get(`/admin/config`).then((result: any) => {
+            const { clues, challenge } = result
+            const cluesFormatted = clues.map(
+                (asset: { imageUrl: any; text: any; id: any }, i: number) => {
+                    return {
+                    imageUrl: asset.imageUrl,
+                    text: asset.text || `Clue ${i + 1}`,
+                    assetId: asset.id,
+                    };
+                }
+            );
+            setQuestion(challenge.text);
+            setAnswer(challenge.answer);
+            setClues(cluesFormatted);
+        }).finally(() => setIsLoading(false));
+      } catch (error) {
+        console.log(error);
+        navigate("*");
+        setIsLoading(false);
+      }
     };
 
     getConfigList();
   }, []);
 
   const onSave = async () => {
-    setSaving(true);
-    await backendAPI.post(`/admin/updateChallenge`, {
-      text: question,
-      answer,
-    });
-    setSaving(false);
+    try {
+      setIsSaving(true);
+      await backendAPI.post(`/admin/updateChallenge`, {
+        text: question,
+        answer,
+      });
+      setIsSaving(false);
+    } catch (error) {
+      console.log(error);
+      navigate("*");
+      setIsLoading(false);
+    }
   };
 
   const handleOpenClueModal = (clue: any) => {
@@ -59,7 +71,7 @@ export const Configurations = () => {
   };
 
   const Clue = ({ item }: { item: any }) => {
-    const { assetId, image, text } = item;
+    const { assetId, imageUrl, text } = item;
     const truncatedText =
       text?.length > 30 ? `${text.substring(0, 30)}...` : text;
     return (
@@ -72,14 +84,14 @@ export const Configurations = () => {
           className="card-image"
           style={{ height: "70px", width: "70px", minWidth: "70px" }}
         >
-          <img src={image} />
+          <img src={imageUrl} />
         </div>
         <div className="card-title">{truncatedText}</div>
       </div>
     );
   };
 
-  if (loading) return <Loading />;
+  if (isLoading) return <Loading />;
 
   return (
     <>
@@ -108,7 +120,7 @@ export const Configurations = () => {
         value={answer}
       />
       <div className="card-actions">
-        <button className="mt-4" onClick={onSave} disabled={saving}>
+        <button className="mt-4" onClick={onSave} disabled={isSaving}>
           Save
         </button>
       </div>

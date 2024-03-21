@@ -5,9 +5,9 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
   try {
     const answer = req.body.answer.toLowerCase();
     const credentials = getCredentials(req.query);
-    const { assetId, profileId, urlSlug } = credentials;
+    const { assetId, profileId, sceneDropId } = credentials;
 
-    const droppedAsset = await getDroppedAssetDataObject(assetId, credentials, false);
+    const droppedAsset = await getDroppedAssetDataObject(assetId, credentials, true);
     const { dataObject } = droppedAsset
 
     const { challenge, analytics } = dataObject as any;
@@ -21,7 +21,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       await droppedAsset.updateDataObject({ [`analytics.progress.${profileId}`]: { challengeDone: true } });
     }
 
-    await dropLeaves(credentials);
+    await dropLeaves(credentials, sceneDropId);
 
     return res.json({ isCorrect: true });
   } catch (error) {

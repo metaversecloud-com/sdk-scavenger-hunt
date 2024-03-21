@@ -14,8 +14,8 @@ import {
 
 // pages
 import Clue from "./pages/Clue";
-import Challenge from "./pages/Admin/Challenge";
-import Admin from "./pages/Admin/Admin";
+import Challenge from "./pages/Challenge";
+import Admin from "./pages/Admin";
 import Error from "./pages/Error";
 
 // context
@@ -29,11 +29,13 @@ import {
 // utils
 import { setupBackendAPI } from "./utils/backendAPI";
 
+import "./App.css";
 import "./index.css";
 
 const App = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [hasInteractiveParams, setHasInteractiveParams] = useState(false);
   const [hasInitBackendAPI, setHasInitBackendAPI] = useState(false);
 
   const dispatch = useContext(GlobalDispatchContext);
@@ -104,12 +106,13 @@ const App = () => {
       setInteractiveParams({
         ...interactiveParams,
       });
+      setHasInteractiveParams(true)
     }
   }, [interactiveParams, setInteractiveParams]);
 
   useEffect(() => {
-    if (!hasInitBackendAPI) setupBackend();
-  }, [hasInitBackendAPI, interactiveParams]);
+    if (!hasInitBackendAPI && hasInteractiveParams) setupBackend();
+  }, [hasInitBackendAPI, hasInteractiveParams]);
 
   return (
     <Routes>

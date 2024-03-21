@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // components
 import Loading from "@/components/Loading";
@@ -8,21 +8,36 @@ import Loading from "@/components/Loading";
 import { backendAPI } from "@/utils/backendAPI";
 
 const Clue = () => {
-  const { id } = useParams();
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [cluesFound, setCluesFound] = useState<string>("");
+  const [totalClues, setTotalClues] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [text, setText] = useState<string>("");
+  const [keyAssetImage, setKeyAssetImage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const getClue = async () => {
-      const res = await backendAPI.get(`/clue`);
-      console.log("🚀 ~ file: Clue.tsx:21 ~ res.data:", res.data);
-      setData(res.data);
-      setLoading(false);
-    };
     getClue();
-  }, [id]);
+  }, []);
 
-  if (loading) return <Loading />;
+  const getClue = async () => {
+    try {
+      await backendAPI.get(`/clue`).then((result: any) => {
+        const { cluesFound, totalClues, imageUrl, text, keyAssetImage } = result.data;
+        setCluesFound(cluesFound);
+        setTotalClues(totalClues);
+        setImageUrl(imageUrl);
+        setText(text);
+        setKeyAssetImage(keyAssetImage);
+      }).finally(() => setIsLoading(false));
+    } catch (error) {
+      console.log(error);
+      navigate("*");
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className="container p-6">
@@ -30,23 +45,24 @@ const Clue = () => {
         <h3 style={{ marginBottom: "5px" }}>Congratulations!</h3>
         <div> You have found a clue!</div>
         <div>
-          Completed {data.cluesFound} of {data.totalClues}
+          Completed {cluesFound} of {totalClues}
         </div>
       </div>
       <div className="container mt-6">
         <img
-          style={{ height: "300px", width: "300px", borderRadius: "10%" }}
-          src={data.image}
+          className="m-auto"
+          style={{ maxHeight: "300px", borderRadius: "10%" }}
+          src={imageUrl}
         />
         <div
           style={{ maxWidth: "80%", paddingTop: "1rem", textAlign: "center" }}
         >
-          {data.text}
+          {text}
         </div>
-        {data.cluesFound === data.totalClues && (
+        {cluesFound === totalClues && (
           <div className="container mt-10 flex items-center justify-start">
             <div className="flex flex-col">
-              <img src={data.keyAssetImage} />
+              <img src={keyAssetImage} />
             </div>
             <div className="flex flex-col">
               Great Job! You have unlocked the final challenge question. Go

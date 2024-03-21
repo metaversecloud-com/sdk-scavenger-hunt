@@ -4,7 +4,7 @@ import { errorHandler } from "./errorHandler";
 import { getRandomPointInCircle } from "./getRandomPointInCircle";
 import { Credentials } from "./types";
 
-export async function dropLeaves(credentials: Credentials) {
+export async function dropLeaves(credentials: Credentials, sceneDropId: string) {
   try {
     const dropZones = [
       {
@@ -35,22 +35,23 @@ export async function dropLeaves(credentials: Credentials) {
 
     const leafIds = ["pTGwDHbiqJfzc1lw7Xmu", "85gY9RrYh2llukwc3lr9", "C0qRlkJXqm8xGETLmjqE", "9RANIeC83o7yvcNjrGpO"];
 
-    const assetsList = await getDroppedAssetBySceneDropId("National Parks Stamp", credentials);
+    const droppedAssets = await getDroppedAssetBySceneDropId(sceneDropId || "National Parks Stamp", credentials);
 
-    const { position } = assetsList.find((a) => a.name === "National Parks Stamp").assets[0];
-
-    const leafAssetToPlace = Math.floor(Math.random() * leafIds.length);
-    const newAsset = await Asset.create(leafIds[leafAssetToPlace], { credentials });
-
-    const random = Math.floor(Math.random() * dropZones.length);
-    const centralPosition = { x: position.x + dropZones[random].x, y: position.y + dropZones[random].y };
-
-    const newPosition = getRandomPointInCircle(centralPosition.x, centralPosition.y, 140);
-
-    await DroppedAsset.drop(newAsset, {
-      interactivePublicKey: credentials.interactivePublicKey,
-      position: newPosition,
-      urlSlug: credentials.urlSlug,
+    await droppedAssets.map(async (asset) => {
+      if (asset.uniqueName === "ScavengerHuntBuildableAsset") {
+          const leafAssetToPlace = Math.floor(Math.random() * leafIds.length);
+          const newAsset = await Asset.create(leafIds[leafAssetToPlace], { credentials });
+      
+          const random = Math.floor(Math.random() * dropZones.length);
+          const centralPosition = { x: asset.position.x + dropZones[random].x, y: asset.position.y + dropZones[random].y };
+          const newPosition = getRandomPointInCircle(centralPosition.x, centralPosition.y, 140);
+      
+          await DroppedAsset.drop(newAsset, {
+            interactivePublicKey: credentials.interactivePublicKey,
+            position: newPosition,
+            urlSlug: credentials.urlSlug,
+        })
+      };
     });
 
     return { success: true };

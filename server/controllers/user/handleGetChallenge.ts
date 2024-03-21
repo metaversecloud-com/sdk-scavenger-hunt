@@ -16,7 +16,7 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
     const { isAdmin } = await getProfile(credentials);
 
     const student = analytics.progress[profileId];
-    const hasCompletedClues = student ? student.cluesFound.length === droppedAssets.length : false;
+    const hasCompletedClues = student ? Object.keys(student.cluesFound).length === Object.keys(droppedAssets).length - 1 : false;
 
     return res.json({ challenge, hasCompletedClues, hasCompletedChallenge: student ? student.challengeDone : false, isAdmin });
   } catch (error) {

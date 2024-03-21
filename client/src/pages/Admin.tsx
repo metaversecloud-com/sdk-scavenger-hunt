@@ -15,32 +15,30 @@ export const Admin = () => {
       <hr />
       <br />
 
-      <section id="accordion" className="accordion">
+      <section className="accordion card">
         <div className="accordion-container">
           <details className="accordion-item">
-            <summary className="accordion-trigger">
-              <h3>Configurations</h3>
-              <span className="accordion-icon" aria-hidden="true">
-                &#8897;
-              </span>
+            <summary className="accordion-trigger flex">
+              <span className="accordion-title h4 flex-1">Configurations</span>
+              <img className="accordion-icon flex-2" aria-hidden="true" src="https://sdk-style.s3.amazonaws.com/icons/chevronDown.svg" />
             </summary>
-            <div className="accordion-content">
+            <div className="accordion-content mt-5">
               <Configurations />
             </div>
           </details>
         </div>
       </section>
 
-      <section id="accordion" className="accordion">
+      <br />
+
+      <section className="accordion card">
         <div className="accordion-container">
           <details className="accordion-item">
-            <summary className="accordion-trigger">
-              <h3>Analytics</h3>
-              <span className="accordion-icon" aria-hidden="true">
-                &#8897;
-              </span>
+            <summary className="accordion-trigger flex">
+              <span className="accordion-title h4 flex-1">Analytics</span>
+              <img className="accordion-icon flex-2" aria-hidden="true" src="https://sdk-style.s3.amazonaws.com/icons/chevronDown.svg" />
             </summary>
-            <div className="accordion-content">
+            <div className="accordion-content mt-5">
               <Analytics />
             </div>
           </details>

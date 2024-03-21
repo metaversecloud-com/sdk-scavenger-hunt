@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
@@ -73,19 +74,26 @@ export const EditClue = ({
   clue: any;
   onCloseModal: any;
 }) => {
+  const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(clue.image);
   const [text, setText] = useState(clue.text);
-  const [saving, setSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   async function onSave() {
-    setSaving(true);
-    await backendAPI.post(`/admin/updateClue`, {
-      assetId: clue.assetId,
-      text,
-      imageUrl: selectedImage,
-    });
-    setSaving(false);
-    onCloseModal();
+    try {
+      setIsSaving(true);
+      await backendAPI.post(`/admin/updateClue`, {
+        assetId: clue.assetId,
+        text,
+        imageUrl: selectedImage,
+      })
+      setIsSaving(false);
+      onCloseModal();
+    } catch (error) {
+      console.log(error);
+      navigate("*");
+      setIsSaving(false);
+    }
   }
 
   const ClueImages = ({ item }: { item: any }) => {
@@ -153,7 +161,7 @@ export const EditClue = ({
             <button className="btn-outline" onClick={onCloseModal}>
               Close
             </button>
-            <button onClick={onSave} disabled={saving}>
+            <button onClick={onSave} disabled={isSaving}>
               Save
             </button>
           </div>

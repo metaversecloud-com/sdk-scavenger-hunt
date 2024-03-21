@@ -8,7 +8,7 @@ export const Header = ({
   text?: string;
 }) => {
   return (
-    <>
+    <div className="container p-6 items-center justify-start">
       <div className="tab-container">
         <button className={activeTab === "challenge" ? "" : "btn-text"}>
           <Link to={`/challenge`}>Challenge</Link>
@@ -22,7 +22,7 @@ export const Header = ({
           <h3 style={{ marginBottom: "0px" }}>{text}</h3>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

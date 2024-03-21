@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // components
 import { Loading } from "@/components/Loading";
@@ -7,22 +8,28 @@ import { Loading } from "@/components/Loading";
 import { backendAPI } from "@/utils/backendAPI";
 
 export const Analytics = () => {
+  const navigate = useNavigate();
   const [progressData, setProgressData] = useState([]);
   const [noOfClues, setNoOfClues] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function getAnalytics() {
-      const res = await backendAPI.get(`/admin/analytics`);
-      console.log("🚀 ~ file: Analytics.tsx:21 ~ res.data:", res.data);
-      setNoOfClues(res.data.totalClues);
-      setProgressData(res.data.analytics?.progress);
-      setLoading(false);
+      try {
+        await backendAPI.get(`/admin/analytics`).then((result) => {
+            setNoOfClues(result.data.totalClues);
+            setProgressData(result.data.analytics?.progress);
+        }).finally(() => setIsLoading(false));
+      } catch (error) {
+        console.log(error);
+        navigate("*");
+        setIsLoading(false);
+      }
     }
     getAnalytics();
   }, []);
 
-  if (loading) return <Loading />;
+  if (isLoading) return <Loading />;
 
   return (
     <>

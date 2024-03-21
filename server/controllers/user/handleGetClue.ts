@@ -5,7 +5,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { assetId, profileId, sceneDropId } = credentials;
-    let keyAssetId;
+    let cluesFound = 1, keyAssetId;
 
     const droppedAssets = await getDroppedAssetBySceneDropId(sceneDropId || "Web Image Asset", credentials);
 
@@ -26,19 +26,19 @@ export const handleGetClue = async (req: Request, res: Response) => {
       });
     } else if (!student.cluesFound) {
       await keyAsset.updateDataObject({ [`analytics.progress.${profileId}.cluesFound`]: { [assetId]: true } });
-    } else {
+    } else if (!student.cluesFound[assetId]) {
       await keyAsset.updateDataObject({ [`analytics.progress.${profileId}.cluesFound.${assetId}`]: true });
+      cluesFound = Object.keys(student.cluesFound).length + 1
     }
 
     const clue = await getDroppedAssetDataObject(assetId, credentials, false);
 
-    console.log("🚀 ~ file: handleGetClue.ts:42 ~ Object.keys(student.cluesFound).length:", Object.keys(student.cluesFound).length)
     return res.send({
       text: clue.dataObject.text || "",
-      image: clue.dataObject.image || "",
+      imageUrl: clue.dataObject.imageUrl || "",
       keyAssetImage: bottomLayerURL,
       totalClues: Object.keys(droppedAssets).length - 1,
-      cluesFound: student?.cluesFound ? Object.keys(student.cluesFound).length : 1,
+      cluesFound,
     });
   } catch (error) {
     return errorHandler({

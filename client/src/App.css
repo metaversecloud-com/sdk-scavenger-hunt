@@ -1,3 +1,4 @@
-.Mui-selected {
-  background-color: red;
+/* Temp support until I can figure out why pseudo elements are being stripped from stylesheet */
+.accordion-trigger::marker {
+    font-size: 0;
 }
