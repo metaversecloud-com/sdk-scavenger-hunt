@@ -1,16 +1,22 @@
-import { LinearProgress } from "@mui/material";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+// components
+import Loading from "@/components/Loading";
+
+// utils
+import { backendAPI } from "@/utils/backendAPI";
+
 const Clue = () => {
   const { id } = useParams();
-  const [clue, setClue] = useState(null);
+  const [clue, setClue] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getClue = async () => {
-      const res = await axios.get(`/backend/clue/${id}${document.location.search}`);
+      const res = await backendAPI.get(
+        `/clue/${id}${document.location.search}`
+      );
       setClue(res.data);
       setLoading(false);
     };
@@ -18,13 +24,8 @@ const Clue = () => {
     getClue();
   }, [id]);
 
-  if (loading)
-    return (
-      <div style={{ padding: "20px" }}>
-        Loading...
-        <LinearProgress />
-      </div>
-    );
+  if (loading) return <Loading />;
+
   return (
     <div
       style={{
@@ -45,12 +46,15 @@ const Clue = () => {
           alignItems: "center",
         }}
       >
-        <img style={{ height: "120px", width: "70px", borderRadius: "10%" }} src={clue && clue.assetImage} />
+        <img
+          style={{ height: "120px", width: "70px", borderRadius: "10%" }}
+          src={clue.assetImage}
+        />
         <div style={{ padding: "10px", textAlign: "center" }}>
           <h3 style={{ marginBottom: "5px" }}>Congratulations!</h3>
           <div> You have found a clue!</div>
           <div>
-            Completed {clue && clue.cluesFound} of {clue && clue.totalClues}
+            Completed {clue.cluesFound} of {clue.totalClues}
           </div>
         </div>
       </div>
@@ -64,8 +68,15 @@ const Clue = () => {
           padding: "10px",
         }}
       >
-        <img style={{ height: "300px", width: "300px", borderRadius: "10%" }} src={clue && clue.image} />
-        <div style={{ maxWidth: "80%", paddingTop: "1rem", textAlign: "center" }}>{clue && clue.text}</div>
+        <img
+          style={{ height: "300px", width: "300px", borderRadius: "10%" }}
+          src={clue.image}
+        />
+        <div
+          style={{ maxWidth: "80%", paddingTop: "1rem", textAlign: "center" }}
+        >
+          {clue.text}
+        </div>
       </div>
       {clue.cluesFound === clue.totalClues && (
         <div
@@ -85,9 +96,14 @@ const Clue = () => {
         >
           <img
             style={{ height: "70px", width: "49px", borderRadius: "10%" }}
-            src={"https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_Start.png"}
+            src={
+              "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_Start.png"
+            }
           />
-          <div>Great Job! You have unlocked the final challenge question. Go back, to the first sign to continue.</div>
+          <div>
+            Great Job! You have unlocked the final challenge question. Go back,
+            to the first sign to continue.
+          </div>
         </div>
       )}
     </div>

@@ -1,9 +1,4 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-
-// components
-import ListComponent from "../../../components/ListComponent";
-import { Loading } from "@/components/Loading";
+import { useState } from "react";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
@@ -71,93 +66,105 @@ const fixedClueImages = [
   },
 ];
 
-export const Clue = () => {
-  const { id } = useParams();
-  const [selected, setSelected] = useState(-1);
-  const [text, setText] = useState("");
-  const [imageURL, setImageURL] = useState("");
-
-  const [loading, setLoading] = useState(true);
+export const EditClue = ({
+  clue,
+  onCloseModal,
+}: {
+  clue: any;
+  onCloseModal: any;
+}) => {
+  const [selectedImage, setSelectedImage] = useState(clue.image);
+  const [text, setText] = useState(clue.text);
   const [saving, setSaving] = useState(false);
 
-  function handleClick(item: any) {
-    setSelected(item.id);
-  }
-
-  useEffect(() => {
-    async function getClue() {
-      const res = await backendAPI.get(`/admin/clue/${id}`);
-      console.log(res.data);
-
-      setText(res.data.text);
-      setImageURL(res.data.image);
-
-      const imageURL = `https://${res.data.assetImage}`;
-      const asset = fixedClueImages.find((asset) => asset.image === imageURL);
-
-      if (asset) {
-        setSelected(asset.id);
-      }
-
-      setLoading(false);
-    }
-    getClue();
-  }, []);
-
   async function onSave() {
-    console.log("save");
     setSaving(true);
-    const res = await backendAPI.post(`/admin/updateClue`, {
-      assetId: id,
+    await backendAPI.post(`/admin/updateClue`, {
+      assetId: clue.assetId,
       text,
-      image: fixedClueImages[selected].image,
-      imageURL,
+      imageUrl: selectedImage,
     });
-
-    console.log(res.data);
     setSaving(false);
+    onCloseModal();
   }
 
-  if (loading) return <Loading />;
+  const ClueImages = ({ item }: { item: any }) => {
+    const { id, image, text } = item;
+    return (
+      <div
+        className="card small mt-4 cursor-pointer"
+        key={id}
+        onClick={() => setSelectedImage(image)}
+        style={{
+          border: selectedImage === image ? "2px solid #555" : "inherit",
+        }}
+      >
+        <div
+          className="card-image"
+          style={{
+            height: "70px",
+            width: "70px",
+            minWidth: "70px",
+            overflow: "hidden",
+          }}
+        >
+          <img src={image} />
+        </div>
+        <div className="card-title">{text}</div>
+      </div>
+    );
+  };
 
   return (
-    <div className="container p-6 flex items-center justify-start">
-      <div className="flex flex-col">
-        <h4>Clue Configuration</h4>
-        <div>
-          You can change the clue text, image it shows in the window. After you
-          have configured everything, click on the Save button to save the
+    <div className="modal-container visible" style={{ overflow: "auto" }}>
+      <div className="modal" style={{ textAlign: "left", top: "100%" }}>
+        <h3>Clue Configuration</h3>
+        <p>
+          You can change the clue text and image it shows in the drawer. Click
+          on the Save button at the bottom of the screen to save the
           configuration.
-        </div>
-        <button onClick={onSave} disabled={saving}>
-          Save
-        </button>
+        </p>
+
         <label>Clue</label>
         <input
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            console.log(
+              "🚀 ~ file: EditClue.tsx:149 ~ event.target.value:",
+              event.target.value
+            );
             setText(event.target.value);
           }}
           type="textarea"
           value={text}
         />
 
-        <label>Clue Image URL</label>
+        {/* <label>Clue Image URL</label>
         <input
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setImageURL(event.target.value);
           }}
           value={imageURL}
-        />
-        <ListComponent
-          title="Asset Image"
-          subTitle="Pick an image for this clue"
-          items={fixedClueImages}
-          currentSelection={selected}
-          onClick={handleClick}
-        />
+        /> */}
+
+        <div className="mt-6">
+          <h4>Asset Image</h4>
+          <p>Pick an image for this clue.</p>
+          {fixedClueImages.map((item) => (
+            <ClueImages item={item} />
+          ))}
+
+          <div className="actions">
+            <button className="btn-outline" onClick={onCloseModal}>
+              Close
+            </button>
+            <button onClick={onSave} disabled={saving}>
+              Save
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Clue;
+export default EditClue;

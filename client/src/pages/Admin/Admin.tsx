@@ -1,29 +1,56 @@
-import { Divider } from "@mui/material";
-import { Link, Outlet } from "react-router-dom";
+import Header from "@/components/Header";
+import Configurations from "@/components/Configurations";
 
-function App() {
-
+export const Admin = () => {
   return (
-    <>
-      <h1>Admin Menu</h1>
-      <Divider />
-      <div style={{ padding: "10px" }}>
-        <h3>Instructions</h3>
-        <div>
-          Here you can configure the scavenger hunt and view analytics. Click on one
-          of the links below to get started!
-        </div>
+    <div className="container p-6">
+      <Header activeTab="admin" />
+      <div className="flex flex-col w-full items-start mb-6 mt-6">
+        <p className="mb-2">
+          Here you can configure the scavenger hunt and view analytics. Click on
+          one of the links below to get started!
+        </p>
       </div>
-      <div style={{padding: "5px", paddingBottom: "20px"}}>
-        <div style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}>
-          <Link to={`/admin/configuration${document.location.search}`}>Configure</Link>
-          <Link to={`/admin/analytics${document.location.search}`}>View Analytics</Link>
-        </div>
-      </div>
-      <Divider />
-      <Outlet />
-    </>
-  );
-}
+      <hr />
+      <br />
 
-export default App;
+      <section id="accordion" className="accordion">
+        <div className="accordion-container">
+          <details className="accordion-item">
+            <summary className="accordion-trigger">
+              <h3>Configurations</h3>
+              <span className="accordion-icon" aria-hidden="true">
+                &#8897;
+              </span>
+            </summary>
+            <div className="accordion-content">
+              <Configurations />
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section id="accordion" className="accordion">
+        <div className="accordion-container">
+          <details className="accordion-item">
+            <summary className="accordion-trigger">
+              <h3>Analytics</h3>
+              <span className="accordion-icon" aria-hidden="true">
+                &#8897;
+              </span>
+            </summary>
+            <div className="accordion-content">
+              {/* <Configurations /> */}
+
+              {/* <Link to={`/admin/analytics`}>
+            View Analytics
+          </Link> */}
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Admin;

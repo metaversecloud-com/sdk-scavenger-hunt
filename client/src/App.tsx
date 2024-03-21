@@ -1,21 +1,130 @@
-function App() {
-  // useEffect(() => {
-  //   axios
-  //     .get(`http://localhost:3000/backend/appState${document.location.search}`)
-  //     .then((res) => {
-  //       console.log(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }, []);
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+
+// pages
+import Clue from "./pages/Clue";
+import Challenge from "./pages/Admin/Challenge";
+// import Configurations from "./components/Configurations";
+// import Analytics from "./pages/Admin/Analytics";
+// import ClueCongif from "./pages/Admin/Configs/Clue";
+import Admin from "./pages/Admin/Admin";
+import Error from "./pages/Error";
+
+// context
+import { GlobalDispatchContext } from "./context/GlobalContext";
+import {
+  InteractiveParams,
+  SET_HAS_SETUP_BACKEND,
+  SET_INTERACTIVE_PARAMS,
+} from "./context/types";
+
+// utils
+import { setupBackendAPI } from "./utils/backendAPI";
+
+import "./index.css";
+
+const App = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [hasInitBackendAPI, setHasInitBackendAPI] = useState(false);
+
+  const dispatch = useContext(GlobalDispatchContext);
+
+  const interactiveParams: InteractiveParams = useMemo(() => {
+    return {
+      assetId: searchParams.get("assetId") || "",
+      interactiveNonce: searchParams.get("interactiveNonce") || "",
+      interactivePublicKey: searchParams.get("interactivePublicKey") || "",
+      profileId: searchParams.get("profileId") || "",
+      sceneDropId: searchParams.get("sceneDropId") || "",
+      urlSlug: searchParams.get("urlSlug") || "",
+      username: searchParams.get("username") || "",
+      visitorId: searchParams.get("visitorId") || "",
+    };
+  }, [searchParams]);
+
+  const setInteractiveParams = useCallback(
+    ({
+      assetId,
+      interactiveNonce,
+      interactivePublicKey,
+      profileId,
+      sceneDropId,
+      urlSlug,
+      username,
+      visitorId,
+    }: InteractiveParams) => {
+      const isInteractiveIframe =
+        visitorId && interactiveNonce && interactivePublicKey && assetId;
+      dispatch!({
+        type: SET_INTERACTIVE_PARAMS,
+        payload: {
+          assetId,
+          interactiveNonce,
+          interactivePublicKey,
+          isInteractiveIframe,
+          profileId,
+          sceneDropId,
+          urlSlug,
+          username,
+          visitorId,
+        },
+      });
+    },
+    [dispatch]
+  );
+
+  const setHasSetupBackend = useCallback(
+    (success: boolean) => {
+      dispatch!({
+        type: SET_HAS_SETUP_BACKEND,
+        payload: { hasSetupBackend: success },
+      });
+    },
+    [dispatch]
+  );
+
+  const setupBackend = async () => {
+    const setupResult = await setupBackendAPI(interactiveParams);
+    setHasSetupBackend(setupResult.success);
+    if (!setupResult.success) navigate("*");
+    else setHasInitBackendAPI(true);
+  };
+
+  useEffect(() => {
+    if (interactiveParams.assetId) {
+      setInteractiveParams({
+        ...interactiveParams,
+      });
+    }
+  }, [interactiveParams, setInteractiveParams]);
+
+  useEffect(() => {
+    if (!hasInitBackendAPI) setupBackend();
+  }, [hasInitBackendAPI, interactiveParams]);
 
   return (
-    <>
-      <h2>Scavenger Hunt</h2>
-      <div>Go find the clues and then come back to answer the big question!</div>
-    </>
+    <Routes>
+      <Route path="clue" element={<Clue />} />
+      <Route path="challenge" element={<Challenge />} />
+      <Route path="admin" element={<Admin />} />
+      {/* <Route path="admin/analytics" element={<Analytics />} /> */}
+      {/* <Route path="admin/configuration" element={<Configurations />} /> */}
+      {/* <Route path="admin/configuration/clue/:id" element={<ClueCongif />} /> */}
+      <Route path="*" element={<Error />} />
+    </Routes>
   );
-}
+};
 
 export default App;

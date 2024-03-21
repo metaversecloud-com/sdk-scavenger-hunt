@@ -1,11 +1,16 @@
 import express from "express";
-import { loadClue } from "./controllers/clue.js";
-import { loadChallenge } from "./controllers/challenge.js";
-import { loadConfiguration } from "./controllers/admin/config.js";
-import { loadAnalytics } from "./controllers/admin/analytics.js";
-import { loadClueWithId, updateClue } from "./controllers/admin/clue.js";
-import { updateChallenge } from "./controllers/admin/updateChallenge.js";
-import { answerChallenge } from "./controllers/challenge.js";
+import {
+  handleAnswerChallenge,
+  handleCheckInteractiveCredentials,
+  handleLoadAnalytics,
+  handleLoadChallenge,
+  handleLoadConfiguration,
+  handleLoadClue,
+  handleLoadClueWithId,
+  handleUpdateChallenge,
+  handleUpdateClue,
+} from "./controllers";
+import { getVersion } from "./utils/getVersion";
 
 const router = express.Router();
 
@@ -13,16 +18,30 @@ router.get("/", (req, res) => {
   res.json({ message: "Hello from server!" });
 });
 
+router.get("/system/health", (req, res) => {
+  return res.json({
+    appVersion: getVersion(),
+    status: "OK",
+    envs: {
+      NODE_ENV: process.env.NODE_ENV,
+      INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN,
+      INTERACTIVE_KEY: process.env.INTERACTIVE_KEY,
+    },
+  });
+});
+
+router.get("/system/interactive-credentials", handleCheckInteractiveCredentials);
+
 // Admin Routes
-router.get("/admin/config", loadConfiguration);
-router.get("/admin/analytics", loadAnalytics);
-router.get("/admin/clue/:id", loadClueWithId);
-router.post("/admin/updateChallenge", updateChallenge);
-router.post("/admin/updateClue", updateClue);
+router.get("/admin/analytics", handleLoadAnalytics);
+router.get("/admin/config", handleLoadConfiguration);
+router.get("/admin/clue/:id", handleLoadClueWithId);
+router.post("/admin/updateChallenge", handleUpdateChallenge);
+router.post("/admin/updateClue", handleUpdateClue);
 
 // User Routes
-router.post("/answerChallenge", answerChallenge);
-router.get("/challenge", loadChallenge);
-router.get("/clue/:id", loadClue);
+router.post("/answerChallenge", handleAnswerChallenge);
+router.get("/challenge", handleLoadChallenge);
+router.get("/clue/:id", handleLoadClue);
 
 export default router;

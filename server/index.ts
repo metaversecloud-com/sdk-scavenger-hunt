@@ -1,49 +1,71 @@
-import path from "path";
-import { fileURLToPath } from "url";
 import express from "express";
-import bodyParser from "body-parser";
-import 'dotenv/config'
-import router from "./routes.js";
 import cors from "cors";
-import { connectDB } from "./db/index.js";
+import dotenv from "dotenv";
+import router from "./routes";
+import path from "path";
+import { cleanReturnPayload } from "./utils/cleanReturnPayload";
+import { fileURLToPath } from "url";
+
+dotenv.config({ path: "../.env" });
 
 function checkEnvVariables() {
-  const requiredEnvVariables = ["INSTANCE_DOMAIN", "INSTANCE_PROTOCOL", "INTERACTIVE_KEY", "INTERACTIVE_SECRET"];
+  const requiredEnvVariables = ["INTERACTIVE_KEY", "INTERACTIVE_SECRET"];
   const missingVariables = requiredEnvVariables.filter((variable) => !process.env[variable]);
 
   if (missingVariables.length > 0) {
     throw new Error(`Missing required environment variables in the .env file: ${missingVariables.join(", ")}`);
+  } else {
+    console.log("All required environment variables provided.");
   }
 }
 checkEnvVariables();
 
 const PORT = process.env.PORT || 3000;
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use("/backend", router);
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 if (process.env.NODE_ENV === "development") {
-  app.use(cors());
+  const corsOptions = {
+    origin: ["http://localhost:3000", "http://localhost:5173"],
+    credentials: true, //access-control-allow-credentials:true
+    optionSuccessStatus: 200,
+  };
+  app.use(cors(corsOptions));
 } else {
   // Node serves the files for the React app
-  const __filename = fileURLToPath(import.meta.url)
-  console.log("🚀 ~ file: index.js:44 ~ __filename:", __filename)
-  const __dirname = path.dirname(__filename)
-  console.log("🚀 ~ file: index.js:46 ~ __dirname:", __dirname)
-  app.use(express.static(path.resolve(__dirname, "../../client/dist")))
-  console.log("🚀 ~ file: index.js:48 ~ path.resolve:", path.resolve(__dirname, "../../client/dist"))
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  app.use(express.static(path.resolve(__dirname, "../client/build")));
 
   // All other GET requests not handled before will return our React app
   app.get("*", (req, res) => {
-      res.sendFile(path.resolve(__dirname, "../../client/dist", "index.html"));
-  })
+    res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
+  });
 }
 
-connectDB();
+app.use(function (req, res, next) {
+  const ogSend = res.send;
+  // @ts-ignore
+  res.send = function (data) {
+    if (data) {
+      try {
+        const cleanData = cleanReturnPayload(typeof data === "string" ? JSON.parse(data) : data);
+        res.send = ogSend;
+        return res.send(cleanData);
+      } catch (error) {
+        console.log(error);
+        next();
+      }
+    }
+  };
+  next();
+});
+
+app.use("/api", router);
 
 app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
+  console.log(`Server is running on port: ${PORT}`);
 });
