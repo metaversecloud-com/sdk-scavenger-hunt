@@ -1,3 +1,3 @@
 export * from "./handleAnswerChallenge"
-export * from "./handleLoadChallenge"
-export * from "./handleLoadClue"
+export * from "./handleGetChallenge"
+export * from "./handleGetClue"

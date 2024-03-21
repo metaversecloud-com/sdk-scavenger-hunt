@@ -6,26 +6,21 @@ export const handleUpdateChallenge = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { text, answer } = req.body;
 
-    const writeObject = await DroppedAsset.create(credentials.assetId, credentials.urlSlug, {
+    const keyAsset = await DroppedAsset.create(credentials.assetId, credentials.urlSlug, {
       credentials,
     });
 
     const lowerCaseAnswer = answer.toLowerCase();
 
-    await writeObject.updateDataObject({
-      ...writeObject.dataObject,
+    await keyAsset.updateDataObject({
+      ...keyAsset.dataObject,
       challenge: {
         text,
         answer: lowerCaseAnswer,
       },
     });
 
-    res.json({
-      scavengerHunt: {
-        text,
-        answer: lowerCaseAnswer,
-      },
-    });
+    return res.json({ text, answer: lowerCaseAnswer });
   } catch (error) {
     return errorHandler({
       error,

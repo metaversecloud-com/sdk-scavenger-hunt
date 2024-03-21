@@ -4,13 +4,22 @@ export const initializeDroppedAssetDataObject = async (droppedAsset: any, isKeyA
   try {
     await droppedAsset.fetchDataObject();
 
-    if (!droppedAsset.dataObject.challenge) {
-      // adding a lockId and releaseLock will prevent race conditions and ensure the data object is being updated only once until either the time has passed or the operation is complete
-      const lockId = `${droppedAsset.id}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
-      await droppedAsset.setDataObject(
-        { analytics: { progress: {} }, challenge: { answer: "", text: "" }, isKeyAsset, scavengerHunt: { image: "", text: "" } },
-        { lock: { lockId } },
-      );
+    const lockId = `${droppedAsset.id}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
+    if (isKeyAsset) {
+        if (!droppedAsset.dataObject.challenge) {
+        await droppedAsset.setDataObject(
+          {
+            analytics: { progress: {} },
+            challenge: { answer: "", text: "" },
+            isKeyAsset,
+          },
+          { lock: { lockId } },
+        );
+      }
+    } else {
+      if (!droppedAsset.dataObject.imageUrl) {
+        await droppedAsset.setDataObject({ imageUrl: "", text: "" }, { lock: { lockId } });
+      }
     }
 
     return;

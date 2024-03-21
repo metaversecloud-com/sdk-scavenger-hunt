@@ -2,11 +2,10 @@ import express from "express";
 import {
   handleAnswerChallenge,
   handleCheckInteractiveCredentials,
-  handleLoadAnalytics,
-  handleLoadChallenge,
-  handleLoadConfiguration,
-  handleLoadClue,
-  handleLoadClueWithId,
+  handleGetAnalytics,
+  handleGetChallenge,
+  handleGetConfiguration,
+  handleGetClue,
   handleUpdateChallenge,
   handleUpdateClue,
 } from "./controllers";
@@ -33,15 +32,14 @@ router.get("/system/health", (req, res) => {
 router.get("/system/interactive-credentials", handleCheckInteractiveCredentials);
 
 // Admin Routes
-router.get("/admin/analytics", handleLoadAnalytics);
-router.get("/admin/config", handleLoadConfiguration);
-router.get("/admin/clue/:id", handleLoadClueWithId);
+router.get("/admin/analytics", handleGetAnalytics);
+router.get("/admin/config", handleGetConfiguration);
 router.post("/admin/updateChallenge", handleUpdateChallenge);
 router.post("/admin/updateClue", handleUpdateClue);
 
 // User Routes
 router.post("/answerChallenge", handleAnswerChallenge);
-router.get("/challenge", handleLoadChallenge);
-router.get("/clue/:id", handleLoadClue);
+router.get("/challenge", handleGetChallenge);
+router.get("/clue", handleGetClue);
 
 export default router;

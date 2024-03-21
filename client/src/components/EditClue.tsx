@@ -128,23 +128,19 @@ export const EditClue = ({
         <label>Clue</label>
         <input
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            console.log(
-              "🚀 ~ file: EditClue.tsx:149 ~ event.target.value:",
-              event.target.value
-            );
             setText(event.target.value);
           }}
           type="textarea"
           value={text}
         />
 
-        {/* <label>Clue Image URL</label>
+        <label>Clue Image URL</label>
         <input
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setImageURL(event.target.value);
+            setSelectedImage(event.target.value);
           }}
-          value={imageURL}
-        /> */}
+          value={selectedImage}
+        />
 
         <div className="mt-6">
           <h4>Asset Image</h4>

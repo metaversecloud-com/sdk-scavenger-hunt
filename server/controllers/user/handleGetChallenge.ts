@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { errorHandler, getCredentials, getDroppedAssetBySceneDropId, getDroppedAssetDataObject, getProfile } from "../../utils";
 
-export const handleLoadChallenge = async (req: Request, res: Response) => {
+export const handleGetChallenge = async (req: Request, res: Response) => {
   const credentials = getCredentials(req.query);
   const { assetId, profileId, sceneDropId } = credentials
 
@@ -10,7 +10,6 @@ export const handleLoadChallenge = async (req: Request, res: Response) => {
     const { dataObject } = droppedAsset
 
     const { challenge, analytics } = dataObject;
-    console.log("🚀 ~ file: handleLoadChallenge.ts:14 ~ analytics:", analytics)
 
     const droppedAssets = await getDroppedAssetBySceneDropId(sceneDropId || "Web Image Asset", credentials);
 
@@ -19,11 +18,11 @@ export const handleLoadChallenge = async (req: Request, res: Response) => {
     const student = analytics.progress[profileId];
     const hasCompletedClues = student ? student.cluesFound.length === droppedAssets.length : false;
 
-    res.json({ challenge, hasCompletedClues, hasCompletedChallenge: student ? student.challengeDone : false, isAdmin });
+    return res.json({ challenge, hasCompletedClues, hasCompletedChallenge: student ? student.challengeDone : false, isAdmin });
   } catch (error) {
     errorHandler({
       error,
-      functionName: "handleLoadChallenge",
+      functionName: "handleGetChallenge",
       message: "Error loading challenge.",
       req,
       res,

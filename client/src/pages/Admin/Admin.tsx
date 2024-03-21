@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Configurations from "@/components/Configurations";
+import Analytics from "@/components/Analytics";
 
 export const Admin = () => {
   return (
@@ -40,11 +41,7 @@ export const Admin = () => {
               </span>
             </summary>
             <div className="accordion-content">
-              {/* <Configurations /> */}
-
-              {/* <Link to={`/admin/analytics`}>
-            View Analytics
-          </Link> */}
+              <Analytics />
             </div>
           </details>
         </div>

@@ -56,7 +56,6 @@ export const ListComponent = ({
   onClick,
 }: Props) => {
   function handleClick(index: number) {
-    console.log("🚀 ~ file: ListComponent.tsx:49 ~ index:", index);
     onClick && onClick(items[index]);
   }
 

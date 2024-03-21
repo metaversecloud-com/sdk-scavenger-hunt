@@ -15,9 +15,6 @@ import {
 // pages
 import Clue from "./pages/Clue";
 import Challenge from "./pages/Admin/Challenge";
-// import Configurations from "./components/Configurations";
-// import Analytics from "./pages/Admin/Analytics";
-// import ClueCongif from "./pages/Admin/Configs/Clue";
 import Admin from "./pages/Admin/Admin";
 import Error from "./pages/Error";
 
@@ -119,9 +116,6 @@ const App = () => {
       <Route path="clue" element={<Clue />} />
       <Route path="challenge" element={<Challenge />} />
       <Route path="admin" element={<Admin />} />
-      {/* <Route path="admin/analytics" element={<Analytics />} /> */}
-      {/* <Route path="admin/configuration" element={<Configurations />} /> */}
-      {/* <Route path="admin/configuration/clue/:id" element={<ClueCongif />} /> */}
       <Route path="*" element={<Error />} />
     </Routes>
   );

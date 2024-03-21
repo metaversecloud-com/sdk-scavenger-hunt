@@ -6,6 +6,7 @@ import Loading from "@/components/Loading";
 // utils
 import { backendAPI } from "@/utils/backendAPI";
 import EditClue from "./EditClue";
+
 export const Configurations = () => {
   const [clues, setClues] = useState([]);
   const [question, setQuestion] = useState("");
@@ -19,20 +20,20 @@ export const Configurations = () => {
     const getConfigList = async () => {
       const res = await backendAPI.get(`/admin/config`);
 
-      const assets = res.data.clues.map(
-        (asset: { assetImage: any; clueText: any; id: any }, i: number) => {
+      console.log("🚀 ~ file: Configurations.tsx:23 ~ res:", res.data)
+      const clues = res.data.clues.map(
+        (asset: { imageUrl: any; text: any; id: any }, i: number) => {
           return {
-            image: asset.assetImage,
-            text: asset.clueText || `Clue ${i + 1}`,
+            imageUrl: asset.imageUrl,
+            text: asset.text || `Clue ${i + 1}`,
             assetId: asset.id,
           };
         }
       );
-      console.log("🚀 ~ file: Configurations.tsx:35 ~ assets:", assets);
 
       setQuestion(res.data.challenge.text);
       setAnswer(res.data.challenge.answer);
-      setClues(assets);
+      setClues(clues);
       setLoading(false);
     };
 
@@ -49,13 +50,10 @@ export const Configurations = () => {
   };
 
   const handleOpenClueModal = (clue: any) => {
-    console.log("🚀 ~ file: Configurations.tsx:56 ~ clue:", clue);
-    // navigate(`/admin/configuration/clue/${item.assetId}`);
     setSelectedClue(clue);
     setIsModalVisible(true);
   };
   const handleCloseClueModal = () => {
-    // navigate(`/admin/configuration/clue/${item.assetId}`);
     setSelectedClue(null);
     setIsModalVisible(false);
   };
