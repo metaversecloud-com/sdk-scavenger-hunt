@@ -6,7 +6,7 @@ export const initializeDroppedAssetDataObject = async (droppedAsset: any, isKeyA
 
     const lockId = `${droppedAsset.id}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
     if (isKeyAsset) {
-        if (!droppedAsset.dataObject.isKeyAsset) {
+      if (!droppedAsset.dataObject.isKeyAsset) {
         await droppedAsset.setDataObject(
           {
             analytics: { progress: {} },
@@ -17,9 +17,9 @@ export const initializeDroppedAssetDataObject = async (droppedAsset: any, isKeyA
         );
       }
     } else {
-      if (!droppedAsset.dataObject.imageUrl) {
-        await droppedAsset.setDataObject({ imageUrl: "", text: "" }, { lock: { lockId } });
-      }
+      // if (!droppedAsset.dataObject.imageUrl) {
+      //   await droppedAsset.setDataObject({ imageUrl: "", text: "" }, { lock: { lockId } });
+      // }
     }
 
     return;

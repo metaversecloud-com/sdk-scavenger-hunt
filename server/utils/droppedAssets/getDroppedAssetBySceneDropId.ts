@@ -5,8 +5,11 @@ import { Credentials } from "../types";
 export const getDroppedAssetBySceneDropId = async (sceneDropId: string, credentials: Credentials) => {
   try {
     const world = await World.create(credentials.urlSlug, { credentials });
-    const droppedAssets = await world.fetchDroppedAssetsBySceneDropId({sceneDropId});
-    return droppedAssets
+    const droppedAssets = await world.fetchDroppedAssetsBySceneDropId({
+      sceneDropId,
+    });
+    // const droppedAssets = await world.fetchDroppedAssets();
+    return droppedAssets;
   } catch (error) {
     return errorHandler({
       error,
