@@ -22,17 +22,19 @@ const Clue = () => {
 
   const getClue = async () => {
     try {
-      await backendAPI.get(`/clue`).then((result: any) => {
+      console.log("hello21")
+      const result = await backendAPI.get(`/clue`);
         const { cluesFound, totalClues, imageUrl, text, keyAssetImage } = result.data;
         setCluesFound(cluesFound);
         setTotalClues(totalClues);
         setImageUrl(imageUrl);
         setText(text);
         setKeyAssetImage(keyAssetImage);
-      }).finally(() => setIsLoading(false));
     } catch (error) {
-      console.log(error);
+      console.error("error", error);
       navigate("*");
+      setIsLoading(false);
+    } finally {
       setIsLoading(false);
     }
   };

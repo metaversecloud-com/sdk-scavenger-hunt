@@ -1,24 +1,28 @@
 import { Request, Response } from "express";
 import { errorHandler, getCredentials, getDroppedAssetBySceneDropId, getDroppedAssetDataObject } from "../../utils";
+import { World, DroppedAsset } from "../../utils/topiaInit";
+import { WorldDataObject } from "../../utils/types";
 
 export const handleGetClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { assetId, profileId, sceneDropId } = credentials;
-    let cluesFound = 1, keyAssetId;
+    let cluesFound = 1,
+      keyAssetId;
 
-    const droppedAssets = await getDroppedAssetBySceneDropId(sceneDropId || "Web Image Asset", credentials);
+    const world = await World.create(credentials.urlSlug, { credentials });
+    await world.fetchDataObject();
 
-    await droppedAssets.map(async (asset) => {
-      if (asset.uniqueName === "ScavengerHunt") keyAssetId = asset.id;
-    });
+    const WorldDataObject = world.dataObject as WorldDataObject;
 
-    if (!keyAssetId) throw "No key asset found.";
+    if (!world.dataObject?.scavengerHunt) {
+      world.dataObject.scavengerHunt = {};
+    }
 
-    const keyAsset = await getDroppedAssetDataObject(keyAssetId, credentials, true);
-    const { bottomLayerURL, dataObject } = keyAsset;
+    const { bottomLayerURL, dataObject } = (world.dataObject as any).scavengerHunt;
 
-    const student = dataObject.analytics.progress[profileId];
+    const student = dataObject.
+    .progress[profileId];
 
     if (!student) {
       await keyAsset.updateDataObject({
@@ -28,7 +32,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
       await keyAsset.updateDataObject({ [`analytics.progress.${profileId}.cluesFound`]: { [assetId]: true } });
     } else if (!student.cluesFound[assetId]) {
       await keyAsset.updateDataObject({ [`analytics.progress.${profileId}.cluesFound.${assetId}`]: true });
-      cluesFound = Object.keys(student.cluesFound).length + 1
+      cluesFound = Object.keys(student.cluesFound).length + 1;
     }
 
     const clue = await getDroppedAssetDataObject(assetId, credentials, false);

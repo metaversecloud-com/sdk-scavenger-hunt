@@ -8,3 +8,9 @@ export interface Credentials {
   urlSlug: string;
   visitorId: number;
 }
+
+export interface WorldDataObject {
+  scavengerHunt?: {
+    bottomLayerURL?: string;
+  };
+}
