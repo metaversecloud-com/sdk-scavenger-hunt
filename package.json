@@ -27,7 +27,9 @@
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/cors": "^2.8.17",
-    "prettier": "3.2.5"
+    "prettier": "3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.3"
   },
   "workspaces": [
     "client",
