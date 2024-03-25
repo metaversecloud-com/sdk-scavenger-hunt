@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/node-lts/tsconfig.json",
+  // "extends": "@tsconfig/node-lts/tsconfig.json",
   "compilerOptions": {
     "outDir": "./build",
     "rootDir": "./",
