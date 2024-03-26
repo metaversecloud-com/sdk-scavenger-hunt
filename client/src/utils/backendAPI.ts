@@ -17,7 +17,6 @@ const setupBackendAPI = async (interactiveParams: InteractiveParams) => {
   if (interactiveParams.assetId) {
     backendAPI.interceptors.request.use((config: any) => {
       if (!config?.params) config.params = {};
-      console.log("interactiveParams", interactiveParams);
       config.params = { ...config.params };
       config.params["assetId"] = interactiveParams.assetId;
       config.params["interactiveNonce"] = interactiveParams.interactiveNonce;

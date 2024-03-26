@@ -21,28 +21,23 @@ const Clue = () => {
   }, [backendAPI]);
 
   const getClue = async () => {
-    try {
-      setIsLoading(true);
-      await backendAPI.get(`/clue`).then((result: any) => {
-        const { success, cluesFound, totalClues, imageUrl, text, keyAssetImage } = result.data;
-        if (success) {
-          setCluesFound(cluesFound);
-          setTotalClues(totalClues);
-          setImageUrl(imageUrl);
-          setText(text);
-          setKeyAssetImage(keyAssetImage);
-          setIsLoading(false);
-        }
-      });
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-      navigate("*");
-    }
+    setIsLoading(true);
+    backendAPI.get(`/clue`).then((result: any) => {
+      const { success, cluesFound, totalClues, imageUrl, text, keyAssetImage } = result.data;
+      if (success) {
+        setCluesFound(cluesFound);
+        setTotalClues(totalClues);
+        setImageUrl(imageUrl);
+        setText(text);
+        setKeyAssetImage(keyAssetImage);
+        setIsLoading(false);
+      }
+    })
+      .catch(() => navigate("*"))
+      .finally(() => setIsLoading(false));
   };
 
-  console.log("isLoading", isLoading);
-  if (isLoading) return <Loading />;
+  if (isLoading || !cluesFound) return <Loading />;
 
   return (
     <div className="container p-6">

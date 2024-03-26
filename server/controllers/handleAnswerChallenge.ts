@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { dropLeaves, errorHandler, getCredentials, getDroppedAssetDataObject } from "../../utils";
+import { dropLeaves, errorHandler, getCredentials, getWorldDataObject } from "../utils";
+import { DataObjectType } from "../types";
 
 export const handleAnswerChallenge = async (req: Request, res: Response) => {
   try {
@@ -7,21 +8,19 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, profileId, sceneDropId } = credentials;
 
-    const droppedAsset = await getDroppedAssetDataObject(assetId, credentials, true);
-    const { dataObject } = droppedAsset
-
-    const { challenge, analytics } = dataObject as any;
+    const { dataObject, world } = await getWorldDataObject({ credentials, keyAssetId: assetId, sceneDropId });
+    const { buildableAssetUniqueName, challenge, progress } = dataObject as DataObjectType;
 
     const isCorrect = challenge.answer === answer;
     if (!isCorrect) return res.json({ isCorrect: false });
 
-    if(analytics.progress[profileId]) {
-      await droppedAsset.updateDataObject({ [`analytics.progress.${profileId}.challengeDone`]: true });
+    if (progress[profileId]) {
+      await world.updateDataObject({ [`scenes.${sceneDropId}.progress.${profileId}.challengeDone`]: true });
     } else {
-      await droppedAsset.updateDataObject({ [`analytics.progress.${profileId}`]: { challengeDone: true } });
+      await world.updateDataObject({ [`scenes.${sceneDropId}.progress.${profileId}`]: { challengeDone: true } });
     }
 
-    await dropLeaves(credentials, sceneDropId);
+    if (buildableAssetUniqueName) await dropLeaves({ buildableAssetUniqueName, credentials });
 
     return res.json({ isCorrect: true });
   } catch (error) {

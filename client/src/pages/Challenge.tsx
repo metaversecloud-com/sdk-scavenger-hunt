@@ -8,6 +8,7 @@ import { Loading } from "@/components/Loading";
 
 export const Challenge = () => {
   const navigate = useNavigate();
+  const [imageUrl, setImageUrl] = useState();
   const [question, setQuestion] = useState("");
   const [hasCompletedClues, setHasCompletedClues] = useState(true);
   const [answer, setAnswer] = useState("");
@@ -32,73 +33,58 @@ export const Challenge = () => {
   ];
 
   useEffect(() => {
-    async function getChallenge() {
-      try {
-        await backendAPI
-          .get(`/challenge`)
-          .then((result) => {
-            const {
-              challenge,
-              hasCompletedClues,
-              hasCompletedChallenge,
-              isAdmin,
-            } = result.data;
-            setQuestion(challenge?.text || "");
-            setHasCompletedClues(hasCompletedClues);
-            setHasAnsweredChallenge(hasCompletedChallenge);
-            setIsAdmin(isAdmin);
-          })
-          .finally(() => setIsLoading(false));
-      } catch (error) {
-        console.log(error);
-        navigate("*");
-        setIsLoading(false);
-      }
-    }
-
-    getChallenge();
+    backendAPI
+      .get(`/challenge`)
+      .then((result) => {
+        const {
+          challenge,
+          hasCompletedClues,
+          hasCompletedChallenge,
+          isAdmin,
+        } = result.data;
+        setImageUrl(challenge?.imageUrl || "");
+        setQuestion(challenge?.text || "");
+        setHasCompletedClues(hasCompletedClues);
+        setHasAnsweredChallenge(hasCompletedChallenge);
+        setIsAdmin(isAdmin);
+      })
+      .catch(() => navigate("*"))
+      .finally(() => setIsLoading(false));
   }, [backendAPI]);
 
   const completeChallenge = async () => {
-    try {
-      setIncorrectAnswer(-1);
-      setAnswering(true);
-      await backendAPI
-        .post(`/answerChallenge`, { answer })
-        .then((result) => {
-          const { isCorrect } = result.data;
-          if (!isCorrect) setIncorrectAnswer(Math.floor(Math.random() * 5));
-          setHasAnsweredChallenge(isCorrect);
-        })
-        .finally(() => setAnswering(false));
-    } catch (error) {
-      console.log(error);
-      navigate("*");
-      setIsLoading(false);
-    }
+    setIncorrectAnswer(-1);
+    setAnswering(true);
+    await backendAPI
+      .post(`/answer-challenge`, { answer })
+      .then((result) => {
+        const { isCorrect } = result.data;
+        if (!isCorrect) setIncorrectAnswer(Math.floor(Math.random() * 5));
+        setHasAnsweredChallenge(isCorrect);
+      })
+      .catch(() => navigate("*"))
+      .finally(() => setAnswering(false));
   };
 
   const getHeader = () => (
     <>
       {isAdmin && <Header activeTab="challenge" />}
-      <div className="container p-6 flex items-center justify-start">
+      <div className="container px-6 flex items-center justify-start">
         <div className="flex flex-col mt-6">
           <img
             style={{ height: "100px", width: "70px", borderRadius: "10%" }}
-            src={
-              "https://topia-scavenger-hunt.s3.us-east-2.amazonaws.com/IMG_Start.png"
-            }
+            src={imageUrl}
           />
         </div>
         <div className="flex flex-col pl-4">
           <h3 style={{ marginBottom: "0px" }}>National Parks</h3>
-          <div> Scavenger Hunt</div>
+          <div>Scavenger Hunt</div>
         </div>
       </div>
     </>
   );
 
-  if (isLoading) return <Loading />;
+  if (isLoading || !imageUrl) return <Loading />;
 
   if (hasAnsweredChallenge) {
     return (

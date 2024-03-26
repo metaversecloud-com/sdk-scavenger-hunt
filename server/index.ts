@@ -56,7 +56,7 @@ app.use(function (req, res, next) {
         res.send = ogSend;
         return res.send(cleanData);
       } catch (error) {
-        console.log(error);
+        console.error(error);
         next();
       }
     }
