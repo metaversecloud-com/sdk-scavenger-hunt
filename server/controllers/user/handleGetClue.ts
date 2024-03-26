@@ -1,52 +1,58 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials, getDroppedAssetBySceneDropId, getDroppedAssetDataObject } from "../../utils";
+import {
+  errorHandler,
+  getCredentials,
+  getDroppedAssetBySceneDropId,
+  getDroppedAssetDataObject,
+  getWorldAndDataObject,
+} from "../../utils";
+
+const NUMBER_OF_ASSETS_TO_IGNORE_BECAUSE_THEY_ARE_SCENE_ASSETS = 4;
 
 export const handleGetClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, profileId, sceneDropId } = credentials;
-    let cluesFound = 1,
-      keyAssetId;
+    const { assetId, profileId, sceneDropId, urlSlug } = credentials;
 
     const droppedAssets = await getDroppedAssetBySceneDropId(sceneDropId, credentials);
 
-    await droppedAssets.map(async (asset) => {
-      if (asset.uniqueName === "ScavengerHunt") {
-        keyAssetId = asset.id;
-      }
-    });
-
-    if (!keyAssetId) throw "No key asset found.";
-
-    const keyAsset = await getDroppedAssetDataObject(keyAssetId, credentials, true);
-    const { bottomLayerURL, dataObject } = keyAsset;
-
-    const student = dataObject.analytics.progress[profileId];
-
-    if (!student) {
-      await keyAsset.updateDataObject({
-        [`analytics.progress.${profileId}`]: { challengeDone: false, cluesFound: {} },
-      });
-    } else if (!student.cluesFound) {
-      await keyAsset.updateDataObject({ [`analytics.progress.${profileId}.cluesFound`]: { [assetId]: true } });
-    } else if (!student.cluesFound[assetId]) {
-      await keyAsset.updateDataObject({ [`analytics.progress.${profileId}.cluesFound.${assetId}`]: true });
-      cluesFound = Object.keys(student.cluesFound).length + 1;
+    const keyAsset = droppedAssets.find((asset) => asset.uniqueName === "ScavengerHunt");
+    if (!keyAsset) {
+      throw new Error(`No key asset found in ${urlSlug}.`);
     }
 
-    const clue = await getDroppedAssetDataObject(assetId, credentials, false);
+    const keyAssetData = await getDroppedAssetDataObject({
+      droppedAssetId: keyAsset.id,
+      credentials,
+      isKeyAsset: true,
+    });
 
-    cluesFound = Object.keys(student.cluesFound).length;
+    const userProgress = keyAssetData.dataObject.analytics.progress[profileId] || [];
+
+    if (!userProgress.includes(assetId)) {
+      userProgress.push(assetId);
+      await keyAssetData.updateDataObject({
+        [`analytics.progress.${profileId}`]: userProgress,
+      });
+    }
+
+    const cluesFound = userProgress.length;
+    const clue = await getDroppedAssetDataObject({
+      droppedAssetId: assetId,
+      credentials,
+      isKeyAsset: false,
+    });
 
     return res.send({
       success: true,
       text: clue.dataObject.text || "test clue text",
       imageUrl: clue.dataObject.imageUrl || "",
-      totalClues: Object.keys(droppedAssets).length - 4,
+      totalClues: droppedAssets.length - NUMBER_OF_ASSETS_TO_IGNORE_BECAUSE_THEY_ARE_SCENE_ASSETS,
       cluesFound,
+      isAdmin: true,
     });
   } catch (error) {
-    return errorHandler({
+    errorHandler({
       error,
       functionName: "handleGetClue",
       message: "Error loading clue.",

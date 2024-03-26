@@ -57,7 +57,7 @@ export const Challenge = () => {
     }
 
     getChallenge();
-  }, []);
+  }, [backendAPI]);
 
   const completeChallenge = async () => {
     try {

@@ -60,9 +60,9 @@ const Clue = () => {
           src={imageUrl}
         />
         <div
-          style={{ maxWidth: "80%", paddingTop: "1rem", textAlign: "center" }}
+          style={{ paddingTop: "1rem", textAlign: "center" }}
         >
-          {text}
+          <p>{text}</p>
         </div>
         {cluesFound === totalClues && (
           <div className="container mt-10 flex items-center justify-start">

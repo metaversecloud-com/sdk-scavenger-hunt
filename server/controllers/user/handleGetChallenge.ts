@@ -1,24 +1,37 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials, getDroppedAssetBySceneDropId, getDroppedAssetDataObject, getProfile } from "../../utils";
+import {
+  errorHandler,
+  getCredentials,
+  getDroppedAssetBySceneDropId,
+  getDroppedAssetDataObject,
+  getProfile,
+} from "../../utils";
 
 export const handleGetChallenge = async (req: Request, res: Response) => {
-  const credentials = getCredentials(req.query);
-  const { assetId, profileId, sceneDropId } = credentials
-
   try {
-    const droppedAsset = await getDroppedAssetDataObject(assetId, credentials, true);
-    const { dataObject } = droppedAsset
+    const credentials = getCredentials(req.query);
+    const { assetId, profileId, sceneDropId } = credentials;
 
-    const { challenge, analytics } = dataObject;
+    const droppedAsset = await getDroppedAssetDataObject({ droppedAssetId: assetId, credentials, isKeyAsset: true });
+    const { dataObject } = droppedAsset;
 
-    const droppedAssets = await getDroppedAssetBySceneDropId(sceneDropId || "Web Image Asset", credentials);
+    const { challenge, analytics } = dataObject as any;
+
+    const droppedAssets = await getDroppedAssetBySceneDropId(sceneDropId, credentials);
 
     const { isAdmin } = await getProfile(credentials);
 
-    const student = analytics.progress[profileId];
-    const hasCompletedClues = student ? Object.keys(student.cluesFound).length >= Object.keys(droppedAssets).length - 1 : false;
+    const userCluesFound = analytics.progress[profileId];
+    const hasCompletedClues = userCluesFound
+      ? Object.keys(userCluesFound).length >= Object.keys(droppedAssets).length - 4
+      : false;
 
-    return res.json({ challenge, hasCompletedClues, hasCompletedChallenge: student ? student.challengeDone : false, isAdmin });
+    return res.json({
+      challenge,
+      hasCompletedClues,
+      hasCompletedChallenge: false,
+      isAdmin,
+    });
   } catch (error) {
     errorHandler({
       error,
@@ -29,4 +42,4 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
     });
     return res.json({});
   }
-}
+};
