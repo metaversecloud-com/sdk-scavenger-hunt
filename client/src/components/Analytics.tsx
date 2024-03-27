@@ -14,11 +14,7 @@ type ProgressType = {
 
 export const Analytics = () => {
   const navigate = useNavigate();
-  const dispatch = useContext(GlobalDispatchContext);
   const context = useContext(GlobalStateContext);
-
-  // // const profileId =  searchParams.get("profileId");
-  console.log("context", context?.profileId);
 
   const [progressData, setProgressData] = useState<ProgressType>({});
   const [totalClues, setTotalClues] = useState(0);
@@ -34,9 +30,6 @@ export const Analytics = () => {
   }, [backendAPI]);
 
   if (isLoading || !progressData) return <Loading />;
-
-  console.log("context?.profileId", context);
-  console.log("progressData", progressData?.[context?.profileId]?.cluesFound.length);
 
   return (
     <>

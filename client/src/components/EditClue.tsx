@@ -100,10 +100,7 @@ export const EditClue = ({
       setIsSaving(false);
       onCloseModal();
     }
-
     setIsSaving(true);
-   
-
   }
 
   const ClueImages = ({ item }: { item: any }) => {

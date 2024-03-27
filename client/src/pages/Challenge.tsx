@@ -90,7 +90,6 @@ export const Challenge = () => {
     </>
   );
 
-  console.log("isLoading", isLoading, "imageUrl", imageUrl);
   if (isLoading || !imageUrl) return <Loading />;
 
   if (hasAnsweredChallenge) {
