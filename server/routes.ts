@@ -9,6 +9,7 @@ import {
   handleResetClues,
   handleUpdateChallenge,
   handleUpdateClue,
+  handleResetGame,
 } from "./controllers";
 import { getVersion } from "./utils/getVersion";
 
@@ -42,5 +43,6 @@ router.post("/answer-challenge", handleAnswerChallenge);
 router.get("/clue", handleGetClue);
 router.post("/update-clue", handleUpdateClue);
 router.post("/reset-clues", handleResetClues);
+router.post("/reset-game", handleResetGame);
 
 export default router;

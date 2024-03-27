@@ -71,29 +71,38 @@ const fixedClueImages = [
 export const EditClue = ({
   clue,
   onCloseModal,
+  onCluesUpdated
 }: {
   clue: any;
   onCloseModal: any;
+  onCluesUpdated: any;
 }) => {
   const navigate = useNavigate();
-  const [selectedImage, setSelectedImage] = useState(clue?.image);
+  const [selectedImage, setSelectedImage] = useState(clue?.imageUrl || fixedClueImages[0].image);
   const [contentImgUrl, setContentImgUrl] = useState(clue?.contentImgUrl);
   const [text, setText] = useState(clue?.text);
   const [isSaving, setIsSaving] = useState(false);
 
   async function onSave() {
-    setIsSaving(true);
-    backendAPI.post(`/update-clue`, {
-      assetId: clue?.id,
-      text,
-      imageUrl: selectedImage,
-      contentImgUrl
-    })
-      .catch(() => navigate("*"))
-      .finally(() => {
-        setIsSaving(false);
-        onCloseModal();
+    try {
+      const result = await backendAPI.post(`/update-clue`, {
+        assetId: clue?.id,
+        text,
+        imageUrl: selectedImage,
+        contentImgUrl
       });
+      if (onCluesUpdated) {
+        onCluesUpdated();
+      }
+    } catch (error) {
+      navigate("*")
+    } finally {
+      setIsSaving(false);
+      onCloseModal();
+    }
+
+    setIsSaving(true);
+   
 
   }
 

@@ -4,7 +4,17 @@ import { errorHandler } from "./errorHandler";
 import { getClueDroppedAssets } from "./getClueDroppedAssets";
 import { DroppedAsset } from "./topiaInit";
 
-export const initializeWorldDataObject = async ({ credentials, keyAssetId, sceneDropId, world }: { credentials: Credentials, keyAssetId: string, sceneDropId: string, world: any }) => {
+export const initializeWorldDataObject = async ({
+  credentials,
+  keyAssetId,
+  sceneDropId,
+  world,
+}: {
+  credentials: Credentials;
+  keyAssetId: string;
+  sceneDropId: string;
+  world: any;
+}) => {
   try {
     await world.fetchDataObject();
 
@@ -19,9 +29,9 @@ export const initializeWorldDataObject = async ({ credentials, keyAssetId, scene
 
     if (!world.dataObject?.scenes || !world.dataObject?.scenes?.[sceneDropId]) {
       if (keyAssetId) {
-        const keyAsset = await DroppedAsset.get(keyAssetId, world.urlSlug, { credentials })
-        payload.challenge.imageUrl = keyAsset.topLayerURL
-        payload.clues = await getClueDroppedAssets({ uniqueName: `${keyAsset.uniqueName}_clue`, world })
+        const keyAsset = await DroppedAsset.get(keyAssetId, world.urlSlug, { credentials });
+        payload.challenge.imageUrl = keyAsset.topLayerURL;
+        payload.clues = await getClueDroppedAssets({ uniqueName: `${keyAsset.uniqueName}_clue`, world });
       }
     }
 

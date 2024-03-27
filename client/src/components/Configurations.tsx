@@ -61,6 +61,17 @@ export const Configurations = () => {
     setIsModalVisible(false);
   };
 
+  const reloadClues = () => {
+    setIsLoading(true);
+    backendAPI.get(`/config`)
+      .then((result: any) => {
+        const { clues } = result.data;
+        setClues(clues);
+      })
+      .catch(() => navigate("*"))
+      .finally(() => setIsLoading(false));
+  };
+
   const Clue = ({ item }: { item: any }) => {
     const { assetId, imageUrl, text } = item;
     const truncatedText =
@@ -132,12 +143,12 @@ export const Configurations = () => {
           <Clue item={clues[item]} />
         ))}
         <button className="mt-4" onClick={onResetClues} disabled={areButtonsDisabled}>
-          Reset Clues
+          Load Clues
         </button>
       </div>
 
       {isModalVisible && selectedClue && (
-        <EditClue clue={selectedClue} onCloseModal={handleCloseClueModal} />
+        <EditClue clue={selectedClue} onCloseModal={handleCloseClueModal} onCluesUpdated={reloadClues} />
       )}
     </>
   );

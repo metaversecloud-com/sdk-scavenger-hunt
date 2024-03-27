@@ -35,7 +35,10 @@ const Clue = () => {
         setIsLoading(false);
       }
     })
-      .catch(() => navigate("*"))
+      .catch((error) => {
+        console.error("result error", error);
+        navigate("*");
+      })
       .finally(() => setIsLoading(false));
   };
 
@@ -58,24 +61,24 @@ const Clue = () => {
           Completed {cluesFound} of {totalClues}
         </p>
       </div>
-  
-      {cluesFound === totalClues ? (
-        <div className="mb-8">
-          <img
+      <div>
+      <img
             className="mx-auto rounded-xl mb-4"
             style={{ maxWidth: "100%", maxHeight: "400px" }}
             src={contentImgUrl}
             alt="Final Challenge"
           />
           <div style={{textAlign: "center"}}>{text}</div>
+      </div>
+      {cluesFound === totalClues ? (
+        <div className="mb-8">
+          
          <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mt-8" role="alert">
             <p>Congratulations! You have unlocked the final challenge question.</p>
             <p>Please return to the first sign to continue.</p>
           </div>
         </div>
-      ) : (
-        <p className="text-center text-xl">{text}</p>
-      )}
+      ) : null}
     </div>
   );
 };

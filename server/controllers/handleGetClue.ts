@@ -30,12 +30,16 @@ export const handleGetClue = async (req: Request, res: Response) => {
     //       progress: {},
     //       clues: {
     //         "-Ntwby-06Z1csHOZfw-4": {
-    //           imageUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_12.png",
+    //           contentImgUrl:
+    //             "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/655464fe420b715a6fdcd924_download%2520(14)-p-800.png",
+    //           imageUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_1.png",
     //           id: "-Ntwby-06Z1csHOZfw-4",
     //           text: "Clue 1",
     //         },
     //         "-Nu-JgCMjBwk7kvsld6d": {
-    //           imageUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_1.png",
+    //           contentImgUrl:
+    //             "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/65546505c732cb3fd47036ad_download%2520(15)-p-800.png",
+    //           imageUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_5.png",
     //           id: "-Nu-JgCMjBwk7kvsld6d",
     //           text: "Clue 2",
     //         },
@@ -50,6 +54,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
           [profileId]: { challengeDone: false, cluesFound: [assetId], profileId, username },
         },
       });
+      cluesFound = [assetId];
     } else if (!progress[profileId].cluesFound.includes(assetId)) {
       cluesFound = progress[profileId].cluesFound;
       cluesFound.push(assetId);
