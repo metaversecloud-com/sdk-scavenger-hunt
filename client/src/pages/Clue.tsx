@@ -12,6 +12,7 @@ const Clue = () => {
   const [cluesFound, setCluesFound] = useState<string>("");
   const [totalClues, setTotalClues] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [contentImgUrl, setContentImgUrl] = useState<string>("");
   const [text, setText] = useState<string>("");
   const [keyAssetImage, setKeyAssetImage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -23,11 +24,12 @@ const Clue = () => {
   const getClue = async () => {
     setIsLoading(true);
     backendAPI.get(`/clue`).then((result: any) => {
-      const { success, cluesFound, totalClues, imageUrl, text, keyAssetImage } = result.data;
+      const { success, cluesFound, totalClues, imageUrl, contentImgUrl, text, keyAssetImage } = result.data;
       if (success) {
         setCluesFound(cluesFound);
         setTotalClues(totalClues);
         setImageUrl(imageUrl);
+        setContentImgUrl(contentImgUrl);
         setText(text);
         setKeyAssetImage(keyAssetImage);
         setIsLoading(false);
@@ -41,36 +43,39 @@ const Clue = () => {
 
   return (
     <div className="container p-6">
-      <div style={{ padding: "10px", textAlign: "center" }}>
-        <h3 style={{ marginBottom: "5px" }}>Congratulations!</h3>
-        <div> You have found a clue!!</div>
-        <div>
-          Completed {cluesFound} of {totalClues}
-        </div>
-      </div>
-      <div className="container mt-6">
-        <img
-          className="m-auto"
-          style={{ maxHeight: "300px", borderRadius: "10%" }}
-          src={imageUrl}
+      <div className="text-center" style={{marginBottom: "70px"}}>
+        <img 
+          className="mx-auto rounded-xl mb-4" 
+          style={{ maxWidth: "100%", maxHeight: "400px" }} 
+          src={imageUrl} 
+          alt="Clue" 
         />
-        <div
-          style={{ paddingTop: "1rem", textAlign: "center" }}
-        >
-          <p>{text}</p>
-        </div>
-        {cluesFound === totalClues && (
-          <div className="container mt-10 flex items-center justify-start">
-            <div className="flex flex-col">
-              <img src={keyAssetImage} />
-            </div>
-            <div className="flex flex-col">
-              Great Job! You have unlocked the final challenge question. Go
-              back, to the first sign to continue.
-            </div>
-          </div>
-        )}
+        <h3 className="text-2xl font-bold mb-2">Congratulations!</h3>
+        <p className="text-lg">
+          You have found a clue! 
+        </p>
+        <p className="text-lg">
+          Completed {cluesFound} of {totalClues}
+        </p>
       </div>
+  
+      {cluesFound === totalClues ? (
+        <div className="mb-8">
+          <img
+            className="mx-auto rounded-xl mb-4"
+            style={{ maxWidth: "100%", maxHeight: "400px" }}
+            src={contentImgUrl}
+            alt="Final Challenge"
+          />
+          <div style={{textAlign: "center"}}>{text}</div>
+         <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mt-8" role="alert">
+            <p>Congratulations! You have unlocked the final challenge question.</p>
+            <p>Please return to the first sign to continue.</p>
+          </div>
+        </div>
+      ) : (
+        <p className="text-center text-xl">{text}</p>
+      )}
     </div>
   );
 };

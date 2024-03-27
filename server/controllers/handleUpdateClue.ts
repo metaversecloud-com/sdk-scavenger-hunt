@@ -4,8 +4,8 @@ import { DroppedAsset, errorHandler, getCredentials, getWorldDataObject } from "
 export const handleUpdateClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { sceneDropId } = credentials
-    const { assetId, imageUrl, text } = req.body;
+    const { sceneDropId } = credentials;
+    const { assetId, imageUrl, contentImgUrl, text } = req.body;
 
     const { world } = await getWorldDataObject({ credentials, sceneDropId });
     const droppedAsset = await DroppedAsset.create(assetId, credentials.urlSlug, {
@@ -15,10 +15,10 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
     await droppedAsset.updateWebImageLayers(imageUrl, "");
 
     await world.updateDataObject({
-      [`scenes.${sceneDropId}.clues.${assetId}`]: { id: assetId, text, imageUrl },
-    })
+      [`scenes.${sceneDropId}.clues.${assetId}`]: { id: assetId, text, imageUrl, contentImgUrl },
+    });
 
-    return res.json({ text, imageUrl });
+    return res.json({ text, imageUrl, contentImgUrl });
   } catch (error) {
     return errorHandler({
       error,
@@ -28,4 +28,4 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
       res,
     });
   }
-}
+};

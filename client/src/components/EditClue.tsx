@@ -76,16 +76,18 @@ export const EditClue = ({
   onCloseModal: any;
 }) => {
   const navigate = useNavigate();
-  const [selectedImage, setSelectedImage] = useState(clue.image);
-  const [text, setText] = useState(clue.text);
+  const [selectedImage, setSelectedImage] = useState(clue?.image);
+  const [contentImgUrl, setContentImgUrl] = useState(clue?.contentImgUrl);
+  const [text, setText] = useState(clue?.text);
   const [isSaving, setIsSaving] = useState(false);
 
   async function onSave() {
     setIsSaving(true);
     backendAPI.post(`/update-clue`, {
-      assetId: clue.id,
+      assetId: clue?.id,
       text,
       imageUrl: selectedImage,
+      contentImgUrl
     })
       .catch(() => navigate("*"))
       .finally(() => {
@@ -144,9 +146,9 @@ export const EditClue = ({
         <label>Clue Image URL</label>
         <input
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setSelectedImage(event.target.value);
+            setContentImgUrl(event.target.value);
           }}
-          value={selectedImage}
+          value={contentImgUrl}
         />
 
         <div className="mt-6">

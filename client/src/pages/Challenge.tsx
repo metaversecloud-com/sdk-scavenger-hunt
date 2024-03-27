@@ -37,19 +37,25 @@ export const Challenge = () => {
       .get(`/challenge`)
       .then((result) => {
         const {
+          success,
           challenge,
           hasCompletedClues,
           hasCompletedChallenge,
           isAdmin,
         } = result.data;
-        setImageUrl(challenge?.imageUrl || "");
-        setQuestion(challenge?.text || "");
+        setImageUrl(challenge?.imageUrl || "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_Start.png");
+        setQuestion(challenge?.text || "Please, go to the admin section to edit the Challenge message.");
         setHasCompletedClues(hasCompletedClues);
         setHasAnsweredChallenge(hasCompletedChallenge);
         setIsAdmin(isAdmin);
+        if (success) {
+          setIsLoading(false);
+        }
       })
-      .catch(() => navigate("*"))
-      .finally(() => setIsLoading(false));
+      .catch(() => {
+        setIsLoading(false);
+        navigate("*");
+      });
   }, [backendAPI]);
 
   const completeChallenge = async () => {
@@ -84,6 +90,7 @@ export const Challenge = () => {
     </>
   );
 
+  console.log("isLoading", isLoading, "imageUrl", imageUrl);
   if (isLoading || !imageUrl) return <Loading />;
 
   if (hasAnsweredChallenge) {

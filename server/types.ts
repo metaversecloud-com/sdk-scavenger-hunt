@@ -10,21 +10,21 @@ export interface Credentials {
 }
 
 export type ClueType = {
-  id: string,
-  imageUrl: string,
-  text: string,
-}
+  id: string;
+  imageUrl: string;
+  contentImgUrl: string;
+  text: string;
+};
 
 export type DataObjectType = {
-  sceneDropId: string,
-  keyAssetId: string,
-  buildableAssetUniqueName?: string,
-  challenge: { answer: string, text: string, imageUrl: string },
+  sceneDropId: string;
+  keyAssetId: string;
+  buildableAssetUniqueName?: string;
+  challenge: { answer: string; text: string; imageUrl: string };
   clues: {
-    [id: string]: ClueType
-  },
+    [id: string]: ClueType;
+  };
   progress: {
-    [profileId: string]: { challengeDone: boolean, cluesFound: string[], profileId: string, username: string }
-  },
-}
-
+    [profileId: string]: { challengeDone: boolean; cluesFound: string[]; profileId: string; username: string };
+  };
+};

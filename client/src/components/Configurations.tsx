@@ -29,7 +29,7 @@ export const Configurations = () => {
       })
       .catch(() => navigate("*"))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [backendAPI]);
 
   const onSave = async () => {
     setAreButtonsDisabled(true);

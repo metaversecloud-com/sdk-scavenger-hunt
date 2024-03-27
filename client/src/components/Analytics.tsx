@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { GlobalStateContext, GlobalDispatchContext } from "@context/GlobalContext";
 
 // components
 import { Loading } from "@/components/Loading";
@@ -13,6 +14,12 @@ type ProgressType = {
 
 export const Analytics = () => {
   const navigate = useNavigate();
+  const dispatch = useContext(GlobalDispatchContext);
+  const context = useContext(GlobalStateContext);
+
+  // // const profileId =  searchParams.get("profileId");
+  console.log("context", context?.profileId);
+
   const [progressData, setProgressData] = useState<ProgressType>({});
   const [totalClues, setTotalClues] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,9 +31,12 @@ export const Analytics = () => {
     })
       .catch(() => navigate("*"))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [backendAPI]);
 
   if (isLoading || !progressData) return <Loading />;
+
+  console.log("context?.profileId", context);
+  console.log("progressData", progressData?.[context?.profileId]?.cluesFound.length);
 
   return (
     <>
@@ -41,10 +51,10 @@ export const Analytics = () => {
           <th align="right">Clues Found</th>
         </tr>
         {Object.keys(progressData).map((row: any) => (
-          <tr key={progressData[row].profileId}>
-            <td scope="row">{progressData[row].username}</td>
+          <tr key={progressData?.[context?.profileId]?.cluesFound?.length}>
+            <td scope="row">{progressData?.[context?.profileId]?.username}</td>
             <td align="right">
-              {row.cluesFound?.length || 0} {progressData[row].challengeDone ? "- Completed" : ""}
+              {progressData?.[context?.profileId]?.cluesFound?.length || 0} {progressData?.[context?.profileId]?.challengeDone ? "- Completed" : ""}
             </td>
           </tr>
         ))}

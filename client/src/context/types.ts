@@ -10,9 +10,10 @@ export type InteractiveParams = {
   urlSlug: string;
   username: string;
   visitorId: string;
-}
+};
 
 export interface InitialState {
+  profileId: string;
   hasInteractiveParams: boolean;
   hasSetupBackend: boolean;
 }
