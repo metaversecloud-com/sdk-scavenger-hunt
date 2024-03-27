@@ -18,32 +18,32 @@ const Clue = () => {
 
   useEffect(() => {
     getClue();
-  }, []);
+  }, [backendAPI]);
 
   const getClue = async () => {
-    try {
-      await backendAPI.get(`/clue`).then((result: any) => {
-        const { cluesFound, totalClues, imageUrl, text, keyAssetImage } = result.data;
+    setIsLoading(true);
+    backendAPI.get(`/clue`).then((result: any) => {
+      const { success, cluesFound, totalClues, imageUrl, text, keyAssetImage } = result.data;
+      if (success) {
         setCluesFound(cluesFound);
         setTotalClues(totalClues);
         setImageUrl(imageUrl);
         setText(text);
         setKeyAssetImage(keyAssetImage);
-      }).finally(() => setIsLoading(false));
-    } catch (error) {
-      console.log(error);
-      navigate("*");
-      setIsLoading(false);
-    }
+        setIsLoading(false);
+      }
+    })
+      .catch(() => navigate("*"))
+      .finally(() => setIsLoading(false));
   };
 
-  if (isLoading) return <Loading />;
+  if (isLoading || !cluesFound) return <Loading />;
 
   return (
     <div className="container p-6">
       <div style={{ padding: "10px", textAlign: "center" }}>
         <h3 style={{ marginBottom: "5px" }}>Congratulations!</h3>
-        <div> You have found a clue!</div>
+        <div> You have found a clue!!</div>
         <div>
           Completed {cluesFound} of {totalClues}
         </div>
@@ -55,9 +55,9 @@ const Clue = () => {
           src={imageUrl}
         />
         <div
-          style={{ maxWidth: "80%", paddingTop: "1rem", textAlign: "center" }}
+          style={{ paddingTop: "1rem", textAlign: "center" }}
         >
-          {text}
+          <p>{text}</p>
         </div>
         {cluesFound === totalClues && (
           <div className="container mt-10 flex items-center justify-start">

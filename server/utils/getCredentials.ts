@@ -1,4 +1,4 @@
-import { Credentials } from "./types";
+import { Credentials } from "../types";
 
 export const getCredentials = (query: any): Credentials => {
   const requiredFields = ["interactiveNonce", "interactivePublicKey", "urlSlug", "visitorId"];
@@ -12,7 +12,7 @@ export const getCredentials = (query: any): Credentials => {
     interactiveNonce: query.interactiveNonce as string,
     interactivePublicKey: query.interactivePublicKey as string,
     profileId: query.profileId as string,
-    sceneDropId: query.sceneDropId as string,
+    sceneDropId: "9lpbrujPyvdDlw8Q9lEL-1711383307095" as string,
     urlSlug: query.urlSlug as string,
     username: query.username as string,
     visitorId: Number(query.visitorId),

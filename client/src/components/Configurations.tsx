@@ -13,52 +13,43 @@ export const Configurations = () => {
   const [clues, setClues] = useState([]);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [buildableAssetUniqueName, setBuildableAssetUniqueName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedClue, setSelectedClue] = useState(null);
 
   useEffect(() => {
-    const getConfigList = async () => {
-      try {
-        await backendAPI.get(`/admin/config`).then((result: any) => {
-            const { clues, challenge } = result
-            const cluesFormatted = clues.map(
-                (asset: { imageUrl: any; text: any; id: any }, i: number) => {
-                    return {
-                    imageUrl: asset.imageUrl,
-                    text: asset.text || `Clue ${i + 1}`,
-                    assetId: asset.id,
-                    };
-                }
-            );
-            setQuestion(challenge.text);
-            setAnswer(challenge.answer);
-            setClues(cluesFormatted);
-        }).finally(() => setIsLoading(false));
-      } catch (error) {
-        console.log(error);
-        navigate("*");
-        setIsLoading(false);
-      }
-    };
-
-    getConfigList();
+    backendAPI.get(`/config`)
+      .then((result: any) => {
+        const { clues, challenge } = result.data
+        setQuestion(challenge.text);
+        setAnswer(challenge.answer);
+        setClues(clues);
+      })
+      .catch(() => navigate("*"))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const onSave = async () => {
-    try {
-      setIsSaving(true);
-      await backendAPI.post(`/admin/updateChallenge`, {
-        text: question,
-        answer,
-      });
-      setIsSaving(false);
-    } catch (error) {
-      console.log(error);
-      navigate("*");
-      setIsLoading(false);
-    }
+    setAreButtonsDisabled(true);
+    backendAPI.post(`/update-challenge`, {
+      answer,
+      buildableAssetUniqueName,
+      text: question,
+    })
+      .catch(() => navigate("*"))
+      .finally(() => setAreButtonsDisabled(false));
+  };
+
+  const onResetClues = async () => {
+    setAreButtonsDisabled(true);
+    backendAPI.post(`/reset-clues`)
+      .then((result: any) => {
+        setClues(result.data.clues);
+      })
+      .catch(() => navigate("*"))
+      .finally(() => setAreButtonsDisabled(false));
   };
 
   const handleOpenClueModal = (clue: any) => {
@@ -84,7 +75,7 @@ export const Configurations = () => {
           className="card-image"
           style={{ height: "70px", width: "70px", minWidth: "70px" }}
         >
-          <img src={imageUrl} />
+          <img src={imageUrl} style={{ maxWidth: "100%", maxHeight: "100%" }} />
         </div>
         <div className="card-title">{truncatedText}</div>
       </div>
@@ -95,7 +86,6 @@ export const Configurations = () => {
 
   return (
     <>
-      <h4>Final Question</h4>
       <p className="mb-4">
         This is the final challenge question that the participants need to
         solve. Enter a question, and answer (non case sensitive) and click the
@@ -119,23 +109,31 @@ export const Configurations = () => {
         style={{ width: "100%" }}
         value={answer}
       />
-      <div className="card-actions">
-        <button className="mt-4" onClick={onSave} disabled={isSaving}>
-          Save
-        </button>
-      </div>
 
-      <div className="container mt-10 flex items-center justify-start">
-        <div className="flex flex-col">
-          <h4>Clues</h4>
-          <p>
-            These are the configured clues. Click on one to take you to the
-            clue.
+      <label>Buildable Asset Unique Name</label>
+      <input
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+          setBuildableAssetUniqueName(event.target.value);
+        }}
+        style={{ width: "100%" }}
+        value={buildableAssetUniqueName}
+      />
+      <button className="mt-4" onClick={onSave} disabled={areButtonsDisabled}>
+        Save
+        </button>
+
+      <div className="mt-10">
+        <h4>Clues</h4>
+        <p>
+          These are the configured clues. Click on one to take you to the
+          clue.
           </p>
-          {clues.map((item) => (
-            <Clue item={item} />
-          ))}
-        </div>
+        {Object.keys(clues).map((item: any) => (
+          <Clue item={clues[item]} />
+        ))}
+        <button className="mt-4" onClick={onResetClues} disabled={areButtonsDisabled}>
+          Reset Clues
+        </button>
       </div>
 
       {isModalVisible && selectedClue && (

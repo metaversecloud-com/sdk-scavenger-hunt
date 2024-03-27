@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 // utils
 import { backendAPI } from "@/utils/backendAPI";
 
+// TODO: move to theme folder in s3 and pull from selected theme instead of hardcoding here
 const fixedClueImages = [
   {
     id: 0,
@@ -80,20 +81,18 @@ export const EditClue = ({
   const [isSaving, setIsSaving] = useState(false);
 
   async function onSave() {
-    try {
-      setIsSaving(true);
-      await backendAPI.post(`/admin/updateClue`, {
-        assetId: clue.assetId,
-        text,
-        imageUrl: selectedImage,
-      })
-      setIsSaving(false);
-      onCloseModal();
-    } catch (error) {
-      console.log(error);
-      navigate("*");
-      setIsSaving(false);
-    }
+    setIsSaving(true);
+    backendAPI.post(`/update-clue`, {
+      assetId: clue.id,
+      text,
+      imageUrl: selectedImage,
+    })
+      .catch(() => navigate("*"))
+      .finally(() => {
+        setIsSaving(false);
+        onCloseModal();
+      });
+
   }
 
   const ClueImages = ({ item }: { item: any }) => {

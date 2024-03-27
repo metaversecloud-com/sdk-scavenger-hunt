@@ -1,4 +1,4 @@
-import { Credentials } from "./types";
+import { Credentials } from "../types";
 import { Visitor } from "./topiaInit";
 
 export const getProfile = async (credentials: Credentials) => {

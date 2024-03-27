@@ -1,11 +1,11 @@
 import { Asset, DroppedAsset } from "./topiaInit";
-import { getDroppedAssetBySceneDropId } from "./droppedAssets/getDroppedAssetBySceneDropId";
 import { errorHandler } from "./errorHandler";
 import { getRandomPointInCircle } from "./getRandomPointInCircle";
-import { Credentials } from "./types";
+import { Credentials } from "../types";
 
-export async function dropLeaves(credentials: Credentials, sceneDropId: string) {
+export async function dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId }: { buildableAssetUniqueName: string, credentials: Credentials, sceneDropId: string }) {
   try {
+    const { interactivePublicKey, urlSlug } = credentials
     const dropZones = [
       {
         x: -354,
@@ -33,33 +33,35 @@ export async function dropLeaves(credentials: Credentials, sceneDropId: string) 
       },
     ];
 
-    const leafIds = ["pTGwDHbiqJfzc1lw7Xmu", "85gY9RrYh2llukwc3lr9", "C0qRlkJXqm8xGETLmjqE", "9RANIeC83o7yvcNjrGpO"];
+    const droppedAsset = await DroppedAsset.getWithUniqueName(buildableAssetUniqueName, urlSlug, {
+      interactivePublicKey,
+      interactiveSecret: process.env.INTERACTIVE_SECRET,
+    });
 
-    const droppedAssets = await getDroppedAssetBySceneDropId(sceneDropId || "National Parks Stamp", credentials);
+    const leafUrls = process.env["DROPPABLE_ASSETS"].split(",")
+    const index = Math.floor(Math.random() * leafUrls.length);
 
-    await droppedAssets.map(async (asset) => {
-      if (asset.uniqueName === "ScavengerHuntBuildableAsset") {
-          const leafAssetToPlace = Math.floor(Math.random() * leafIds.length);
-          const newAsset = await Asset.create(leafIds[leafAssetToPlace], { credentials });
-      
-          const random = Math.floor(Math.random() * dropZones.length);
-          const centralPosition = { x: asset.position.x + dropZones[random].x, y: asset.position.y + dropZones[random].y };
-          const newPosition = getRandomPointInCircle(centralPosition.x, centralPosition.y, 140);
-      
-          await DroppedAsset.drop(newAsset, {
-            interactivePublicKey: credentials.interactivePublicKey,
-            position: newPosition,
-            urlSlug: credentials.urlSlug,
-        })
-      };
+    const random = Math.floor(Math.random() * dropZones.length);
+    const centralPosition = { x: droppedAsset.position.x + dropZones[random].x, y: droppedAsset.position.y + dropZones[random].y };
+    const position = getRandomPointInCircle(centralPosition.x, centralPosition.y, 140);
+
+    const asset = Asset.create(process.env.WEB_IMAGE_ASSET_ID || "webImageAsset", {
+      credentials,
+    });
+
+    await DroppedAsset.drop(asset, {
+      layer1: leafUrls[index],
+      position,
+      sceneDropId,
+      urlSlug,
     });
 
     return { success: true };
   } catch (error) {
     return errorHandler({
       error,
-      functionName: "getDroppedAsset",
-      message: "Error getting dropped asset",
+      functionName: "dropLeaves",
+      message: "Error dropping leaf asset",
     });
   }
 }
