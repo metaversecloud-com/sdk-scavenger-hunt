@@ -20,7 +20,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       await world.updateDataObject({ [`scenes.${sceneDropId}.progress.${profileId}`]: { challengeDone: true } });
     }
 
-    if (buildableAssetUniqueName) await dropLeaves({ buildableAssetUniqueName, credentials });
+    if (buildableAssetUniqueName) await dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId });
 
     return res.json({ isCorrect: true });
   } catch (error) {
