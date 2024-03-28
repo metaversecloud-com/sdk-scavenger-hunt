@@ -8,9 +8,9 @@ export const handleGetConfiguration = async (req: Request, res: Response) => {
     const { assetId, sceneDropId } = credentials;
 
     const { dataObject } = await getWorldDataObject({ credentials, keyAssetId: assetId, sceneDropId });
-    const { challenge, clues } = dataObject as DataObjectType;
+    const { challenge, clues, theme } = dataObject as DataObjectType;
 
-    return res.json({ clues, challenge });
+    return res.json({ success: true, clues, challenge, theme });
   } catch (error) {
     errorHandler({
       error,

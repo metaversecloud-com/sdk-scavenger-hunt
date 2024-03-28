@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 // utils
@@ -6,8 +6,15 @@ import { backendAPI } from "@/utils/backendAPI";
 import { Header } from "@/components/Header";
 import { Loading } from "@/components/Loading";
 
+// context 
+import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { SET_THEME } from "@/context/types";
+import { themeData } from "@/context/themeData";
+
 export const Challenge = () => {
+  const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
+  const { theme } = useContext(GlobalStateContext);
   const [imageUrl, setImageUrl] = useState();
   const [question, setQuestion] = useState("");
   const [hasCompletedClues, setHasCompletedClues] = useState(true);
@@ -17,6 +24,7 @@ export const Challenge = () => {
   const [incorrectAnswer, setIncorrectAnswer] = useState(-1);
   const [isLoading, setIsLoading] = useState(true);
   const [answering, setAnswering] = useState(false);
+  const [currentTheme, setTheme] = useState("");
 
   const incorrectAnswerRotation = [
     "Try one more time!",
@@ -42,14 +50,22 @@ export const Challenge = () => {
           hasCompletedClues,
           hasCompletedChallenge,
           isAdmin,
+          theme
         } = result.data;
-        setImageUrl(challenge?.imageUrl || "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_Start.png");
-        setQuestion(challenge?.text || "Please, go to the admin section to edit the Challenge message.");
-        setHasCompletedClues(hasCompletedClues);
-        setHasAnsweredChallenge(hasCompletedChallenge);
-        setIsAdmin(isAdmin);
+        
         if (success) {
+          setImageUrl(challenge?.imageUrl || `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}IMG_Start.png`);
+          setQuestion(challenge?.text || "Please, go to the admin section to edit the Challenge message.");
+          setHasCompletedClues(hasCompletedClues);
+          setHasAnsweredChallenge(hasCompletedChallenge);
+          setIsAdmin(isAdmin);
+          setTheme(theme);
           setIsLoading(false);
+          dispatch!({
+            type: SET_THEME,
+            payload: theme,
+          });
+          // console.log("theme", theme);
         }
       })
       .catch(() => {
@@ -83,7 +99,7 @@ export const Challenge = () => {
           />
         </div>
         <div className="flex flex-col pl-4">
-          <h3 style={{ marginBottom: "0px" }}>National Parks</h3>
+          <h3 style={{ marginBottom: "0px" }}>{themeData?.[currentTheme]?.title}</h3>
           <div>Scavenger Hunt</div>
         </div>
       </div>

@@ -1,6 +1,5 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { GlobalStateContext, GlobalDispatchContext } from "@context/GlobalContext";
 
 // components
 import { Loading } from "@/components/Loading";
@@ -8,11 +7,16 @@ import { Loading } from "@/components/Loading";
 // utils
 import { backendAPI } from "@/utils/backendAPI";
 
+// context 
+import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { SET_THEME } from "@/context/types";
+
 type ProgressType = {
   [key: string]: { challengeDone: boolean, cluesFound: string[], profileId: string, username: string }
 }
 
 export const Analytics = () => {
+  const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
   const context = useContext(GlobalStateContext);
 
@@ -22,8 +26,16 @@ export const Analytics = () => {
 
   useEffect(() => {
     backendAPI.get(`/progress`).then((result) => {
-      setTotalClues(result.data.totalClues);
-      setProgressData(result.data.progress);
+    const {totalClues, progress, success, theme} = result.data;
+      if (success) {
+        setTotalClues(totalClues);
+        setProgressData(progress);
+        dispatch!({
+          type: SET_THEME,
+          payload: theme,
+        });
+        console.log("theme", theme);
+      }
     })
       .catch(() => navigate("*"))
       .finally(() => setIsLoading(false));

@@ -8,7 +8,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
     const { assetId, profileId, sceneDropId, username } = credentials;
 
     const { dataObject, world } = await getWorldDataObject({ credentials, sceneDropId });
-    const { clues, progress } = dataObject as DataObjectType;
+    const { clues, progress, theme } = dataObject as DataObjectType;
 
     const clue: ClueType = clues?.[assetId];
     if (!clue) throw new Error(`No clue asset found.`);
@@ -22,7 +22,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
     //       totalGamesWonCount: 0,
     //       challenge: {
     //         answer: "yes",
-    //         imageUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_Start.png",
+    //         imageUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/national-park/IMG_Start.png",
     //         text: "Is this the final question?",
     //       },
     //       keyAssetId: "-NtqODEUwsYTqgUaYQyB",
@@ -32,14 +32,14 @@ export const handleGetClue = async (req: Request, res: Response) => {
     //         "-Ntwby-06Z1csHOZfw-4": {
     //           contentImgUrl:
     //             "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/655464fe420b715a6fdcd924_download%2520(14)-p-800.png",
-    //           imageUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_1.png",
+    //           imageUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/national-park/IMG_1.png",
     //           id: "-Ntwby-06Z1csHOZfw-4",
     //           text: "Clue 1",
     //         },
     //         "-Nu-JgCMjBwk7kvsld6d": {
     //           contentImgUrl:
     //             "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/65546505c732cb3fd47036ad_download%2520(15)-p-800.png",
-    //           imageUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/IMG_5.png",
+    //           imageUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/national-park/IMG_5.png",
     //           id: "-Nu-JgCMjBwk7kvsld6d",
     //           text: "Clue 2",
     //         },
@@ -73,6 +73,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
       totalClues: Object.keys(clues).length,
       cluesFound: cluesFound.length,
       isAdmin: true,
+      theme,
     });
   } catch (error) {
     errorHandler({

@@ -1,5 +1,6 @@
 export const SET_HAS_SETUP_BACKEND = "SET_HAS_SETUP_BACKEND";
 export const SET_INTERACTIVE_PARAMS = "SET_INTERACTIVE_PARAMS";
+export const SET_THEME = "SET_THEME";
 
 export type InteractiveParams = {
   assetId: string;
@@ -16,9 +17,18 @@ export interface InitialState {
   profileId: string;
   hasInteractiveParams: boolean;
   hasSetupBackend: boolean;
+  theme: string;
 }
 
 export type ActionType = {
   type: string;
   payload?: any;
 };
+
+export interface ThemeInfo {
+  title: string;
+}
+
+export interface ThemeData {
+  [key: string]: ThemeInfo;
+}

@@ -22,7 +22,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
 
     if (buildableAssetUniqueName) await dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId });
 
-    return res.json({ isCorrect: true });
+    return res.json({ success: true, isCorrect: true });
   } catch (error) {
     errorHandler({
       error,
@@ -31,6 +31,6 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       req,
       res,
     });
-    return res.json({ isCorrect: false });
+    return res.json({ success: false, isCorrect: false });
   }
-}
+};

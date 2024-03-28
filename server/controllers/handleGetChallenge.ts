@@ -10,7 +10,7 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
     const { isAdmin } = await getProfile(credentials);
 
     const { dataObject, world } = await getWorldDataObject({ credentials, keyAssetId: assetId, sceneDropId });
-    const { progress, challenge, clues } = dataObject as DataObjectType;
+    const { progress, challenge, clues, theme } = dataObject as DataObjectType;
 
     let hasCompletedClues = false,
       hasCompletedChallenge = false;
@@ -34,6 +34,7 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
       hasCompletedClues,
       hasCompletedChallenge,
       isAdmin,
+      theme,
     });
   } catch (error) {
     return errorHandler({

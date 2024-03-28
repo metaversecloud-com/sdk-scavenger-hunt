@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 // components
@@ -8,7 +8,12 @@ import Loading from "@/components/Loading";
 import { backendAPI } from "@/utils/backendAPI";
 import EditClue from "./EditClue";
 
+// context 
+import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { SET_THEME } from "@/context/types";
+
 export const Configurations = () => {
+  const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
   const [clues, setClues] = useState([]);
   const [question, setQuestion] = useState("");
@@ -22,14 +27,23 @@ export const Configurations = () => {
   useEffect(() => {
     backendAPI.get(`/config`)
       .then((result: any) => {
-        const { clues, challenge } = result.data
-        setQuestion(challenge.text);
-        setAnswer(challenge.answer);
-        setClues(clues);
+        const { clues, challenge, theme, success } = result.data
+        if (success) {
+          setQuestion(challenge.text);
+          setAnswer(challenge.answer);
+          setClues(clues);
+          if (dispatch) {
+            dispatch({
+              type: SET_THEME,
+              payload: theme,
+            });
+            // console.log("config theme", theme);
+          }
+        }
       })
       .catch(() => navigate("*"))
       .finally(() => setIsLoading(false));
-  }, [backendAPI]);
+  }, [backendAPI, dispatch]);
 
   const onSave = async () => {
     setAreButtonsDisabled(true);
@@ -143,7 +157,7 @@ export const Configurations = () => {
           <Clue item={clues[item]} />
         ))}
         <button className="mt-4" onClick={onResetClues} disabled={areButtonsDisabled}>
-          Load Clues
+          Reset Clues
         </button>
       </div>
 

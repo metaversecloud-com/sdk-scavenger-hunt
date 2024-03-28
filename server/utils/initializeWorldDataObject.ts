@@ -31,7 +31,7 @@ export const initializeWorldDataObject = async ({
       if (keyAssetId) {
         const keyAsset = await DroppedAsset.get(keyAssetId, world.urlSlug, { credentials });
         payload.challenge.imageUrl = keyAsset.topLayerURL;
-        payload.clues = await getClueDroppedAssets({ uniqueName: `${keyAsset.uniqueName}_clue`, world });
+        payload.clues = await getClueDroppedAssets({ uniqueName: `${keyAsset.uniqueName}_robots_clue`, world });
       }
     }
 

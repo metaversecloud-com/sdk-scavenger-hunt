@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 // components
@@ -7,7 +7,12 @@ import Loading from "@/components/Loading";
 // utils
 import { backendAPI } from "@/utils/backendAPI";
 
+// context 
+import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { SET_THEME } from "@/context/types";
+
 const Clue = () => {
+  const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
   const [cluesFound, setCluesFound] = useState<string>("");
   const [totalClues, setTotalClues] = useState<string>("");
@@ -24,7 +29,7 @@ const Clue = () => {
   const getClue = async () => {
     setIsLoading(true);
     backendAPI.get(`/clue`).then((result: any) => {
-      const { success, cluesFound, totalClues, imageUrl, contentImgUrl, text, keyAssetImage } = result.data;
+      const { success, cluesFound, totalClues, imageUrl, contentImgUrl, text, keyAssetImage, theme } = result.data;
       if (success) {
         setCluesFound(cluesFound);
         setTotalClues(totalClues);
@@ -33,8 +38,22 @@ const Clue = () => {
         setText(text);
         setKeyAssetImage(keyAssetImage);
         setIsLoading(false);
+        dispatch!({
+          type: SET_THEME,
+          payload: theme,
+        });
       }
     })
+      .catch((error) => {
+        console.error("result error", error);
+        navigate("*");
+      })
+      .finally(() => setIsLoading(false));
+  };
+
+  const resetGame = async () => {
+    setIsLoading(true);
+    backendAPI.post(`/reset-game`).then((result: any) => {})
       .catch((error) => {
         console.error("result error", error);
         navigate("*");
@@ -79,6 +98,8 @@ const Clue = () => {
           </div>
         </div>
       ) : null}
+
+      <button onClick={() => resetGame()} className="btn btn-primary">Reset Game</button>
     </div>
   );
 };

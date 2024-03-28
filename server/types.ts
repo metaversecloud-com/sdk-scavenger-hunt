@@ -20,6 +20,7 @@ export type DataObjectType = {
   sceneDropId: string;
   keyAssetId: string;
   buildableAssetUniqueName?: string;
+  theme?: string;
   challenge: { answer: string; text: string; imageUrl: string };
   clues: {
     [id: string]: ClueType;

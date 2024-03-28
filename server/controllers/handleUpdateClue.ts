@@ -18,7 +18,7 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
       [`scenes.${sceneDropId}.clues.${assetId}`]: { id: assetId, text, imageUrl, contentImgUrl },
     });
 
-    return res.json({ text, imageUrl, contentImgUrl });
+    return res.json({ success: true, text, imageUrl, contentImgUrl });
   } catch (error) {
     return errorHandler({
       error,
