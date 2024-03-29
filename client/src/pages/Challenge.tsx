@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 // utils
@@ -6,8 +6,15 @@ import { backendAPI } from "@/utils/backendAPI";
 import { Header } from "@/components/Header";
 import { Loading } from "@/components/Loading";
 
+// context 
+import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { SET_THEME } from "@/context/types";
+import { themeData } from "@/context/themeData";
+
 export const Challenge = () => {
+  const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
+  const { theme } = useContext(GlobalStateContext);
   const [imageUrl, setImageUrl] = useState();
   const [question, setQuestion] = useState("");
   const [hasCompletedClues, setHasCompletedClues] = useState(true);
@@ -17,6 +24,7 @@ export const Challenge = () => {
   const [incorrectAnswer, setIncorrectAnswer] = useState(-1);
   const [isLoading, setIsLoading] = useState(true);
   const [answering, setAnswering] = useState(false);
+  const [currentTheme, setTheme] = useState("");
 
   const incorrectAnswerRotation = [
     "Try one more time!",
@@ -26,30 +34,38 @@ export const Challenge = () => {
     "Check the clues again for help with the answer!",
   ];
 
-  const correctAnswerRotation = [
-    "Good job, one more leaf!",
-    "Great, you’ve added a leaf to the tree!",
-    "Nice one! The tree got another leaf!",
-  ];
-
   useEffect(() => {
     backendAPI
       .get(`/challenge`)
       .then((result) => {
         const {
+          success,
           challenge,
           hasCompletedClues,
           hasCompletedChallenge,
           isAdmin,
+          theme
         } = result.data;
-        setImageUrl(challenge?.imageUrl || "");
-        setQuestion(challenge?.text || "");
-        setHasCompletedClues(hasCompletedClues);
-        setHasAnsweredChallenge(hasCompletedChallenge);
-        setIsAdmin(isAdmin);
+        
+        if (success) {
+          setImageUrl(challenge?.imageUrl || `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}IMG_Start.png`);
+          setQuestion(challenge?.text || "Please, go to the admin section to edit the Challenge message.");
+          setHasCompletedClues(hasCompletedClues);
+          setHasAnsweredChallenge(hasCompletedChallenge);
+          setIsAdmin(isAdmin);
+          setTheme(theme);
+          setIsLoading(false);
+          dispatch!({
+            type: SET_THEME,
+            payload: theme,
+          });
+          // console.log("theme", theme);
+        }
       })
-      .catch(() => navigate("*"))
-      .finally(() => setIsLoading(false));
+      .catch(() => {
+        setIsLoading(false);
+        navigate("*");
+      });
   }, [backendAPI]);
 
   const completeChallenge = async () => {
@@ -73,11 +89,11 @@ export const Challenge = () => {
         <div className="flex flex-col mt-6">
           <img
             style={{ height: "100px", width: "70px", borderRadius: "10%" }}
-            src={imageUrl}
+            src={themeData?.[currentTheme]?.challengeTitleImgUrl || imageUrl}
           />
         </div>
         <div className="flex flex-col pl-4">
-          <h3 style={{ marginBottom: "0px" }}>National Parks</h3>
+          <h3 style={{ marginBottom: "0px" }}>{themeData?.[currentTheme]?.title}</h3>
           <div>Scavenger Hunt</div>
         </div>
       </div>
@@ -92,7 +108,7 @@ export const Challenge = () => {
         {getHeader()}
         <div className="container p-6 flex items-center justify-start">
           <div className="flex flex-col">
-            <h5>{correctAnswerRotation[Math.floor(Math.random() * 3)]}</h5>
+            <h5>{themeData?.[theme]?.correctAnswerCongratulations}</h5>
           </div>
         </div>
       </>

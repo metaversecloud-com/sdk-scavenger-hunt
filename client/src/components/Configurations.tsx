@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 // components
@@ -8,43 +8,62 @@ import Loading from "@/components/Loading";
 import { backendAPI } from "@/utils/backendAPI";
 import EditClue from "./EditClue";
 
+// context
+import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { SET_THEME } from "@/context/types";
+
 export const Configurations = () => {
+  const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
   const [clues, setClues] = useState([]);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [currentTheme, setTheme] = useState("robot");
   const [buildableAssetUniqueName, setBuildableAssetUniqueName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedClue, setSelectedClue] = useState(null);
+  const [allWalkButtonsDisabled, setAllWalkButtonsDisabled] = useState(false);
 
   useEffect(() => {
-    backendAPI.get(`/config`)
+    backendAPI
+      .get(`/config`)
       .then((result: any) => {
-        const { clues, challenge } = result.data
-        setQuestion(challenge.text);
-        setAnswer(challenge.answer);
-        setClues(clues);
+        const { clues, challenge, theme, success } = result.data;
+        if (success) {
+          setQuestion(challenge.text);
+          setAnswer(challenge.answer);
+          setClues(clues);
+          setTheme(theme);
+          if (dispatch) {
+            dispatch({
+              type: SET_THEME,
+              payload: theme,
+            });
+          }
+        }
       })
       .catch(() => navigate("*"))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [backendAPI, dispatch]);
 
   const onSave = async () => {
     setAreButtonsDisabled(true);
-    backendAPI.post(`/update-challenge`, {
-      answer,
-      buildableAssetUniqueName,
-      text: question,
-    })
+    backendAPI
+      .post(`/update-challenge`, {
+        answer,
+        buildableAssetUniqueName,
+        text: question,
+      })
       .catch(() => navigate("*"))
       .finally(() => setAreButtonsDisabled(false));
   };
 
   const onResetClues = async () => {
     setAreButtonsDisabled(true);
-    backendAPI.post(`/reset-clues`)
+    backendAPI
+      .post(`/reset-clues`)
       .then((result: any) => {
         setClues(result.data.clues);
       })
@@ -61,23 +80,57 @@ export const Configurations = () => {
     setIsModalVisible(false);
   };
 
+  const reloadClues = () => {
+    setIsLoading(true);
+    backendAPI
+      .get(`/config`)
+      .then((result: any) => {
+        const { clues } = result.data;
+        setClues(clues);
+      })
+      .catch(() => navigate("*"))
+      .finally(() => setIsLoading(false));
+  };
+
+  const walkUpToClueAsset = async (clue: any) => {
+    try {
+      setAllWalkButtonsDisabled(true);
+      const result = await backendAPI.post(`/walk-up-to-clue-asset`, { clue });
+      if (result?.data?.success) {
+        setAllWalkButtonsDisabled(false);
+      }
+    } catch (error) {
+      console.error(error);
+      setAllWalkButtonsDisabled(false);
+    }
+  };
+
   const Clue = ({ item }: { item: any }) => {
     const { assetId, imageUrl, text } = item;
-    const truncatedText =
-      text?.length > 30 ? `${text.substring(0, 30)}...` : text;
+    const truncatedText = text?.length > 30 ? `${text.substring(0, 30)}...` : text;
     return (
-      <div
-        className="card small mt-4 cursor-pointer"
-        key={assetId}
-        onClick={() => handleOpenClueModal(item)}
-      >
-        <div
-          className="card-image"
-          style={{ height: "70px", width: "70px", minWidth: "70px" }}
-        >
+      <div className="card small mt-4 cursor-pointer" key={assetId} onClick={() => handleOpenClueModal(item)}>
+        <div className="card-image" style={{ height: "70px", width: "70px", minWidth: "70px" }}>
           <img src={imageUrl} style={{ maxWidth: "100%", maxHeight: "100%" }} />
         </div>
-        <div className="card-title">{truncatedText}</div>
+        <div className="card-details">
+          <h4 className="card-title h4 mb-4">{truncatedText}</h4>
+          <div className="card-actions" style={{ marginTop: "10px" }}>
+            <button
+              className="btn btn-icon cursor-pointer"
+              onClick={(event) => {
+                event.stopPropagation();
+                walkUpToClueAsset(item);
+              }}
+              disabled={allWalkButtonsDisabled}
+            >
+              <img
+                src="https://sdk-scavenger-hunt.s3.amazonaws.com/footsteps.svg"
+                style={{ width: "14px", maxWidth: "14px" }}
+              />
+            </button>
+          </div>
+        </div>
       </div>
     );
   };
@@ -87,9 +140,8 @@ export const Configurations = () => {
   return (
     <>
       <p className="mb-4">
-        This is the final challenge question that the participants need to
-        solve. Enter a question, and answer (non case sensitive) and click the
-        save button.
+        This is the final challenge question that the participants need to solve. Enter a question, and answer (non case
+        sensitive) and click the save button.
       </p>
       <label>Question</label>
       <input
@@ -110,34 +162,34 @@ export const Configurations = () => {
         value={answer}
       />
 
-      <label>Buildable Asset Unique Name</label>
-      <input
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-          setBuildableAssetUniqueName(event.target.value);
-        }}
-        style={{ width: "100%" }}
-        value={buildableAssetUniqueName}
-      />
+      {currentTheme === "national-park" && (
+        <div>
+          <label>Buildable Asset Unique Name</label>
+          <input
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setBuildableAssetUniqueName(event.target.value);
+            }}
+            style={{ width: "100%" }}
+            value={buildableAssetUniqueName}
+          />
+        </div>
+      )}
+
       <button className="mt-4" onClick={onSave} disabled={areButtonsDisabled}>
         Save
-        </button>
+      </button>
 
       <div className="mt-10">
         <h4>Clues</h4>
-        <p>
-          These are the configured clues. Click on one to take you to the
-          clue.
-          </p>
-        {Object.keys(clues).map((item: any) => (
-          <Clue item={clues[item]} />
-        ))}
+        <p>These are the configured clues. Click on one to take you to the clue.</p>
+        {Object.keys(clues)?.map((item: any, index: any) => <Clue key={index} item={clues[item]} />)}
         <button className="mt-4" onClick={onResetClues} disabled={areButtonsDisabled}>
           Reset Clues
         </button>
       </div>
 
       {isModalVisible && selectedClue && (
-        <EditClue clue={selectedClue} onCloseModal={handleCloseClueModal} />
+        <EditClue clue={selectedClue} onCloseModal={handleCloseClueModal} onCluesUpdated={reloadClues} />
       )}
     </>
   );

@@ -2,21 +2,29 @@ import { errorHandler } from "./errorHandler.js";
 import { initializeWorldDataObject } from "./initializeWorldDataObject.js";
 import { World } from "./topiaInit.js";
 import { Credentials } from "../types.js";
-import { DataObjectType } from '../types';
+import { DataObjectType } from "../types";
 
 type WorldDataObject = {
   scenes: {
-    [key: string]: DataObjectType
-  },
-}
+    [key: string]: DataObjectType;
+  };
+};
 
-export const getWorldDataObject = async ({ credentials, keyAssetId, sceneDropId }: { credentials: Credentials, keyAssetId?: string, sceneDropId: string }) => {
+export const getWorldDataObject = async ({
+  credentials,
+  keyAssetId,
+  sceneDropId,
+}: {
+  credentials: Credentials;
+  keyAssetId?: string;
+  sceneDropId: string;
+}) => {
   try {
     const { urlSlug } = credentials;
 
     const world = World.create(urlSlug, { credentials });
     await world.fetchDataObject();
-    await initializeWorldDataObject({ credentials, keyAssetId, sceneDropId, world });
+    // await initializeWorldDataObject({ credentials, keyAssetId, sceneDropId, world });
 
     const dataObject = world.dataObject as WorldDataObject;
 
