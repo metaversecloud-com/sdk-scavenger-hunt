@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { dropLeaves, errorHandler, getCredentials, getWorldDataObject } from "../utils";
 import { DataObjectType } from "../types";
+import { Visitor } from "../utils/topiaInit";
 
 export const handleAnswerChallenge = async (req: Request, res: Response) => {
   try {
@@ -9,7 +10,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     const { assetId, profileId, sceneDropId } = credentials;
 
     const { dataObject, world } = await getWorldDataObject({ credentials, keyAssetId: assetId, sceneDropId });
-    const { buildableAssetUniqueName, challenge, progress } = dataObject as DataObjectType;
+    const { buildableAssetUniqueName, challenge, progress, theme } = dataObject as DataObjectType;
 
     const isCorrect = challenge.answer === answer;
     if (!isCorrect) return res.json({ isCorrect: false });
@@ -20,8 +21,14 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       await world.updateDataObject({ [`scenes.${sceneDropId}.progress.${profileId}`]: { challengeDone: true } });
     }
 
-    if (buildableAssetUniqueName) await dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId });
-
+    if (theme === "national-park") {
+      if (buildableAssetUniqueName) await dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId });
+    } else if (theme === "robot") {
+      const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
+      await visitor.grantExpression({
+        name: `scavengerHunt-robot-1`,
+      });
+    }
     return res.json({ success: true, isCorrect: true });
   } catch (error) {
     errorHandler({

@@ -99,7 +99,7 @@ const Clue = () => {
         </div>
       ) : null}
 
-      <button onClick={() => resetGame()} className="btn btn-primary">Reset Game</button>
+      {/* <button onClick={() => resetGame()} className="btn btn-primary">Reset Game</button> */}
     </div>
   );
 };

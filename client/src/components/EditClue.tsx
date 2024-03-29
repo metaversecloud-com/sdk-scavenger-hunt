@@ -4,19 +4,19 @@ import { useNavigate } from "react-router-dom";
 // utils
 import { backendAPI } from "@/utils/backendAPI";
 
-// context 
+// context
 import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
 
 export const EditClue = ({
   clue,
   onCloseModal,
-  onCluesUpdated
+  onCluesUpdated,
 }: {
   clue: any;
   onCloseModal: any;
   onCluesUpdated: any;
 }) => {
-  const {theme} = useContext(GlobalStateContext) || "national-park";
+  const { theme } = useContext(GlobalStateContext) || "national-park";
   const fixedClueImages = [
     {
       id: 0,
@@ -79,7 +79,7 @@ export const EditClue = ({
       text: "Clue image twelve",
     },
   ];
-  
+
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(clue?.imageUrl || fixedClueImages[0].image);
   const [contentImgUrl, setContentImgUrl] = useState(clue?.contentImgUrl);
@@ -92,13 +92,13 @@ export const EditClue = ({
         assetId: clue?.id,
         text,
         imageUrl: selectedImage,
-        contentImgUrl
+        contentImgUrl,
       });
       if (onCluesUpdated) {
         onCluesUpdated();
       }
     } catch (error) {
-      navigate("*")
+      navigate("*");
     } finally {
       setIsSaving(false);
       onCloseModal();
@@ -138,9 +138,8 @@ export const EditClue = ({
       <div className="modal" style={{ textAlign: "left", top: "100%" }}>
         <h3>Clue Configuration</h3>
         <p>
-          You can change the clue text and image it shows in the drawer. Click
-          on the Save button at the bottom of the screen to save the
-          configuration.
+          You can change the clue text and image it shows in the drawer. Click on the Save button at the bottom of the
+          screen to save the configuration.
         </p>
 
         <label>Clue</label>
@@ -163,9 +162,7 @@ export const EditClue = ({
         <div className="mt-6">
           <h4>Asset Image</h4>
           <p>Pick an image for this clue.</p>
-          {fixedClueImages.map((item) => (
-            <ClueImages item={item} />
-          ))}
+          {fixedClueImages?.map((item, index) => <ClueImages key={index} item={item} />)}
 
           <div className="actions">
             <button className="btn-outline" onClick={onCloseModal}>

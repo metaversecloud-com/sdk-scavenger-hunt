@@ -29,3 +29,7 @@ export type DataObjectType = {
     [profileId: string]: { challengeDone: boolean; cluesFound: string[]; profileId: string; username: string };
   };
 };
+
+export type DroppedAssetType = {
+  position?: { x?: number; y?: number };
+};

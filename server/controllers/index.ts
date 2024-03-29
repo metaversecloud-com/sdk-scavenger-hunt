@@ -9,3 +9,4 @@ export * from "./handleResetClues";
 export * from "./handleUpdateChallenge";
 export * from "./handleUpdateClue";
 export * from "./handleResetGame";
+export * from "./handleMoveToClueAsset";
