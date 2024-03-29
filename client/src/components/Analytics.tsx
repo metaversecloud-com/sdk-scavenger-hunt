@@ -34,7 +34,6 @@ export const Analytics = () => {
           type: SET_THEME,
           payload: theme,
         });
-        console.log("theme", theme);
       }
     })
       .catch(() => navigate("*"))
@@ -50,7 +49,7 @@ export const Analytics = () => {
         <div>Total clues (in world): {totalClues} </div>
       </div>
       <hr />
-      <table>
+      <table style={{fontSize: "12px"}}>
         <tr>
           <th>Username</th>
           <th align="right">Clues Found</th>

@@ -27,6 +27,8 @@ export type ActionType = {
 
 export interface ThemeInfo {
   title: string;
+  correctAnswerCongratulations: string;
+  challengeTitleImgUrl: string;
 }
 
 export interface ThemeData {

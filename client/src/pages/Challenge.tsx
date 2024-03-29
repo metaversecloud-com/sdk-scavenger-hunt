@@ -34,12 +34,6 @@ export const Challenge = () => {
     "Check the clues again for help with the answer!",
   ];
 
-  const correctAnswerRotation = [
-    "Good job, one more leaf!",
-    "Great, you’ve added a leaf to the tree!",
-    "Nice one! The tree got another leaf!",
-  ];
-
   useEffect(() => {
     backendAPI
       .get(`/challenge`)
@@ -95,7 +89,7 @@ export const Challenge = () => {
         <div className="flex flex-col mt-6">
           <img
             style={{ height: "100px", width: "70px", borderRadius: "10%" }}
-            src={imageUrl}
+            src={themeData?.[currentTheme]?.challengeTitleImgUrl || imageUrl}
           />
         </div>
         <div className="flex flex-col pl-4">
@@ -114,7 +108,7 @@ export const Challenge = () => {
         {getHeader()}
         <div className="container p-6 flex items-center justify-start">
           <div className="flex flex-col">
-            <h5>{correctAnswerRotation[Math.floor(Math.random() * 3)]}</h5>
+            <h5>{themeData?.[theme]?.correctAnswerCongratulations}</h5>
           </div>
         </div>
       </>
