@@ -156,7 +156,7 @@ export const Configurations = () => {
       <label>Answer</label>
       <input
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-          setAnswer(event.target.value);
+          setAnswer(event.target.value?.trim()?.toLowerCase());
         }}
         style={{ width: "100%" }}
         value={answer}

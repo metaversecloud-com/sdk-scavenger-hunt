@@ -12,7 +12,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     const { dataObject, world } = await getWorldDataObject({ credentials, keyAssetId: assetId, sceneDropId });
     const { buildableAssetUniqueName, challenge, progress, theme } = dataObject as DataObjectType;
 
-    const isCorrect = challenge.answer === answer;
+    const isCorrect = challenge.answer?.trim()?.toLowerCase() === answer?.trim()?.toLowerCase();
     if (!isCorrect) return res.json({ isCorrect: false });
 
     if (progress[profileId]) {
