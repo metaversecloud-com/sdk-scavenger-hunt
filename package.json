@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@rtsdk/topia": "^0.9.1",
-    "axios": "^1.6.7",
+    "axios": "^1.6.8",
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
     "yalc": "^1.0.0-pre.53"
