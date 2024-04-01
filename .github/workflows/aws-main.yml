@@ -62,7 +62,7 @@ jobs:
         with:
           images: ${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY }}
           tags: |
-            type=raw,value=${{ github.event.repository.name }}-${{ github.event.inputs.version_number }}
+            type=raw,value=${{ github.event.repository.name }}
 
       - name: Build and  tag
         run: |
