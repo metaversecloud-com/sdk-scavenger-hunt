@@ -27,6 +27,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use("/api", router);
+
 if (process.env.NODE_ENV === "development") {
   const corsOptions = {
     origin: ["http://localhost:3000", "http://localhost:5173"],
@@ -63,8 +65,6 @@ app.use(function (req, res, next) {
   };
   next();
 });
-
-app.use("/api", router);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
