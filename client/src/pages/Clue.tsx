@@ -8,7 +8,7 @@ import Loading from "@/components/Loading";
 import { backendAPI } from "@/utils/backendAPI";
 
 // context
-import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { GlobalDispatchContext } from "@/context/GlobalContext";
 import { SET_THEME } from "@/context/types";
 
 const Clue = () => {
@@ -19,7 +19,6 @@ const Clue = () => {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [contentImgUrl, setContentImgUrl] = useState<string>("");
   const [text, setText] = useState<string>("");
-  const [keyAssetImage, setKeyAssetImage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -31,14 +30,13 @@ const Clue = () => {
     backendAPI
       .get(`/clue`)
       .then((result: any) => {
-        const { success, cluesFound, totalClues, imageUrl, contentImgUrl, text, keyAssetImage, theme } = result.data;
+        const { success, cluesFound, totalClues, imageUrl, contentImgUrl, text, theme } = result.data;
         if (success) {
           setCluesFound(cluesFound);
           setTotalClues(totalClues);
           setImageUrl(imageUrl);
           setContentImgUrl(contentImgUrl);
           setText(text);
-          setKeyAssetImage(keyAssetImage);
           setIsLoading(false);
           dispatch!({
             type: SET_THEME,
@@ -87,8 +85,6 @@ const Clue = () => {
           </div>
         </div>
       ) : null}
-
-      {/* <button onClick={() => resetGame()} className="btn btn-primary">Reset Game</button> */}
     </div>
   );
 };

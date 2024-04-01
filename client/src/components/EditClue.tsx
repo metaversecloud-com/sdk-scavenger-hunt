@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { backendAPI } from "@/utils/backendAPI";
 
 // context
-import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { GlobalStateContext } from "@/context/GlobalContext";
 
 export const EditClue = ({
   clue,

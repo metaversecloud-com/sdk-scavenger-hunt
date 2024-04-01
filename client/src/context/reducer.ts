@@ -16,7 +16,6 @@ const globalReducer = (state: InitialState, action: ActionType) => {
         hasSetupBackend: true,
       };
     case SET_THEME: {
-      // console.log("set theme", payload);
       return {
         ...state,
         theme: payload,

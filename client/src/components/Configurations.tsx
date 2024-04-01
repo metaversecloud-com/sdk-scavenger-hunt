@@ -9,7 +9,7 @@ import { backendAPI } from "@/utils/backendAPI";
 import EditClue from "./EditClue";
 
 // context
-import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { GlobalDispatchContext } from "@/context/GlobalContext";
 import { SET_THEME } from "@/context/types";
 
 export const Configurations = () => {
