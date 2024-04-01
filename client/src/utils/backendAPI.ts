@@ -6,8 +6,7 @@ let backendAPI: AxiosInstance = axios;
 
 const setupBackendAPI = async (interactiveParams: InteractiveParams) => {
   backendAPI = axios.create({
-    // baseURL: `${BASE_URL}/api`,
-    baseURL: `${BASE_URL}/api`,
+    baseURL: `/api`,
     headers: {
       "Content-Type": "application/json",
     },

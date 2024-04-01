@@ -8,5 +8,4 @@ export * from "./handleGetClue.js";
 export * from "./handleResetClues.js";
 export * from "./handleUpdateChallenge.js";
 export * from "./handleUpdateClue.js";
-export * from "./handleResetGame.js";
 export * from "./handleMoveToClueAsset.js";

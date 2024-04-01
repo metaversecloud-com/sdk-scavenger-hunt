@@ -6,7 +6,7 @@ import { backendAPI } from "@/utils/backendAPI";
 import { Header } from "@/components/Header";
 import { Loading } from "@/components/Loading";
 
-// context 
+// context
 import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
 import { SET_THEME } from "@/context/types";
 import { themeData } from "@/context/themeData";
@@ -38,15 +38,8 @@ export const Challenge = () => {
     backendAPI
       .get(`/challenge`)
       .then((result) => {
-        const {
-          success,
-          challenge,
-          hasCompletedClues,
-          hasCompletedChallenge,
-          isAdmin,
-          theme
-        } = result.data;
-        
+        const { success, challenge, hasCompletedClues, hasCompletedChallenge, isAdmin, theme } = result.data;
+
         if (success) {
           setImageUrl(challenge?.imageUrl || `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}IMG_Start.png`);
           setQuestion(challenge?.text || "Please, go to the admin section to edit the Challenge message.");
@@ -59,7 +52,6 @@ export const Challenge = () => {
             type: SET_THEME,
             payload: theme,
           });
-          // console.log("theme", theme);
         }
       })
       .catch(() => {
@@ -138,20 +130,13 @@ export const Challenge = () => {
                   Submit
                 </button>
               </div>
-              {incorrectAnswer >= 0 && (
-                <p className="pt-4 text-error">
-                  {incorrectAnswerRotation[incorrectAnswer]}
-                </p>
-              )}
+              {incorrectAnswer >= 0 && <p className="pt-4 text-error">{incorrectAnswerRotation[incorrectAnswer]}</p>}
             </div>
           </div>
         ) : (
           <div className="flex flex-col">
             <div className="mt-6">
-              <div>
-                Find all the clues, and then come back to answer the final
-                question!
-              </div>
+              <div>Find all the clues, and then come back to answer the final question!</div>
             </div>
           </div>
         )}

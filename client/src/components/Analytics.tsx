@@ -7,13 +7,13 @@ import { Loading } from "@/components/Loading";
 // utils
 import { backendAPI } from "@/utils/backendAPI";
 
-// context 
+// context
 import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
 import { SET_THEME } from "@/context/types";
 
 type ProgressType = {
-  [key: string]: { challengeDone: boolean, cluesFound: string[], profileId: string, username: string }
-}
+  [key: string]: { challengeDone: boolean; cluesFound: string[]; profileId: string; username: string };
+};
 
 export const Analytics = () => {
   const dispatch = useContext(GlobalDispatchContext);
@@ -25,17 +25,19 @@ export const Analytics = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    backendAPI.get(`/progress`).then((result) => {
-    const {totalClues, progress, success, theme} = result.data;
-      if (success) {
-        setTotalClues(totalClues);
-        setProgressData(progress);
-        dispatch!({
-          type: SET_THEME,
-          payload: theme,
-        });
-      }
-    })
+    backendAPI
+      .get(`/progress`)
+      .then((result) => {
+        const { totalClues, progress, success, theme } = result.data;
+        if (success) {
+          setTotalClues(totalClues);
+          setProgressData(progress);
+          dispatch!({
+            type: SET_THEME,
+            payload: theme,
+          });
+        }
+      })
       .catch(() => navigate("*"))
       .finally(() => setIsLoading(false));
   }, [backendAPI]);
@@ -49,7 +51,7 @@ export const Analytics = () => {
         <div>Total clues (in world): {totalClues} </div>
       </div>
       <hr />
-      <table style={{fontSize: "12px"}}>
+      <table style={{ fontSize: "12px" }}>
         <tr>
           <th>Username</th>
           <th align="right">Clues Found</th>
@@ -58,7 +60,8 @@ export const Analytics = () => {
           <tr key={progressData?.[context?.profileId]?.cluesFound?.length}>
             <td scope="row">{progressData?.[context?.profileId]?.username}</td>
             <td align="right">
-              {progressData?.[context?.profileId]?.cluesFound?.length || 0} {progressData?.[context?.profileId]?.challengeDone ? "- Completed" : ""}
+              {progressData?.[context?.profileId]?.cluesFound?.length || 0}{" "}
+              {progressData?.[context?.profileId]?.challengeDone ? "- Completed" : ""}
             </td>
           </tr>
         ))}
