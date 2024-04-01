@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { dropLeaves, errorHandler, getCredentials, getWorldDataObject } from "../utils";
-import { DataObjectType } from "../types";
-import { Visitor } from "../utils/topiaInit";
+import { dropLeaves, errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
+import { DataObjectType } from "../types.js";
+import { Visitor } from "../utils/topiaInit.js";
 
 export const handleAnswerChallenge = async (req: Request, res: Response) => {
   try {

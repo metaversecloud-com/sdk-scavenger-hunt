@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials } from "../utils";
-import { Visitor, DroppedAsset } from "../utils/topiaInit";
-import { DroppedAssetType } from "../types";
+import { errorHandler, getCredentials } from "../utils/index.js";
+import { Visitor, DroppedAsset } from "../utils/topiaInit.js";
+import { DroppedAssetType } from "../types.js";
 
 export const handleMoveToClueAsset = async (req: Request, res: Response) => {
   try {

@@ -1,19 +1,19 @@
-import { errorHandler } from "./errorHandler";
+import { errorHandler } from "./errorHandler.js";
 
-export const getClueDroppedAssets = async ({ uniqueName, world }: { uniqueName: string, world: any }) => {
+export const getClueDroppedAssets = async ({ uniqueName, world }: { uniqueName: string; world: any }) => {
   try {
-    const clues = {}
+    const clues = {};
 
-    const droppedAssets = await world.fetchDroppedAssetsWithUniqueName({ uniqueName })
+    const droppedAssets = await world.fetchDroppedAssetsWithUniqueName({ uniqueName });
     for (const index in droppedAssets) {
       clues[droppedAssets[index].id] = {
         id: droppedAssets[index].id,
         imageUrl: droppedAssets[index].topLayerURL || droppedAssets[index].bottomLayerURL,
         text: `Clue ${parseInt(index) + 1}`,
-      }
+      };
     }
 
-    return clues
+    return clues;
   } catch (error) {
     errorHandler({
       error,

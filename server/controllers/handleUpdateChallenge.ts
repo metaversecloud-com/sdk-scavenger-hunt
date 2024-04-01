@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials, getWorldDataObject } from "../utils";
+import { errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
 
 export const handleUpdateChallenge = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, sceneDropId } = credentials
+    const { assetId, sceneDropId } = credentials;
 
     const { answer, buildableAssetUniqueName, text } = req.body;
 
@@ -16,7 +16,7 @@ export const handleUpdateChallenge = async (req: Request, res: Response) => {
       [`scenes.${sceneDropId}.buildableAssetUniqueName`]: buildableAssetUniqueName,
       [`scenes.${sceneDropId}.challenge.answer`]: lowerCaseAnswer,
       [`scenes.${sceneDropId}.challenge.text`]: text,
-    })
+    });
 
     return res.json({ success: true });
   } catch (error) {
@@ -28,4 +28,4 @@ export const handleUpdateChallenge = async (req: Request, res: Response) => {
       res,
     });
   }
-}
+};

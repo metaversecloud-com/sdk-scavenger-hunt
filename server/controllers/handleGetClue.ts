@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { DataObjectType, ClueType } from "../types";
-import { errorHandler, getCredentials, getWorldDataObject } from "../utils";
+import { DataObjectType, ClueType } from "../types.js";
+import { errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
 
 export const handleGetClue = async (req: Request, res: Response) => {
   try {

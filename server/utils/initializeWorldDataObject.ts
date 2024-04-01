@@ -1,8 +1,8 @@
 // @ts-nocheck
-import { Credentials } from "../types";
-import { errorHandler } from "./errorHandler";
-import { getClueDroppedAssets } from "./getClueDroppedAssets";
-import { DroppedAsset } from "./topiaInit";
+import { Credentials } from "../types.js";
+import { errorHandler } from "./errorHandler.js";
+import { getClueDroppedAssets } from "./getClueDroppedAssets.js";
+import { DroppedAsset } from "./topiaInit.js";
 
 export const initializeWorldDataObject = async ({
   credentials,

@@ -1,6 +1,12 @@
 import { Request, Response } from "express";
-import { DroppedAsset, errorHandler, getClueDroppedAssets, getCredentials, getWorldDataObject } from "../utils";
-import { DataObjectType } from "../types";
+import {
+  DroppedAsset,
+  errorHandler,
+  getClueDroppedAssets,
+  getCredentials,
+  getWorldDataObject,
+} from "../utils/index.js";
+import { DataObjectType } from "../types.js";
 
 export const handleResetClues = async (req: Request, res: Response) => {
   try {

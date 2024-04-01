@@ -1,5 +1,5 @@
-import { Credentials } from "../types";
-import { Visitor } from "./topiaInit";
+import { Credentials } from "../types.js";
+import { Visitor } from "./topiaInit.js";
 
 export const getProfile = async (credentials: Credentials) => {
   try {

@@ -1,11 +1,19 @@
-import { Asset, DroppedAsset } from "./topiaInit";
-import { errorHandler } from "./errorHandler";
-import { getRandomPointInCircle } from "./getRandomPointInCircle";
-import { Credentials } from "../types";
+import { Asset, DroppedAsset } from "./topiaInit.js";
+import { errorHandler } from "./errorHandler.js";
+import { getRandomPointInCircle } from "./getRandomPointInCircle.js";
+import { Credentials } from "../types.js";
 
-export async function dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId }: { buildableAssetUniqueName: string, credentials: Credentials, sceneDropId: string }) {
+export async function dropLeaves({
+  buildableAssetUniqueName,
+  credentials,
+  sceneDropId,
+}: {
+  buildableAssetUniqueName: string;
+  credentials: Credentials;
+  sceneDropId: string;
+}) {
   try {
-    const { interactivePublicKey, urlSlug } = credentials
+    const { interactivePublicKey, urlSlug } = credentials;
     const dropZones = [
       {
         x: -354,
@@ -38,11 +46,14 @@ export async function dropLeaves({ buildableAssetUniqueName, credentials, sceneD
       interactiveSecret: process.env.INTERACTIVE_SECRET,
     });
 
-    const leafUrls = process.env["DROPPABLE_ASSETS"].split(",")
+    const leafUrls = process.env["DROPPABLE_ASSETS"].split(",");
     const index = Math.floor(Math.random() * leafUrls.length);
 
     const random = Math.floor(Math.random() * dropZones.length);
-    const centralPosition = { x: droppedAsset.position.x + dropZones[random].x, y: droppedAsset.position.y + dropZones[random].y };
+    const centralPosition = {
+      x: droppedAsset.position.x + dropZones[random].x,
+      y: droppedAsset.position.y + dropZones[random].y,
+    };
     const position = getRandomPointInCircle(centralPosition.x, centralPosition.y, 140);
 
     const asset = Asset.create(process.env.WEB_IMAGE_ASSET_ID || "webImageAsset", {
