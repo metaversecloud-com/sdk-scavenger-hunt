@@ -6,7 +6,8 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch index.ts",
-    "start": "tsx index.ts",
+    "start": "node index.js",
+    "build": "tsc index.ts",
     "ts-check": "tsc --noEmit"
   },
   "dependencies": {

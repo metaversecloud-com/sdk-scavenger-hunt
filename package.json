@@ -6,7 +6,7 @@
   "type": "module",
   "main": "./server/index.js",
   "scripts": {
-    "build": "npm run build -w client",
+    "build": "npm run build -ws",
     "link-sdk": "yalc link @rtsdk/topia",
     "unlink-sdk": "yalc remove @rtsdk/topia",
     "server": "npm run start --prefix server",
