@@ -24,7 +24,7 @@ export const getWorldDataObject = async ({
 
     const world = World.create(urlSlug, { credentials });
     await world.fetchDataObject();
-    // await initializeWorldDataObject({ credentials, keyAssetId, sceneDropId, world });
+    await initializeWorldDataObject({ credentials, keyAssetId, sceneDropId, world });
 
     const dataObject = world.dataObject as WorldDataObject;
 
