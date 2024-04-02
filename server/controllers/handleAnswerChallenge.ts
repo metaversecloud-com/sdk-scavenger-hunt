@@ -25,6 +25,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       if (buildableAssetUniqueName) await dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId });
     } else if (theme === "robot") {
       const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
+
       await visitor.grantExpression({
         name: `scavengerHunt-robot-1`,
       });
@@ -38,6 +39,5 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       req,
       res,
     });
-    return res.json({ success: false, isCorrect: false });
   }
 };
