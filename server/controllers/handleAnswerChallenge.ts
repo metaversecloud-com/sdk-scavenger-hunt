@@ -26,9 +26,13 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     } else if (theme === "robot") {
       const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
 
-      await visitor.grantExpression({
-        name: `scavengerHunt-robot-1`,
-      });
+      try {
+        await visitor.grantExpression({
+          name: `scavengerHunt-robot-1`,
+        });
+      } catch (error) {
+        console.error("Error granting expression to visitor", error);
+      }
     }
     return res.json({ success: true, isCorrect: true });
   } catch (error) {
