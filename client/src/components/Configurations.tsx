@@ -106,12 +106,12 @@ export const Configurations = () => {
   };
 
   const Clue = ({ item }: { item: any }) => {
-    const { assetId, imageUrl, text } = item;
+    const { assetId, imgUrl, text } = item;
     const truncatedText = text?.length > 30 ? `${text.substring(0, 30)}...` : text;
     return (
       <div className="card small mt-4 cursor-pointer" key={assetId} onClick={() => handleOpenClueModal(item)}>
         <div className="card-image" style={{ height: "70px", width: "70px", minWidth: "70px" }}>
-          <img src={imageUrl} style={{ maxWidth: "100%", maxHeight: "100%" }} />
+          <img src={imgUrl} style={{ maxWidth: "100%", maxHeight: "100%" }} />
         </div>
         <div className="card-details">
           <h4 className="card-title h4 mb-4">{truncatedText}</h4>

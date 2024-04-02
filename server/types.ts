@@ -11,7 +11,7 @@ export interface Credentials {
 
 export type ClueType = {
   id: string;
-  imageUrl: string;
+  imgUrl: string;
   contentImgUrl: string;
   text: string;
 };
@@ -21,7 +21,7 @@ export type DataObjectType = {
   keyAssetId: string;
   buildableAssetUniqueName?: string;
   theme?: string;
-  challenge: { answer: string; text: string; imageUrl: string };
+  challenge: { answer: string; text: string; imgUrl: string };
   clues: {
     [id: string]: ClueType;
   };

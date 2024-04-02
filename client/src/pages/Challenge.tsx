@@ -15,7 +15,7 @@ export const Challenge = () => {
   const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
   const { theme } = useContext(GlobalStateContext);
-  const [imageUrl, setImageUrl] = useState();
+  const [imgUrl, setImgUrl] = useState();
   const [question, setQuestion] = useState("");
   const [hasCompletedClues, setHasCompletedClues] = useState(true);
   const [answer, setAnswer] = useState("");
@@ -41,7 +41,7 @@ export const Challenge = () => {
         const { success, challenge, hasCompletedClues, hasCompletedChallenge, isAdmin, theme } = result.data;
 
         if (success) {
-          setImageUrl(challenge?.imageUrl || `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}IMG_Start.png`);
+          setImgUrl(challenge?.imgUrl || `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}IMG_Start.png`);
           setQuestion(challenge?.text || "Please, go to the admin section to edit the Challenge message.");
           setHasCompletedClues(hasCompletedClues);
           setHasAnsweredChallenge(hasCompletedChallenge);
@@ -81,7 +81,7 @@ export const Challenge = () => {
         <div className="flex flex-col mt-6">
           <img
             style={{ height: "100px", width: "70px", borderRadius: "10%" }}
-            src={themeData?.[currentTheme]?.challengeTitleImgUrl || imageUrl}
+            src={themeData?.[currentTheme]?.challengeTitleImgUrl || imgUrl}
           />
         </div>
         <div className="flex flex-col pl-4">
@@ -92,7 +92,7 @@ export const Challenge = () => {
     </>
   );
 
-  if (isLoading || !imageUrl) return <Loading />;
+  if (isLoading || !imgUrl) return <Loading />;
 
   if (hasAnsweredChallenge) {
     return (

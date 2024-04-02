@@ -16,7 +16,7 @@ const Clue = () => {
   const navigate = useNavigate();
   const [cluesFound, setCluesFound] = useState<string>("");
   const [totalClues, setTotalClues] = useState<string>("");
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const [imgUrl, setImgUrl] = useState<string>("");
   const [contentImgUrl, setContentImgUrl] = useState<string>("");
   const [text, setText] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -30,11 +30,11 @@ const Clue = () => {
     backendAPI
       .get(`/clue`)
       .then((result: any) => {
-        const { success, cluesFound, totalClues, imageUrl, contentImgUrl, text, theme } = result.data;
+        const { success, cluesFound, totalClues, imgUrl, contentImgUrl, text, theme } = result.data;
         if (success) {
           setCluesFound(cluesFound);
           setTotalClues(totalClues);
-          setImageUrl(imageUrl);
+          setImgUrl(imgUrl);
           setContentImgUrl(contentImgUrl);
           setText(text);
           setIsLoading(false);
@@ -59,7 +59,7 @@ const Clue = () => {
         <img
           className="mx-auto rounded-xl mb-4"
           style={{ maxWidth: "100%", maxHeight: "400px" }}
-          src={imageUrl}
+          src={imgUrl}
           alt="Clue"
         />
         <h3 className="text-2xl font-bold mb-2">Congratulations!</h3>

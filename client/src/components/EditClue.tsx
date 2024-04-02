@@ -81,7 +81,7 @@ export const EditClue = ({
   ];
 
   const navigate = useNavigate();
-  const [selectedImage, setSelectedImage] = useState(clue?.imageUrl || fixedClueImages[0].image);
+  const [selectedImage, setSelectedImage] = useState(clue?.imgUrl || fixedClueImages[0].image);
   const [contentImgUrl, setContentImgUrl] = useState(clue?.contentImgUrl);
   const [text, setText] = useState(clue?.text);
   const [isSaving, setIsSaving] = useState(false);
@@ -91,7 +91,7 @@ export const EditClue = ({
       const result = await backendAPI.post(`/update-clue`, {
         assetId: clue?.id,
         text,
-        imageUrl: selectedImage,
+        imgUrl: selectedImage,
         contentImgUrl,
       });
       if (onCluesUpdated) {

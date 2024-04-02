@@ -11,7 +11,6 @@ export const initializeWorldDataObject = async ({
   world,
 }: {
   credentials: Credentials;
-  keyAssetId: string;
   sceneDropId: string;
   world: any;
 }) => {
@@ -20,19 +19,25 @@ export const initializeWorldDataObject = async ({
 
     const payload = {
       sceneDropId,
-      keyAssetId,
       buildableAssetUniqueName: "",
-      challenge: { answer: "", text: "", imageUrl: "" },
+      challenge: { answer: "", text: "", imgUrl: "" },
       clues: {},
       progress: {},
     };
 
     if (!world.dataObject?.scenes || !world.dataObject?.scenes?.[sceneDropId]) {
-      if (keyAssetId) {
-        const keyAsset = await DroppedAsset.get(keyAssetId, world.urlSlug, { credentials });
-        payload.challenge.imageUrl = keyAsset.topLayerURL;
-        payload.clues = await getClueDroppedAssets({ uniqueName: `${keyAsset.uniqueName}_robots_clue`, world });
-      }
+      const droppedAsset = await DroppedAsset.get(credentials?.assetId, world.urlSlug, { credentials });
+      await droppedAsset.fetchDataObject();
+
+      const { answer, text } = droppedAsset.dataObject?.challenge;
+
+      payload.theme = droppedAsset?.dataObject?.theme;
+      payload.challenge = { answer, text };
+      payload.challenge.imgUrl = `https://sdk-scavenger-hunt.s3.amazonaws.com/${droppedAsset?.dataObject?.theme}/IMG_Start.png`;
+      payload.clues = await getClueDroppedAssets({
+        uniqueName: `ScavengerHunt_${droppedAsset?.dataObject?.theme}_clue`,
+        world,
+      });
     }
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;

@@ -35,7 +35,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
     return res.send({
       success: true,
       text: clue.text || "test clue text",
-      imageUrl: clue.imageUrl || "",
+      imgUrl: clue.imgUrl || "",
       contentImgUrl: clue.contentImgUrl || "",
       totalClues: Object.keys(clues).length,
       cluesFound: cluesFound.length,
