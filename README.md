@@ -23,12 +23,11 @@ This boilerplate is meant to give you a simple starting point to build new featu
 
 Run `npm install` or `yarn install` on the root directory.
 
-Notes: 
+Notes:
 
 1. Root package.json is for general/shared dependencies.
-2. Client and Server package.json files are for app specific dependencies. 
+2. Client and Server package.json files are for app specific dependencies.
 3. We DO want to keep the ts-config files seperate, given that we might have different needs for client and server.
-
 
 ### Run in Docker
 
@@ -50,3 +49,34 @@ PRIVATE_KEY=enteryoursecret
 
 [Topia Dev Account Dashboard](https://dev.topia.io/t/dashboard/integrations)
 [Topia Production Account Dashboard](https://topia.io/t/dashboard/integrations)
+
+Example of what to put inside of each droppedAsset dataObject
+
+```json
+{
+  "challenge": {
+    "imgUrl": "IMG_Start.png",
+    "answer": "yes",
+    "text": "Did the challenge finish?"
+  },
+  "theme": "robot",
+  "clues": [
+    {
+      "contentImgUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/65546505c732cb3fd47036ad_download%2520(15)-p-800.png",
+      "text": "Clue 1"
+    },
+    {
+      "contentImgUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554650b477b93838a94d5c5_ANALYTICS%20APPROVED%20IMAGE.png",
+      "text": "Clue 2"
+    },
+    {
+      "contentImgUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554652ab384111406b994f1_why%2520image-p-800.png",
+      "text": "Clue 3"
+    },
+    {
+      "contentImgUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554652ab384111406b994f1_why%2520image-p-800.png",
+      "text": "Clue 4"
+    }
+  ]
+}
+```

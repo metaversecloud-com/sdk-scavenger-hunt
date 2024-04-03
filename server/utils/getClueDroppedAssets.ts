@@ -23,6 +23,5 @@ export const getClueDroppedAssets = async ({ uniqueName, world }: { uniqueName: 
       functionName: "resetClues",
       message: "Error resetting clues on world data object",
     });
-    return await world.fetchDataObject();
   }
 };

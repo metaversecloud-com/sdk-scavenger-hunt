@@ -26,7 +26,7 @@ export const handleMoveToClueAsset = async (req: Request, res: Response) => {
       success: true,
     });
   } catch (error) {
-    errorHandler({
+    return errorHandler({
       error,
       functionName: "handleMoveToClueAsset",
       message: "Error moving to clue.",

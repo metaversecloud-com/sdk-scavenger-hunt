@@ -6,7 +6,6 @@ import { DroppedAsset } from "./topiaInit.js";
 
 export const initializeWorldDataObject = async ({
   credentials,
-  keyAssetId,
   sceneDropId,
   world,
 }: {
@@ -65,6 +64,5 @@ export const initializeWorldDataObject = async ({
       functionName: "initializeWorldDataObject",
       message: "Error initializing world data object",
     });
-    return await world.fetchDataObject();
   }
 };

@@ -12,13 +12,12 @@ export const handleGetConfiguration = async (req: Request, res: Response) => {
 
     return res.json({ success: true, clues, challenge, theme });
   } catch (error) {
-    errorHandler({
+    return errorHandler({
       error,
       functionName: "handleGetConfiguration",
       message: "Error loading configuration.",
       req,
       res,
     });
-    return res.json({ clues: [] });
   }
 };

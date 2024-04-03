@@ -36,7 +36,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     }
     return res.json({ success: true, isCorrect: true });
   } catch (error) {
-    errorHandler({
+    return errorHandler({
       error,
       functionName: "handleAnswerChallenge",
       message: "Error answering challenge.",

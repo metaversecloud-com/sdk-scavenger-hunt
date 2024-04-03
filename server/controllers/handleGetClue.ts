@@ -43,7 +43,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
       theme,
     });
   } catch (error) {
-    errorHandler({
+    return errorHandler({
       error,
       functionName: "handleGetClue",
       message: "Error loading clue.",
