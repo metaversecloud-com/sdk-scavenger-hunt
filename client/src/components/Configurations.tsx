@@ -22,7 +22,7 @@ export const Configurations = () => {
   const [buildableAssetUniqueName, setBuildableAssetUniqueName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isEditClueVisible, setIsEditClueVisible] = useState(false);
   const [selectedClue, setSelectedClue] = useState(null);
   const [allWalkButtonsDisabled, setAllWalkButtonsDisabled] = useState(false);
 
@@ -73,11 +73,11 @@ export const Configurations = () => {
 
   const handleOpenClueModal = (clue: any) => {
     setSelectedClue(clue);
-    setIsModalVisible(true);
+    setIsEditClueVisible(true);
   };
   const handleCloseClueModal = () => {
     setSelectedClue(null);
-    setIsModalVisible(false);
+    setIsEditClueVisible(false);
   };
 
   const reloadClues = () => {
@@ -137,6 +137,11 @@ export const Configurations = () => {
 
   if (isLoading) return <Loading />;
 
+  console.log("isEditClueVisible", isEditClueVisible, selectedClue);
+  if (isEditClueVisible && selectedClue) {
+    return <EditClue clue={selectedClue} onCloseModal={handleCloseClueModal} onCluesUpdated={reloadClues} />;
+  }
+
   return (
     <>
       <p className="mb-4">
@@ -187,10 +192,6 @@ export const Configurations = () => {
           Reset Clues
         </button>
       </div>
-
-      {isModalVisible && selectedClue && (
-        <EditClue clue={selectedClue} onCloseModal={handleCloseClueModal} onCluesUpdated={reloadClues} />
-      )}
     </>
   );
 };

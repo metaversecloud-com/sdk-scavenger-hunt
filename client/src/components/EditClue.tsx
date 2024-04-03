@@ -134,8 +134,8 @@ export const EditClue = ({
   };
 
   return (
-    <div className="modal-container visible" style={{ overflow: "auto" }}>
-      <div className="modal" style={{ textAlign: "left", top: "100%" }}>
+    <div className="" style={{ overflow: "auto" }}>
+      <div className="" style={{ textAlign: "left", top: "100%" }}>
         <h3>Clue Configuration</h3>
         <p>
           You can change the clue text and image it shows in the drawer. Click on the Save button at the bottom of the
@@ -164,7 +164,7 @@ export const EditClue = ({
           <p>Pick an image for this clue.</p>
           {fixedClueImages?.map((item, index) => <ClueImages key={index} item={item} />)}
 
-          <div className="actions">
+          <div className="actions" style={{ display: "flex", columnGap: "7px" }}>
             <button className="btn-outline" onClick={onCloseModal}>
               Close
             </button>
