@@ -14,8 +14,6 @@ export const initializeWorldDataObject = async ({
   world: any;
 }) => {
   try {
-    await world.fetchDataObject();
-
     const payload = {
       sceneDropId,
       buildableAssetUniqueName: "",
