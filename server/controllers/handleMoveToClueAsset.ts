@@ -13,8 +13,11 @@ export const handleMoveToClueAsset = async (req: Request, res: Response) => {
       return res.status(400).send({ success: false, message: "The clue asset id is missing." });
     }
 
-    const droppedAsset = (await DroppedAsset.get(clue.id, urlSlug, { credentials })) as DroppedAssetType;
-    const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
+    const promises = [
+      DroppedAsset.get(clue.id, urlSlug, { credentials }),
+      Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials }),
+    ];
+    const [droppedAsset, visitor] = (await Promise.all(promises)) as [DroppedAssetType, any];
 
     if (!droppedAsset?.position) {
       return res.status(400).send({ success: false, message: "The clue asset was not found" });
