@@ -7,9 +7,8 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, profileId, sceneDropId, username } = credentials;
 
-    const { isAdmin } = await getProfile(credentials);
-
-    const { dataObject, world } = await getWorldDataObject({ credentials, keyAssetId: assetId, sceneDropId });
+    const promises = [getProfile(credentials), getWorldDataObject({ credentials, keyAssetId: assetId, sceneDropId })];
+    const [{ isAdmin }, { world, dataObject }] = await Promise.all(promises);
     const { progress, challenge, clues, theme } = dataObject as DataObjectType;
 
     let hasCompletedClues = false,
