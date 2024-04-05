@@ -74,6 +74,26 @@ export const Challenge = () => {
       .finally(() => setAnswering(false));
   };
 
+  const getAnswerQuestionDescription = () => {
+    if (theme === "robot") {
+      return "Answer the final question and unlock a new emote!";
+    }
+    if (theme === "national-park") {
+      return "Answer the final question and see what happens!";
+    }
+    return "Answer the final question and see what happens!";
+  };
+
+  const getExplorationText = () => {
+    if (theme === "robot") {
+      return "Explore the world to find all of the clues! Once you’ve found all of the clues, come back here to answer the question and unlock a new emote!";
+    }
+    if (theme === "national-park") {
+      return "Explore the world to find all of the clues! Once you’ve found all of the clues, come back here to answer the question.";
+    }
+    return "Explore the world to find all of the clues! Once you’ve found all of the clues, come back here to answer the question.";
+  };
+
   const getHeader = () => (
     <>
       {isAdmin && <Header activeTab="challenge" />}
@@ -116,7 +136,7 @@ export const Challenge = () => {
         {hasCompletedClues ? (
           <div className="flex flex-col">
             <h3>Nice Job! </h3>
-            <p>Answer the final question and unlock a new emote!</p>
+            <p>{getAnswerQuestionDescription()}</p>
             <div className="mt-6">
               <p>{question}</p>
             </div>
@@ -141,10 +161,7 @@ export const Challenge = () => {
           <div className="flex flex-col">
             <div className="mt-6">
               <div>
-                <p>
-                  Explore the world to find all of the clues! Once you’ve found all of the clues, come back here to
-                  answer the question and unlock a new emote!
-                </p>
+                <p>{getExplorationText()}</p>
               </div>
             </div>
           </div>
