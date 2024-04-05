@@ -107,7 +107,7 @@ export const Configurations = () => {
 
   const Clue = ({ item }: { item: any }) => {
     const { assetId, imgUrl, text } = item;
-    const truncatedText = text?.length > 30 ? `${text.substring(0, 30)}...` : text;
+    const truncatedText = text?.length > 18 ? `${text.substring(0, 15)}...` : text;
     return (
       <div className="card small mt-4 cursor-pointer" key={assetId} onClick={() => handleOpenClueModal(item)}>
         <div className="card-image" style={{ height: "70px", width: "70px", minWidth: "70px" }}>
