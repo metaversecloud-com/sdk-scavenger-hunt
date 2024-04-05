@@ -75,7 +75,9 @@ const Clue = () => {
           src={contentImgUrl}
           alt="Final Challenge"
         />
-        <div style={{ textAlign: "center" }}>{text}</div>
+        <div style={{ textAlign: "center" }}>
+          <p>{text}</p>
+        </div>
       </div>
       {cluesFound === totalClues ? (
         <div className="mb-8">

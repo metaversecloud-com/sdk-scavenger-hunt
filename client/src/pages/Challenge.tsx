@@ -86,7 +86,9 @@ export const Challenge = () => {
         </div>
         <div className="flex flex-col pl-4">
           <h3 style={{ marginBottom: "0px" }}>{themeData?.[currentTheme]?.title}</h3>
-          <div>Scavenger Hunt</div>
+          <div>
+            <p>Scavenger Hunt</p>
+          </div>
         </div>
       </div>
     </>
@@ -114,8 +116,10 @@ export const Challenge = () => {
         {hasCompletedClues ? (
           <div className="flex flex-col">
             <h3>Nice Job! </h3>
-            <p>Answer the final question and see what happens!!</p>
-            <div className="mt-6">{question}</div>
+            <p>Answer the final question and unlock a new emote!</p>
+            <div className="mt-6">
+              <p>{question}</p>
+            </div>
             <div className="mt-2">
               <label>Answer</label>
               <input
@@ -136,7 +140,12 @@ export const Challenge = () => {
         ) : (
           <div className="flex flex-col">
             <div className="mt-6">
-              <div>Find all the clues, and then come back to answer the final question!</div>
+              <div>
+                <p>
+                  Explore the world to find all of the clues! Once you’ve found all of the clues, come back here to
+                  answer the question and unlock a new emote!
+                </p>
+              </div>
             </div>
           </div>
         )}

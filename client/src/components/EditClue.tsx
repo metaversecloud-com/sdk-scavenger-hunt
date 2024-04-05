@@ -110,32 +110,18 @@ export const EditClue = ({
     const { id, image, text } = item;
     return (
       <div
-        className="card small mt-4 cursor-pointer"
         key={id}
         onClick={() => setSelectedImage(image)}
-        style={{
-          border: selectedImage === image ? "2px solid #555" : "inherit",
-        }}
+        className={`clue-image ${selectedImage === image ? "selected" : ""}`}
       >
-        <div
-          className="card-image"
-          style={{
-            height: "70px",
-            width: "70px",
-            minWidth: "70px",
-            overflow: "hidden",
-          }}
-        >
-          <img src={image} />
-        </div>
-        <div className="card-title">{text}</div>
+        <img src={image} alt={text} />
       </div>
     );
   };
 
   return (
-    <div className="" style={{ overflow: "auto" }}>
-      <div className="" style={{ textAlign: "left", top: "100%" }}>
+    <div style={{ overflow: "auto" }}>
+      <div style={{ textAlign: "left", top: "100%" }}>
         <h3>Clue Configuration</h3>
         <p>
           You can change the clue text and image it shows in the drawer. Click on the Save button at the bottom of the
@@ -159,12 +145,14 @@ export const EditClue = ({
           value={contentImgUrl}
         />
 
-        <div className="mt-6">
+        <div style={{ marginTop: "24px" }}>
           <h4>Asset Image</h4>
           <p>Pick an image for this clue.</p>
-          {fixedClueImages?.map((item, index) => <ClueImages key={index} item={item} />)}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+            {fixedClueImages?.map((item, index) => <ClueImages key={index} item={item} />)}
+          </div>
 
-          <div className="actions" style={{ display: "flex", columnGap: "7px" }}>
+          <div style={{ display: "flex", columnGap: "7px", marginTop: "16px" }}>
             <button className="btn-outline" onClick={onCloseModal}>
               Close
             </button>
