@@ -17,19 +17,28 @@ export const initializeWorldDataObject = async ({
     const payload = {
       sceneDropId,
       buildableAssetUniqueName: "",
-      challenge: { answer: "", text: "", imgUrl: "" },
+      challenge: {
+        answer: "",
+        text: "",
+        imgUrl: "",
+      },
       clues: {},
       progress: {},
     };
 
     if (!world.dataObject?.scenes || !world.dataObject?.scenes?.[sceneDropId]) {
-      const droppedAsset = await DroppedAsset.get(credentials?.assetId, world.urlSlug, { credentials });
+      const droppedAsset = await DroppedAsset.get(credentials?.assetId, world.urlSlug, {
+        credentials,
+      });
       await droppedAsset.fetchDataObject();
 
-      const { answer, text } = droppedAsset.dataObject?.challenge;
+      const challenge = droppedAsset.dataObject?.challenge;
+      if (challenge) {
+        const { answer, text } = challenge;
+        payload.challenge = { answer, text };
+      }
 
       payload.theme = droppedAsset?.dataObject?.theme;
-      payload.challenge = { answer, text };
       payload.challenge.imgUrl = `https://sdk-scavenger-hunt.s3.amazonaws.com/${droppedAsset?.dataObject?.theme}/IMG_Start.png`;
       payload.clues = await getClueDroppedAssets({
         uniqueName: `ScavengerHunt_${droppedAsset?.dataObject?.theme}_clue`,
@@ -42,7 +51,9 @@ export const initializeWorldDataObject = async ({
       await world.setDataObject(
         {
           scenes: {
-            [sceneDropId]: { ...payload },
+            [sceneDropId]: {
+              ...payload,
+            },
           },
         },
         { lock: { lockId, releaseLock: true } },
@@ -50,11 +61,14 @@ export const initializeWorldDataObject = async ({
     } else if (!world.dataObject?.scenes?.[sceneDropId]) {
       await world.updateDataObject(
         {
-          [`scenes.${sceneDropId}`]: { ...payload },
+          [`scenes.${sceneDropId}`]: {
+            ...payload,
+          },
         },
         { lock: { lockId, releaseLock: true } },
       );
     }
+
     return;
   } catch (error) {
     errorHandler({
