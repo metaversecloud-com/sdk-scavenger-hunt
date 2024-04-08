@@ -82,7 +82,8 @@ const Clue = () => {
       {cluesFound === totalClues ? (
         <div className="mb-8">
           <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mt-8" role="alert">
-            <p>Congratulations! You have unlocked the final challenge question.</p>
+            <p>Congratulations!</p>
+            <p>You have unlocked the final challenge question.</p>
             <p>Please return to the first sign to continue.</p>
           </div>
         </div>
