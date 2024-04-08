@@ -7,6 +7,10 @@ export const getCredentials = (query: any): Credentials => {
     throw new Error(`Missing required body parameters: ${missingFields.join(", ")}`);
   }
 
+  if (process.env.INTERACTIVE_KEY !== query.interactivePublicKey) {
+    throw new Error("Provided public key does not match");
+  }
+
   return {
     assetId: query.assetId as string,
     interactiveNonce: query.interactiveNonce as string,

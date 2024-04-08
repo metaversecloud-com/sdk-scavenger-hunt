@@ -93,16 +93,18 @@ export const Configurations = () => {
   };
 
   const walkUpToClueAsset = async (clue: any) => {
-    try {
-      setAllWalkButtonsDisabled(true);
-      const result = await backendAPI.post(`/walk-up-to-clue-asset`, { clue });
-      if (result?.data?.success) {
+    setAllWalkButtonsDisabled(true);
+    backendAPI
+      .post(`/walk-up-to-clue-asset`, { clue })
+      .then((result) => {
+        if (result?.data?.success) {
+          setAllWalkButtonsDisabled(false);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
         setAllWalkButtonsDisabled(false);
-      }
-    } catch (error) {
-      console.error(error);
-      setAllWalkButtonsDisabled(false);
-    }
+      });
   };
 
   const Clue = ({ item }: { item: any }) => {
@@ -137,7 +139,6 @@ export const Configurations = () => {
 
   if (isLoading) return <Loading />;
 
-  console.log("isEditClueVisible", isEditClueVisible, selectedClue);
   if (isEditClueVisible && selectedClue) {
     return <EditClue clue={selectedClue} onCloseModal={handleCloseClueModal} onCluesUpdated={reloadClues} />;
   }

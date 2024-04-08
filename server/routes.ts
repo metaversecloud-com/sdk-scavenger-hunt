@@ -1,7 +1,6 @@
 import express from "express";
 import {
   handleAnswerChallenge,
-  handleCheckInteractiveCredentials,
   handleGetChallenge,
   handleGetConfiguration,
   handleGetClue,
@@ -30,8 +29,6 @@ router.get("/system/health", (req, res) => {
     },
   });
 });
-
-router.get("/system/interactive-credentials", handleCheckInteractiveCredentials);
 
 router.get("/progress", handleGetProgress);
 router.get("/config", handleGetConfiguration);

@@ -1,6 +1,4 @@
-export * from "./handleCheckInteractiveCredentials.js";
 export * from "./handleAnswerChallenge.js";
-export * from "./handleCheckInteractiveCredentials.js";
 export * from "./handleGetProgress.js";
 export * from "./handleGetChallenge.js";
 export * from "./handleGetConfiguration.js";
