@@ -1,11 +1,16 @@
 import express from "express";
-import { loadClue } from "./controllers/clue.js";
-import { loadChallenge } from "./controllers/challenge.js";
-import { loadConfiguration } from "./controllers/admin/config.js";
-import { loadAnalytics } from "./controllers/admin/analytics.js";
-import { loadClueWithId, updateClue } from "./controllers/admin/clue.js";
-import { updateChallenge } from "./controllers/admin/updateChallenge.js";
-import { answerChallenge } from "./controllers/challenge.js";
+import {
+  handleAnswerChallenge,
+  handleGetChallenge,
+  handleGetConfiguration,
+  handleGetClue,
+  handleGetProgress,
+  handleResetClues,
+  handleUpdateChallenge,
+  handleUpdateClue,
+  handleMoveToClueAsset,
+} from "./controllers/index.js";
+import { getVersion } from "./utils/getVersion.js";
 
 const router = express.Router();
 
@@ -13,16 +18,28 @@ router.get("/", (req, res) => {
   res.json({ message: "Hello from server!" });
 });
 
-// Admin Routes
-router.get("/admin/config", loadConfiguration);
-router.get("/admin/analytics", loadAnalytics);
-router.get("/admin/clue/:id", loadClueWithId);
-router.post("/admin/updateChallenge", updateChallenge);
-router.post("/admin/updateClue", updateClue);
+router.get("/system/health", (req, res) => {
+  return res.json({
+    appVersion: getVersion(),
+    status: "OK",
+    envs: {
+      NODE_ENV: process.env.NODE_ENV,
+      INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN,
+      INTERACTIVE_KEY: process.env.INTERACTIVE_KEY,
+    },
+  });
+});
 
-// User Routes
-router.post("/answerChallenge", answerChallenge);
-router.get("/challenge", loadChallenge);
-router.get("/clue/:id", loadClue);
+router.get("/progress", handleGetProgress);
+router.get("/config", handleGetConfiguration);
+
+router.get("/challenge", handleGetChallenge);
+router.post("/update-challenge", handleUpdateChallenge);
+router.post("/answer-challenge", handleAnswerChallenge);
+
+router.get("/clue", handleGetClue);
+router.post("/update-clue", handleUpdateClue);
+router.post("/reset-clues", handleResetClues);
+router.post("/walk-up-to-clue-asset", handleMoveToClueAsset);
 
 export default router;

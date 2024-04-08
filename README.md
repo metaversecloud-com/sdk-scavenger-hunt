@@ -6,33 +6,28 @@ This boilerplate is meant to give you a simple starting point to build new featu
 
 # NOTES
 
-- This repository uses NPM Workspaces
+- This repository uses (NPM Workspaces)[https://docs.npmjs.com/cli/v7/using-npm/workspaces]
 - We use Typescript
 - Express for Server app
 - Vite based React client app
 
+## Implementation Notes
+
+- This application leverages `sceneDropId` to manage dropped assets and defaults to "ScavengerHunt" if one is not found.
+- The key asset should always have the unique name "ScavengerHunt" regardless of how many instances are placed in world.
+- If the instance of the application should allow users to drop a leaf upon completion then an asset with the unique name "ScavengerHuntBuildableAsset" must be included in the scene.
+
 ## Initial Setup
-
-### Setup the npm workspace 
-
-After you have cloned the repository, locate `name` key in the three `package.json` files. Then change the values as the following: 
-
-1. Root file: `[app-name]` Example: `awesome-rnd-magic`
-2. `./server/package.json`: `@[app-name]/server` Example: `@awesome-rnd-magic/server`
-3. `./client/package.json`: `@[app-name]/client` Example: `@awesome-rnd-magic/client`
-
-If you want to learn more about workspaces https://docs.npmjs.com/cli/v7/using-npm/workspaces
 
 ### Install
 
 Run `npm install` or `yarn install` on the root directory.
 
-Notes: 
+Notes:
 
 1. Root package.json is for general/shared dependencies.
-2. Client and Server package.json files are for app specific dependencies. 
+2. Client and Server package.json files are for app specific dependencies.
 3. We DO want to keep the ts-config files seperate, given that we might have different needs for client and server.
-
 
 ### Run in Docker
 
@@ -54,3 +49,34 @@ PRIVATE_KEY=enteryoursecret
 
 [Topia Dev Account Dashboard](https://dev.topia.io/t/dashboard/integrations)
 [Topia Production Account Dashboard](https://topia.io/t/dashboard/integrations)
+
+Example of what to put inside of each droppedAsset dataObject
+
+```json
+{
+  "challenge": {
+    "imgUrl": "IMG_Start.png",
+    "answer": "yes",
+    "text": "Did the challenge finish?"
+  },
+  "theme": "robot",
+  "clues": [
+    {
+      "contentImgUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/65546505c732cb3fd47036ad_download%2520(15)-p-800.png",
+      "text": "Clue 1"
+    },
+    {
+      "contentImgUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554650b477b93838a94d5c5_ANALYTICS%20APPROVED%20IMAGE.png",
+      "text": "Clue 2"
+    },
+    {
+      "contentImgUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554652ab384111406b994f1_why%2520image-p-800.png",
+      "text": "Clue 3"
+    },
+    {
+      "contentImgUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554652ab384111406b994f1_why%2520image-p-800.png",
+      "text": "Clue 4"
+    }
+  ]
+}
+```

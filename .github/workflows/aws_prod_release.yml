@@ -1,17 +1,15 @@
-name: AWS-Deploy
-
+name: AWS-Build-Push-Prod
 on:
-  push:
-    branches: [dev]
   workflow_dispatch:
+    inputs:
+      version_number:
+        description: "Version number for the Docker image tag"
+        required: true
 env:
   REGISTRY: '368076259134.dkr.ecr.us-east-1.amazonaws.com'
-  REPOSITORY: 'sdk-example'
-  IMAGE_TAG: ${{ github.event.repository.name }}
-  GCP_PROJECT_ID: "topia-gcp" #${{ secrets.GCP_PROJECT_ID }}
-  GCP_ARTIFACTORY: 'us-west1-docker.pkg.dev'
-  GCP_REPOSITORY: 'sdk-apps'
-        
+  REPOSITORY: 'sdk-prod'
+  IMAGE_TAG: ${{ github.event.repository.name }}-${{ github.event.inputs.version_number }}
+              
 permissions:
   id-token: write # This is required for requesting the JWT
   contents: read  # This is required for actions/checkout
@@ -62,7 +60,7 @@ jobs:
         with:
           images: ${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY }}
           tags: |
-            type=raw,value=${{ github.event.repository.name }}
+            type=raw,value=${{ github.event.repository.name }}-${{ github.event.inputs.version_number }}
 
       - name: Build and  tag
         run: |
@@ -71,7 +69,3 @@ jobs:
       - name: push docker image to Amazon ECR
         run: |
           docker push ${{ steps.metadata.outputs.tags }}
-  
-      - name: Publish
-        run: |
-          aws ecs update-service --service topia-dev-svghunt0 --force-new-deployment --cluster topia-dev-sdk-apps
