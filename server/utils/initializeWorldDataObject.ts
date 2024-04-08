@@ -47,22 +47,13 @@ export const initializeWorldDataObject = async ({
     }
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
-    if (!world.dataObject || !world.dataObject?.scenes) {
+    if (!world.dataObject || !world.dataObject?.scenes?.[sceneDropId]) {
       await world.setDataObject(
         {
           scenes: {
             [sceneDropId]: {
               ...payload,
             },
-          },
-        },
-        { lock: { lockId, releaseLock: true } },
-      );
-    } else if (!world.dataObject?.scenes?.[sceneDropId]) {
-      await world.updateDataObject(
-        {
-          [`scenes.${sceneDropId}`]: {
-            ...payload,
           },
         },
         { lock: { lockId, releaseLock: true } },
