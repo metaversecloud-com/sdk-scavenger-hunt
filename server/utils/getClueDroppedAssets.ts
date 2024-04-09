@@ -6,13 +6,12 @@ export const getClueDroppedAssets = async ({ uniqueName, world }: { uniqueName: 
 
     const droppedAssets = await world.fetchDroppedAssetsWithUniqueName({ uniqueName });
     await droppedAssets?.[0]?.fetchDataObject();
-    const contentImgUrlArray = droppedAssets?.[0]?.dataObject?.clues?.map((clue) => clue.contentImgUrl);
     for (const index in droppedAssets) {
       clues[droppedAssets[index].id] = {
         id: droppedAssets[index].id,
         imgUrl: droppedAssets[index].topLayerURL || droppedAssets[index].bottomLayerURL,
-        text: `Clue ${parseInt(index) + 1}`,
-        contentImgUrl: contentImgUrlArray?.[index],
+        text: droppedAssets?.[0]?.dataObject?.clues?.[index]?.text || `Clue ${parseInt(index) + 1}`,
+        contentImgUrl: droppedAssets?.[0]?.dataObject?.clues?.[index]?.contentImgUrl,
       };
     }
 
