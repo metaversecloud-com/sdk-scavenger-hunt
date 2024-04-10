@@ -68,13 +68,18 @@ export const EditClue = ({
           screen to save the configuration.
         </p>
 
-        <label>Clue</label>
-        <input
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+        <label>Clue Text</label>
+        <textarea
+          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
             setText(event.target.value);
           }}
-          type="textarea"
           value={text}
+          style={{
+            resize: "none",
+            height: "100px",
+            padding: "10px",
+            border: "1px solid #ccc",
+          }}
         />
 
         <label>Clue Image URL</label>

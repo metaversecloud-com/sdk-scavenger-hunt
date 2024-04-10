@@ -11,6 +11,8 @@ import { backendAPI } from "@/utils/backendAPI";
 import { GlobalDispatchContext } from "@/context/GlobalContext";
 import { SET_THEME } from "@/context/types";
 
+import { TOPIA_WORKERS_URL } from "@/context/constants";
+
 const Clue = () => {
   const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
@@ -72,7 +74,7 @@ const Clue = () => {
         <img
           className="mx-auto rounded-xl mb-4"
           style={{ maxWidth: "100%", maxHeight: "400px" }}
-          src={contentImgUrl}
+          src={contentImgUrl || TOPIA_WORKERS_URL}
           alt="Final Challenge"
         />
         <div style={{ textAlign: "center" }}>

@@ -60,7 +60,19 @@ export function getFixedClueImages(theme: string) {
       image: `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_12.png`,
       text: "Clue image twelve",
     },
+    {
+      id: 12,
+      image: `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_13.png`,
+      text: "Clue image twelve",
+    },
+    {
+      id: 13,
+      image: `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_14.png`,
+      text: "Clue image twelve",
+    },
   ];
 }
+
+export const TOPIA_WORKERS_URL = "https://topiaimages.s3.us-west-1.amazonaws.com/under-construction.png";
 
 export const NATIONAL_PARK = "national-park";
