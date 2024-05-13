@@ -97,14 +97,14 @@ export const Challenge = () => {
   const getHeader = () => (
     <>
       {isAdmin && <Header activeTab="challenge" />}
-      <div className="container px-6 flex items-center justify-start">
-        <div className="flex flex-col mt-6">
+      <div className="container px-6 justify-start">
+        <div className="mt-6" style={{ textAlign: "center", margin: "0 auto" }}>
           <img
-            style={{ height: "100px", width: "70px", borderRadius: "10%" }}
+            style={{ width: "130px", borderRadius: "10%", textAlign: "center", margin: "0 auto" }}
             src={themeData?.[currentTheme]?.challengeTitleImgUrl || imgUrl}
           />
         </div>
-        <div className="flex flex-col pl-4">
+        <div className="pl-4" style={{ textAlign: "center", margin: "0 auto" }}>
           <h3 style={{ marginBottom: "0px" }}>{themeData?.[currentTheme]?.title}</h3>
           <div>
             <p>Scavenger Hunt</p>
@@ -122,7 +122,7 @@ export const Challenge = () => {
         {getHeader()}
         <div className="container p-6 flex items-center justify-start">
           <div className="flex flex-col">
-            <h5>{themeData?.[theme]?.correctAnswerCongratulations}</h5>
+            <h5>{themeData?.[theme]?.correctAnswerCongratulations || "Nice one! You unlocked a new emote!"}</h5>
           </div>
         </div>
       </>

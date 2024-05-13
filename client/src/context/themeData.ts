@@ -10,4 +10,14 @@ export const themeData: ThemeData = {
     correctAnswerCongratulations: "Nice one! You unlocked a new emote!",
     challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/robot/IMG_Start.png",
   },
+  "space": {
+    title: "Space",
+    correctAnswerCongratulations: "Nice one! You unlocked a new emote!",
+    challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/space/IMG_Start.png",
+  },
+  "bird": {
+    title: "Birds",
+    correctAnswerCongratulations: "Nice one! You unlocked a new emote!",
+    challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/space/IMG_Start.png",
+  },
 };

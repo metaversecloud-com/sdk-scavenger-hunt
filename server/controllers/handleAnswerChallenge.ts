@@ -30,6 +30,29 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
         await visitor.grantExpression({
           name: `scavengerHunt-robot-1`,
         });
+        await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
+      } catch (error) {
+        console.error("Error granting expression to visitor", error);
+      }
+    } else if (theme === "space") {
+      const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
+
+      try {
+        await visitor.grantExpression({
+          name: `scavengerHunt-space-1`,
+        });
+        await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
+      } catch (error) {
+        console.error("Error granting expression to visitor", error);
+      }
+    } else if (theme === "bird") {
+      const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
+
+      try {
+        await visitor.grantExpression({
+          name: `scavengerHunt-bird-1`,
+        });
+        await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
       } catch (error) {
         console.error("Error granting expression to visitor", error);
       }

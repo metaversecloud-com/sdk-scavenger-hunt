@@ -10,6 +10,7 @@ import { backendAPI } from "@/utils/backendAPI";
 // context
 import { GlobalDispatchContext } from "@/context/GlobalContext";
 import { SET_THEME } from "@/context/types";
+import { TOPIA_WORKERS_URL } from "@/context/constants";
 
 import { TOPIA_WORKERS_URL } from "@/context/constants";
 
@@ -38,7 +39,7 @@ const Clue = () => {
           setTotalClues(totalClues);
           setImgUrl(imgUrl);
           setContentImgUrl(contentImgUrl);
-          setText(text);
+          setText(text.replace(/\\n/g, "\n"));
           setIsLoading(false);
           dispatch!({
             type: SET_THEME,
@@ -77,7 +78,7 @@ const Clue = () => {
           src={contentImgUrl || TOPIA_WORKERS_URL}
           alt="Final Challenge"
         />
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: "center", whiteSpace: "pre-wrap" }}>
           <p>{text}</p>
         </div>
       </div>
