@@ -12,6 +12,8 @@ import { GlobalDispatchContext } from "@/context/GlobalContext";
 import { SET_THEME } from "@/context/types";
 import { TOPIA_WORKERS_URL } from "@/context/constants";
 
+import { TOPIA_WORKERS_URL } from "@/context/constants";
+
 const Clue = () => {
   const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
