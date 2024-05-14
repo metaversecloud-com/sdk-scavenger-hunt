@@ -25,8 +25,13 @@ router.get("/system/health", (req, res) => {
     status: "OK",
     envs: {
       NODE_ENV: process.env.NODE_ENV,
-      INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN,
-      INTERACTIVE_KEY: process.env.INTERACTIVE_KEY,
+      INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN ? process.env.INSTANCE_DOMAIN : "NOT SET",
+      INTERACTIVE_KEY: process.env.INTERACTIVE_KEY ? process.env.INTERACTIVE_KEY : "NOT SET",
+      API_URL: process.env.API_URL ? process.env.API_URL : "NOT SET",
+      SKIP_PREFLIGHT_CHECK: process.env.SKIP_PREFLIGHT_CHECK ? process.env.SKIP_PREFLIGHT_CHECK : "NOT SET",
+      INTERACTIVE_SECRET: process.env.INTERACTIVE_SECRET ? "SET" : "NOT SET",
+      COMMIT_HASH: process.env.COMMIT_HASH ? process.env.COMMIT_HASH : "NOT SET",
+      IMG_ASSET_ID: process.env.IMG_ASSET_ID ? process.env.IMG_ASSET_ID : "NOT SET",
     },
   });
 });

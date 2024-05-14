@@ -79,7 +79,7 @@ async function dropImageAsset({
   };
   const uniqueName = `ScavengerHunt_${theme}_clue`;
 
-  const asset = await Asset.create(process.env.IMG_ASSET_ID, { credentials });
+  const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", { credentials });
 
   let spawnedDroppedAsset;
   try {
