@@ -71,6 +71,17 @@ export const Configurations = () => {
       .finally(() => setAreButtonsDisabled(false));
   };
 
+  const handleAddNewClue = async () => {
+    setAreButtonsDisabled(true);
+    backendAPI
+      .post(`/add-new-clue`)
+      .then((result: any) => {
+        setClues(result.data.clues);
+      })
+      .catch(() => navigate("*"))
+      .finally(() => setAreButtonsDisabled(false));
+  };
+
   const handleOpenClueModal = (clue: any) => {
     setSelectedClue(clue);
     setIsEditClueVisible(true);
@@ -109,11 +120,15 @@ export const Configurations = () => {
 
   const Clue = ({ item }: { item: any }) => {
     const { assetId, imgUrl, text } = item;
+    let imgSrc = imgUrl;
+    if (imgUrl === "layers/textAssetPreview.png") {
+      imgSrc = "https://topiaimages.s3.us-west-1.amazonaws.com/under-construction.png";
+    }
     const truncatedText = text?.length > 18 ? `${text.substring(0, 15)}...` : text;
     return (
       <div className="card small mt-4 cursor-pointer" key={assetId} onClick={() => handleOpenClueModal(item)}>
         <div className="card-image" style={{ height: "70px", width: "70px", minWidth: "70px" }}>
-          <img src={imgUrl} style={{ maxWidth: "100%", maxHeight: "100%" }} />
+          <img src={imgSrc} style={{ maxWidth: "100%", maxHeight: "100%" }} />
         </div>
         <div className="card-details">
           <h4 className="card-title h4 mb-4">{truncatedText}</h4>
@@ -189,6 +204,9 @@ export const Configurations = () => {
         <h4>Clues</h4>
         <p>These are the configured clues. Click on one to take you to the clue.</p>
         {Object.keys(clues)?.map((item: any, index: any) => <Clue key={index} item={clues[item]} />)}
+        <button className="mt-4" onClick={handleAddNewClue} disabled={areButtonsDisabled}>
+          Add New Clue
+        </button>
         <button className="mt-4" onClick={onResetClues} disabled={areButtonsDisabled}>
           Reset Clues
         </button>

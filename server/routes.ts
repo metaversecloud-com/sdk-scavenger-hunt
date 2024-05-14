@@ -9,6 +9,7 @@ import {
   handleUpdateChallenge,
   handleUpdateClue,
   handleMoveToClueAsset,
+  handleAddNewClue,
 } from "./controllers/index.js";
 import { getVersion } from "./utils/getVersion.js";
 
@@ -41,5 +42,6 @@ router.get("/clue", handleGetClue);
 router.post("/update-clue", handleUpdateClue);
 router.post("/reset-clues", handleResetClues);
 router.post("/walk-up-to-clue-asset", handleMoveToClueAsset);
+router.post("/add-new-clue", handleAddNewClue);
 
 export default router;
