@@ -7,3 +7,4 @@ export * from "./handleResetClues.js";
 export * from "./handleUpdateChallenge.js";
 export * from "./handleUpdateClue.js";
 export * from "./handleMoveToClueAsset.js";
+export * from "./handleAddNewClue.js";
