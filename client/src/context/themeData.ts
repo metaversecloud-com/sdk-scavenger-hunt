@@ -18,6 +18,6 @@ export const themeData: ThemeData = {
   "bird": {
     title: "Birds",
     correctAnswerCongratulations: "Nice one! You unlocked a new emote!",
-    challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/space/IMG_Start.png",
+    challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/bird/IMG_Start.png",
   },
 };
