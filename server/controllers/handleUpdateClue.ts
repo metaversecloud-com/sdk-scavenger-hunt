@@ -12,7 +12,7 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
       credentials,
     });
 
-    await droppedAsset.updateWebImageLayers(imgUrl, "");
+    await droppedAsset.updateWebImageLayers("", imgUrl);
 
     await world.updateDataObject({
       [`scenes.${sceneDropId}.clues.${assetId}`]: { id: assetId, text, imgUrl, contentImgUrl },
