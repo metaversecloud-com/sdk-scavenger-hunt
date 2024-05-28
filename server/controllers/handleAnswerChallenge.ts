@@ -16,9 +16,15 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     if (!isCorrect) return res.json({ isCorrect: false });
 
     if (progress[profileId]) {
-      await world.updateDataObject({ [`scenes.${sceneDropId}.progress.${profileId}.challengeDone`]: true });
+      await world.updateDataObject(
+        { [`scenes.${sceneDropId}.progress.${profileId}.challengeDone`]: true },
+        { analytics: ["completions"], uniqueKey: profileId },
+      );
     } else {
-      await world.updateDataObject({ [`scenes.${sceneDropId}.progress.${profileId}`]: { challengeDone: true } });
+      await world.updateDataObject(
+        { [`scenes.${sceneDropId}.progress.${profileId}`]: { challengeDone: true } },
+        { analytics: ["completions"], uniqueKey: profileId },
+      );
     }
 
     if (theme === "national-park") {
@@ -30,6 +36,9 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
         await visitor.grantExpression({
           name: `scavengerHunt-robot-1`,
         });
+
+        await world.updateDataObject({}, { analytics: [`${theme}-scavengerHunt-robot-1-Unlocked`] });
+
         await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
       } catch (error) {
         console.error("Error granting expression to visitor", error);
@@ -41,6 +50,8 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
         await visitor.grantExpression({
           name: `scavengerHunt-space-1`,
         });
+
+        await world.updateDataObject({}, { analytics: [`${theme}-scavengerHunt-space-1-Unlocked`] });
         await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
       } catch (error) {
         console.error("Error granting expression to visitor", error);
@@ -52,6 +63,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
         await visitor.grantExpression({
           name: `scavengerHunt-bird-1`,
         });
+        await world.updateDataObject({}, { analytics: [`${theme}-scavengerHunt-bird-1-Unlocked`] });
         await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
       } catch (error) {
         console.error("Error granting expression to visitor", error);

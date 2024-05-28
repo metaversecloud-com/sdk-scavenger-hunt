@@ -22,7 +22,11 @@ export const handleResetClues = async (req: Request, res: Response) => {
     const clues = await getClueDroppedAssets({ uniqueName: `${keyAsset.uniqueName}_${theme}_clue`, world });
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
-    await world.updateDataObject({ [`scenes.${sceneDropId}.clues`]: clues }, { lock: { lockId, releaseLock: true } });
+    await world.updateDataObject(
+      { [`scenes.${sceneDropId}.clues`]: clues },
+      { lock: { lockId, releaseLock: true } },
+      { analytics: [`${theme}-resets`] },
+    );
 
     return res.json({ success: true, clues });
   } catch (error) {

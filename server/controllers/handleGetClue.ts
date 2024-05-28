@@ -15,14 +15,17 @@ export const handleGetClue = async (req: Request, res: Response) => {
     let cluesFound = [];
 
     if (!progress[profileId]) {
-      await world.updateDataObject({
-        [`scenes.${sceneDropId}.progress.${profileId}`]: {
-          challengeDone: false,
-          cluesFound: [assetId],
-          profileId,
-          username,
+      await world.updateDataObject(
+        {
+          [`scenes.${sceneDropId}.progress.${profileId}`]: {
+            challengeDone: false,
+            cluesFound: [assetId],
+            profileId,
+            username,
+          },
         },
-      });
+        { analytics: ["starts"], uniqueKey: profileId },
+      );
       cluesFound = [assetId];
     } else {
       cluesFound = progress[profileId].cluesFound;
