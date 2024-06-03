@@ -32,6 +32,15 @@ router.get("/system/health", (req, res) => {
       INTERACTIVE_SECRET: process.env.INTERACTIVE_SECRET ? "SET" : "NOT SET",
       COMMIT_HASH: process.env.COMMIT_HASH ? process.env.COMMIT_HASH : "NOT SET",
       IMG_ASSET_ID: process.env.IMG_ASSET_ID ? process.env.IMG_ASSET_ID : "NOT SET",
+      PARTICLE_EFFECT_NAME_FOR_FINAL_CLUE: process.env.PARTICLE_EFFECT_NAME_FOR_FINAL_CLUE
+        ? process.env.PARTICLE_EFFECT_NAME_FOR_FINAL_CLUE
+        : "NOT SET",
+      PARTICLE_EFFECT_NAME_FOR_GET_CLUE: process.env.PARTICLE_EFFECT_NAME_FOR_GET_CLUE
+        ? process.env.PARTICLE_EFFECT_NAME_FOR_GET_CLUE
+        : "NOT SET",
+      PARTICLE_EFFECT_NAME_FOR_EMOTE_UNLOCK: process.env.PARTICLE_EFFECT_NAME_FOR_EMOTE_UNLOCK
+        ? process.env.PARTICLE_EFFECT_NAME_FOR_EMOTE_UNLOCK
+        : "NOT SET",
     },
   });
 });
