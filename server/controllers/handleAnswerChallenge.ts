@@ -2,12 +2,13 @@ import { Request, Response } from "express";
 import { dropLeaves, errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
 import { DataObjectType } from "../types.js";
 import { Visitor, DroppedAsset } from "../utils/topiaInit.js";
+import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
 
 export const handleAnswerChallenge = async (req: Request, res: Response) => {
   try {
     const answer = req.body.answer.toLowerCase();
     const credentials = getCredentials(req.query);
-    const { assetId, profileId, sceneDropId } = credentials;
+    const { assetId, profileId, sceneDropId, urlSlug } = credentials;
 
     const { dataObject, world } = await getWorldDataObject({ credentials, keyAssetId: assetId, sceneDropId });
     const { buildableAssetUniqueName, challenge, progress, theme } = dataObject as DataObjectType;
@@ -18,14 +19,24 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     if (progress[profileId]) {
       await world.updateDataObject(
         { [`scenes.${sceneDropId}.progress.${profileId}.challengeDone`]: true },
-        { analytics: ["completions"], uniqueKey: profileId },
+        { analytics: [{ analyticName: "completions", uniqueKey: profileId, profileId, urlSlug }] },
       );
     } else {
       await world.updateDataObject(
         { [`scenes.${sceneDropId}.progress.${profileId}`]: { challengeDone: true } },
-        { analytics: ["completions"], uniqueKey: profileId },
+        { analytics: [{ analyticName: "completions", uniqueKey: profileId, profileId, urlSlug }] },
       );
     }
+
+    addNewRowToGoogleSheets({
+      identityId: req?.query?.identityId,
+      displayName: req?.query?.displayName,
+      username: null,
+      appName: "Race",
+      event: "starts",
+    })
+      .then()
+      .catch();
 
     if (theme === "national-park") {
       if (buildableAssetUniqueName) await dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId });
@@ -37,7 +48,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
           name: `scavengerHunt-robot-1`,
         });
 
-        await world.updateDataObject({}, { analytics: [`${theme}-scavengerHunt-robot-1-Unlocked`] });
+        await world.updateDataObject({}, { analytics: [{ analyticName: `${theme}-scavengerHunt-robot-1-Unlocked` }] });
 
         await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
       } catch (error) {
@@ -51,7 +62,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
           name: `scavengerHunt-space-1`,
         });
 
-        await world.updateDataObject({}, { analytics: [`${theme}-scavengerHunt-space-1-Unlocked`] });
+        await world.updateDataObject({}, { analytics: [{ analyticName: `${theme}-scavengerHunt-space-1-Unlocked` }] });
         await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
       } catch (error) {
         console.error("Error granting expression to visitor", error);
@@ -63,7 +74,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
         await visitor.grantExpression({
           name: `scavengerHunt-bird-1`,
         });
-        await world.updateDataObject({}, { analytics: [`${theme}-scavengerHunt-bird-1-Unlocked`] });
+        await world.updateDataObject({}, { analytics: [{ analyticName: `${theme}-scavengerHunt-bird-1-Unlocked` }] });
         await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
       } catch (error) {
         console.error("Error granting expression to visitor", error);

@@ -11,6 +11,8 @@ export type InteractiveParams = {
   urlSlug: string;
   username: string;
   visitorId: string;
+  identityId: string;
+  displayName: string;
 };
 
 export interface InitialState {

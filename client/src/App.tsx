@@ -1,16 +1,5 @@
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  Routes,
-  Route,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { Routes, Route, useNavigate, useSearchParams } from "react-router-dom";
 
 // pages
 import Clue from "./pages/Clue";
@@ -20,11 +9,7 @@ import Error from "./pages/Error";
 
 // context
 import { GlobalDispatchContext } from "./context/GlobalContext";
-import {
-  InteractiveParams,
-  SET_HAS_SETUP_BACKEND,
-  SET_INTERACTIVE_PARAMS,
-} from "./context/types";
+import { InteractiveParams, SET_HAS_SETUP_BACKEND, SET_INTERACTIVE_PARAMS } from "./context/types";
 
 // utils
 import { setupBackendAPI } from "./utils/backendAPI";
@@ -50,6 +35,8 @@ const App = () => {
       urlSlug: searchParams.get("urlSlug") || "",
       username: searchParams.get("username") || "",
       visitorId: searchParams.get("visitorId") || "",
+      identityId: searchParams.get("identityId") || "",
+      displayName: searchParams.get("displayName") || "",
     };
   }, [searchParams]);
 
@@ -64,8 +51,7 @@ const App = () => {
       username,
       visitorId,
     }: InteractiveParams) => {
-      const isInteractiveIframe =
-        visitorId && interactiveNonce && interactivePublicKey && assetId;
+      const isInteractiveIframe = visitorId && interactiveNonce && interactivePublicKey && assetId;
       dispatch!({
         type: SET_INTERACTIVE_PARAMS,
         payload: {
@@ -81,7 +67,7 @@ const App = () => {
         },
       });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const setHasSetupBackend = useCallback(
@@ -91,7 +77,7 @@ const App = () => {
         payload: { hasSetupBackend: success },
       });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const setupBackend = async () => {
@@ -106,7 +92,7 @@ const App = () => {
       setInteractiveParams({
         ...interactiveParams,
       });
-      setHasInteractiveParams(true)
+      setHasInteractiveParams(true);
     }
   }, [interactiveParams, setInteractiveParams]);
 

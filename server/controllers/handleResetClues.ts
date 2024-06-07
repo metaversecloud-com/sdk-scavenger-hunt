@@ -25,7 +25,7 @@ export const handleResetClues = async (req: Request, res: Response) => {
     await world.updateDataObject(
       { [`scenes.${sceneDropId}.clues`]: clues },
       { lock: { lockId, releaseLock: true } },
-      { analytics: [`${theme}-resets`] },
+      { analytics: [{ analyticName: `${theme}-resets`, urlSlug }] },
     );
 
     return res.json({ success: true, clues });
