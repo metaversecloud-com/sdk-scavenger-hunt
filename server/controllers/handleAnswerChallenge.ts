@@ -49,67 +49,13 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       .catch();
 
     const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
+
     if (theme === "national-park") {
       if (buildableAssetUniqueName) {
         await dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId });
       }
-    } else if (theme === "robot") {
-      try {
-        const grantExpressionResult = (await visitor.grantExpression({
-          name: `scavengerHunt-robot-1`,
-        })) as any;
-
-        if (grantExpressionResult?.data?.statusCode === 200) {
-          await world.updateDataObject({}, { analytics: [{ analyticName: `robot-1-emoteUnlocked` }] });
-          await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
-        } else {
-          await visitor.fireToast({
-            groupId: "space",
-            title: "Congratulations 🌟",
-            text: "You completed the challenge!",
-          });
-        }
-      } catch (error) {
-        console.error("Error granting expression to visitor", error);
-      }
-    } else if (theme === "space") {
-      try {
-        const grantExpressionResult = (await visitor.grantExpression({
-          name: `scavengerHunt-space-1`,
-        })) as any;
-
-        if (grantExpressionResult?.data?.statusCode === 200) {
-          await world.updateDataObject({}, { analytics: [{ analyticName: `space-1-emoteUnlocked` }] });
-          await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
-        } else {
-          await visitor.fireToast({
-            groupId: "space",
-            title: "Congratulations 🌟",
-            text: "You completed the challenge!",
-          });
-        }
-      } catch (error) {
-        console.error("Error granting expression to visitor", error);
-      }
-    } else if (theme === "bird") {
-      try {
-        const grantExpressionResult = (await visitor.grantExpression({
-          name: `scavengerHunt-bird-1`,
-        })) as any;
-
-        if (grantExpressionResult?.data?.statusCode === 200) {
-          await world.updateDataObject({}, { analytics: [{ analyticName: `bird-1-emoteUnlocked` }] });
-          await visitor.fireToast({ groupId: "bird", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
-        } else {
-          await visitor.fireToast({
-            groupId: "bird",
-            title: "Congratulations 🌟",
-            text: "You completed the challenge!",
-          });
-        }
-      } catch (error) {
-        console.error("Error granting expression to visitor", error);
-      }
+    } else {
+      await handleThemeExpression(world, visitor, theme);
     }
 
     visitor
@@ -131,3 +77,27 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     });
   }
 };
+
+async function handleThemeExpression(world: any, visitor: any, theme: string) {
+  try {
+    const expressionName = `scavengerHunt-${theme}-1`;
+    const analyticName = `${theme}-1-emoteUnlocked`;
+
+    const grantExpressionResult = (await visitor.grantExpression({
+      name: expressionName,
+    })) as any;
+
+    if (grantExpressionResult?.data?.statusCode === 200) {
+      await world.updateDataObject({}, { analytics: [{ analyticName }] });
+      await visitor.fireToast({ groupId: theme, title: "Congratulations 🌟", text: "You unlocked a new emote!" });
+    } else {
+      await visitor.fireToast({
+        groupId: theme,
+        title: "Congratulations 🌟",
+        text: "You completed the challenge!",
+      });
+    }
+  } catch (error) {
+    console.error("Error granting expression to visitor", error);
+  }
+}

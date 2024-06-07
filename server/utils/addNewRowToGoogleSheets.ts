@@ -15,8 +15,8 @@ const sheetsClient = sheets?.sheets({ version: "v4", auth });
 /**
  * @summary
  * Insert a new row into a spreadsheet.
- * Currently this is being used for Stride SpreadSheet in:
- * https://docs.google.com/spreadsheets/d/1BDUgJ1WJufqXlFqyfBO-vpDx0IfRk2VauMNZzLYohRU/edit#gid=0
+ * Currently this is being used for SpreadSheet in:
+ * https://docs.google.com/spreadsheets/d/1BDUgJ1WJufqXlFqyfBO-123/edit#gid=0
  *
  * @usage
  * ```js
