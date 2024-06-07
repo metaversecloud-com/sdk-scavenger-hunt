@@ -2,6 +2,7 @@ import { Asset, DroppedAsset } from "./topiaInit.js";
 import { errorHandler } from "./errorHandler.js";
 import { getRandomPointInCircle } from "./getRandomPointInCircle.js";
 import { Credentials } from "../types.js";
+import { DroppedAssetFactory } from "@rtsdk/topia";
 
 export async function dropLeaves({
   buildableAssetUniqueName,
@@ -41,10 +42,12 @@ export async function dropLeaves({
       },
     ];
 
-    const droppedAsset = await DroppedAsset.getWithUniqueName(buildableAssetUniqueName, urlSlug, {
-      interactivePublicKey,
-      interactiveSecret: process.env.INTERACTIVE_SECRET,
-    });
+    const droppedAsset = await DroppedAsset.getWithUniqueName(
+      buildableAssetUniqueName,
+      credentials.urlSlug,
+      process.env.INTERACTIVE_SECRET,
+      credentials,
+    );
 
     const leafUrls = process.env["DROPPABLE_ASSETS"].split(",");
     const index = Math.floor(Math.random() * leafUrls.length);

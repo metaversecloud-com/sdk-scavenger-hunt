@@ -24,6 +24,8 @@ const setupBackendAPI = async (interactiveParams: InteractiveParams) => {
       config.params["urlSlug"] = interactiveParams.urlSlug;
       config.params["username"] = interactiveParams.username;
       config.params["visitorId"] = interactiveParams.visitorId;
+      config.params["displayName"] = interactiveParams.displayName;
+      config.params["identityId"] = interactiveParams.identityId;
       return config;
     });
   }
