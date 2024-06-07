@@ -74,7 +74,10 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
         await visitor.grantExpression({
           name: `scavengerHunt-bird-1`,
         });
-        await world.updateDataObject({}, { analytics: [{ analyticName: `${theme}-scavengerHunt-bird-1-Unlocked` }] });
+        await world.updateDataObject(
+          {},
+          { analytics: [{ analyticName: `${theme}-scavengerHunt-bird-1-emoteUnlocked` }] },
+        );
         await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
       } catch (error) {
         console.error("Error granting expression to visitor", error);
