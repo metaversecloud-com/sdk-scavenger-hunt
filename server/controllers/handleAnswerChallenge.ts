@@ -32,7 +32,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       identityId: req?.query?.identityId,
       displayName: req?.query?.displayName,
       username: null,
-      appName: "Race",
+      appName: "ScavengerHunt",
       event: "starts",
     })
       .then()
