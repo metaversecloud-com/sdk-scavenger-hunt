@@ -48,13 +48,12 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       .then()
       .catch();
 
+    const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
     if (theme === "national-park") {
       if (buildableAssetUniqueName) {
         await dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId });
       }
     } else if (theme === "robot") {
-      const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
-
       try {
         const grantExpressionResult = (await visitor.grantExpression({
           name: `scavengerHunt-robot-1`,
@@ -74,8 +73,6 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
         console.error("Error granting expression to visitor", error);
       }
     } else if (theme === "space") {
-      const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
-
       try {
         const grantExpressionResult = (await visitor.grantExpression({
           name: `scavengerHunt-space-1`,
@@ -95,8 +92,6 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
         console.error("Error granting expression to visitor", error);
       }
     } else if (theme === "bird") {
-      const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
-
       try {
         const grantExpressionResult = (await visitor.grantExpression({
           name: `scavengerHunt-bird-1`,
@@ -117,9 +112,13 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       }
     }
 
-    renderEmoteParticleEffects({ world, assetId, credentials })
+    visitor
+      .triggerParticle({
+        name: "firework1_gold",
+        duration: 6,
+      })
       .then()
-      .catch(() => console.error("Failed to render particle effects"));
+      .catch((error) => console.error(error));
 
     return res.json({ success: true, isCorrect: true });
   } catch (error) {
@@ -132,15 +131,3 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     });
   }
 };
-
-async function renderEmoteParticleEffects({ world, assetId, credentials }) {
-  const droppedAsset = await DroppedAsset.get(assetId, credentials?.urlSlug, { credentials });
-  await world.triggerParticle({
-    name: process.env.PARTICLE_EFFECT_NAME_FOR_EMOTE_UNLOCK || "firework1_gold",
-    duration: 6,
-    position: {
-      x: droppedAsset?.position?.x,
-      y: droppedAsset?.position?.y,
-    },
-  });
-}
