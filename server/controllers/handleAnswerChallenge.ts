@@ -49,18 +49,27 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       .catch();
 
     if (theme === "national-park") {
-      if (buildableAssetUniqueName) await dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId });
+      if (buildableAssetUniqueName) {
+        await dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId });
+      }
     } else if (theme === "robot") {
       const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
 
       try {
-        await visitor.grantExpression({
+        const grantExpressionResult = (await visitor.grantExpression({
           name: `scavengerHunt-robot-1`,
-        });
+        })) as any;
 
-        await world.updateDataObject({}, { analytics: [{ analyticName: `${theme}-scavengerHunt-robot-1-Unlocked` }] });
-
-        await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
+        if (grantExpressionResult?.data?.statusCode === 200) {
+          await world.updateDataObject({}, { analytics: [{ analyticName: `robot-1-emoteUnlocked` }] });
+          await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
+        } else {
+          await visitor.fireToast({
+            groupId: "space",
+            title: "Congratulations 🌟",
+            text: "You completed the challenge!",
+          });
+        }
       } catch (error) {
         console.error("Error granting expression to visitor", error);
       }
@@ -68,12 +77,20 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
 
       try {
-        await visitor.grantExpression({
+        const grantExpressionResult = (await visitor.grantExpression({
           name: `scavengerHunt-space-1`,
-        });
+        })) as any;
 
-        await world.updateDataObject({}, { analytics: [{ analyticName: `${theme}-scavengerHunt-space-1-Unlocked` }] });
-        await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
+        if (grantExpressionResult?.data?.statusCode === 200) {
+          await world.updateDataObject({}, { analytics: [{ analyticName: `space-1-emoteUnlocked` }] });
+          await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
+        } else {
+          await visitor.fireToast({
+            groupId: "space",
+            title: "Congratulations 🌟",
+            text: "You completed the challenge!",
+          });
+        }
       } catch (error) {
         console.error("Error granting expression to visitor", error);
       }
@@ -81,14 +98,20 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
 
       try {
-        await visitor.grantExpression({
+        const grantExpressionResult = (await visitor.grantExpression({
           name: `scavengerHunt-bird-1`,
-        });
-        await world.updateDataObject(
-          {},
-          { analytics: [{ analyticName: `${theme}-scavengerHunt-bird-1-emoteUnlocked` }] },
-        );
-        await visitor.fireToast({ groupId: "space", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
+        })) as any;
+
+        if (grantExpressionResult?.data?.statusCode === 200) {
+          await world.updateDataObject({}, { analytics: [{ analyticName: `bird-1-emoteUnlocked` }] });
+          await visitor.fireToast({ groupId: "bird", title: "Congratulations 🌟", text: "You unlocked a new emote!" });
+        } else {
+          await visitor.fireToast({
+            groupId: "bird",
+            title: "Congratulations 🌟",
+            text: "You completed the challenge!",
+          });
+        }
       } catch (error) {
         console.error("Error granting expression to visitor", error);
       }
