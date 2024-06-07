@@ -25,7 +25,12 @@ export const handleGetClue = async (req: Request, res: Response) => {
             username,
           },
         },
-        { analytics: [{ analyticName: `${theme}-starts`, uniqueKey: profileId, profileId, urlSlug }] },
+        {
+          analytics: [
+            { analyticName: `${theme}-starts`, uniqueKey: profileId, profileId, urlSlug },
+            { analyticName: `starts`, uniqueKey: profileId, profileId, urlSlug },
+          ],
+        },
       );
       cluesFound = [assetId];
     } else {

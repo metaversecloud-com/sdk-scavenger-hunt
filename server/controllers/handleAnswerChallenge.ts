@@ -19,12 +19,22 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     if (progress[profileId]) {
       await world.updateDataObject(
         { [`scenes.${sceneDropId}.progress.${profileId}.challengeDone`]: true },
-        { analytics: [{ analyticName: `${theme}-completions`, uniqueKey: profileId, profileId, urlSlug }] },
+        {
+          analytics: [
+            { analyticName: `${theme}-completions`, uniqueKey: profileId, profileId, urlSlug },
+            { analyticName: `completions`, uniqueKey: profileId, profileId, urlSlug },
+          ],
+        },
       );
     } else {
       await world.updateDataObject(
         { [`scenes.${sceneDropId}.progress.${profileId}`]: { challengeDone: true } },
-        { analytics: [{ analyticName: `${theme}-completions`, uniqueKey: profileId, profileId, urlSlug }] },
+        {
+          analytics: [
+            { analyticName: `${theme}-completions`, uniqueKey: profileId, profileId, urlSlug },
+            { analyticName: `completions`, uniqueKey: profileId, profileId, urlSlug },
+          ],
+        },
       );
     }
 
@@ -33,7 +43,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       displayName: req?.query?.displayName,
       username: null,
       appName: "ScavengerHunt",
-      event: `${theme}-starts`,
+      event: `${theme}-completions`,
     })
       .then()
       .catch();
