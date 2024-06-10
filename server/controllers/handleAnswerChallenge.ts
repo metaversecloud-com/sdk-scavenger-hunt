@@ -87,7 +87,7 @@ async function handleThemeExpression(world: any, visitor: any, theme: string) {
       name: expressionName,
     })) as any;
 
-    if (grantExpressionResult?.data?.statusCode === 200) {
+    if (grantExpressionResult?.status === 200 || grantExpressionResult?.data?.statusCode === 200) {
       await world.updateDataObject({}, { analytics: [{ analyticName }] });
       await visitor.fireToast({ groupId: theme, title: "Congratulations 🌟", text: "You unlocked a new emote!" });
     } else {
