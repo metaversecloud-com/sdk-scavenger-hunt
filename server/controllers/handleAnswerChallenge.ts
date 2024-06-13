@@ -44,6 +44,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       username: null,
       appName: "ScavengerHunt",
       event: `${theme}-completions`,
+      urlSlug,
     })
       .then()
       .catch();
@@ -52,7 +53,9 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
 
     if (theme === "national-park") {
       if (buildableAssetUniqueName) {
-        await dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId });
+        dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId })
+          .then()
+          .catch((error) => console.error(error));
       }
     } else {
       await handleThemeExpression(world, visitor, theme);
@@ -64,7 +67,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
         duration: 6,
       })
       .then()
-      .catch((error) => console.error(error));
+      .catch();
 
     return res.json({ success: true, isCorrect: true });
   } catch (error) {
@@ -88,14 +91,23 @@ async function handleThemeExpression(world: any, visitor: any, theme: string) {
     })) as any;
 
     if (grantExpressionResult?.status === 200 || grantExpressionResult?.data?.statusCode === 200) {
-      await world.updateDataObject({}, { analytics: [{ analyticName }] });
-      await visitor.fireToast({ groupId: theme, title: "Congratulations 🌟", text: "You unlocked a new emote!" });
+      world
+        .updateDataObject({}, { analytics: [{ analyticName }] })
+        .then()
+        .catch((error) => console.error(error));
+      visitor
+        .fireToast({ groupId: theme, title: "Congratulations 🌟", text: "You unlocked a new emote!" })
+        .then()
+        .catch((error) => console.error(error));
     } else {
-      await visitor.fireToast({
-        groupId: theme,
-        title: "Congratulations 🌟",
-        text: "You completed the challenge!",
-      });
+      visitor
+        .fireToast({
+          groupId: theme,
+          title: "Congratulations 🌟",
+          text: "You completed the challenge!",
+        })
+        .then()
+        .catch((error) => console.error(error));
     }
   } catch (error) {
     console.error("Error granting expression to visitor", error);
