@@ -48,6 +48,7 @@ export const addNewRowToGoogleSheets = async ({ identityId, displayName, usernam
       displayName || username,
       appName,
       event,
+      urlSlug,
     ];
 
     await sheetsClient.spreadsheets.values.append({
