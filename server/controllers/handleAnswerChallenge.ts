@@ -98,7 +98,7 @@ async function handleThemeExpression(world: any, visitor: any, theme: string) {
       visitor
         .fireToast({ groupId: theme, title: "Congratulations 🌟", text: "You unlocked a new emote!" })
         .then()
-        .catch();
+        .catch((error) => console.error(error));
     } else {
       visitor
         .fireToast({
@@ -107,7 +107,7 @@ async function handleThemeExpression(world: any, visitor: any, theme: string) {
           text: "You completed the challenge!",
         })
         .then()
-        .catch();
+        .catch((error) => console.error(error));
     }
   } catch (error) {
     console.error("Error granting expression to visitor", error);
