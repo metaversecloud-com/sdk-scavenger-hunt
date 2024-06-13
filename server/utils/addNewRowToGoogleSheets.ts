@@ -30,7 +30,7 @@ const sheetsClient = sheets?.sheets({ version: "v4", auth });
  *         .catch();
  * ```
  */
-export const addNewRowToGoogleSheets = async ({ identityId, displayName, username, appName, event }) => {
+export const addNewRowToGoogleSheets = async ({ identityId, displayName, username, appName, event, urlSlug }) => {
   try {
     // Only execute this function if we have GOOGLESHEETS_SHEET_ID in the environment variables.
     if (!process.env.GOOGLESHEETS_SHEET_ID) {

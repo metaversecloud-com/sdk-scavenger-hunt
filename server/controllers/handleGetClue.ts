@@ -42,10 +42,13 @@ export const handleGetClue = async (req: Request, res: Response) => {
         });
         if (cluesFound.length == Object.keys(dataObject.clues).length) {
           const visitor = Visitor.create(credentials?.visitorId, credentials?.urlSlug, { credentials });
-          await visitor.triggerParticle({
-            name: process.env.PARTICLE_EFFECT_NAME_FOR_FINAL_CLUE || "Green Smoke",
-            duration: 7,
-          });
+          visitor
+            .triggerParticle({
+              name: process.env.PARTICLE_EFFECT_NAME_FOR_FINAL_CLUE || "Green Smoke",
+              duration: 7,
+            })
+            .then()
+            .catch();
         }
         renderGetClueParticleEffects({ world, assetId, credentials })
           .then()
@@ -76,12 +79,15 @@ export const handleGetClue = async (req: Request, res: Response) => {
 
 async function renderGetClueParticleEffects({ world, assetId, credentials }) {
   const droppedAsset = await DroppedAsset.get(assetId, credentials?.urlSlug, { credentials });
-  await world.triggerParticle({
-    name: process.env.PARTICLE_EFFECT_NAME_FOR_GET_CLUE || "Flame",
-    duration: 3,
-    position: {
-      x: droppedAsset?.position?.x,
-      y: droppedAsset?.position?.y,
-    },
-  });
+  world
+    .triggerParticle({
+      name: process.env.PARTICLE_EFFECT_NAME_FOR_GET_CLUE || "Flame",
+      duration: 3,
+      position: {
+        x: droppedAsset?.position?.x,
+        y: droppedAsset?.position?.y,
+      },
+    })
+    .then()
+    .catch();
 }
