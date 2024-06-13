@@ -94,7 +94,7 @@ async function handleThemeExpression(world: any, visitor: any, theme: string) {
       world
         .updateDataObject({}, { analytics: [{ analyticName }] })
         .then()
-        .catch();
+        .catch((error) => console.error(error));
       visitor
         .fireToast({ groupId: theme, title: "Congratulations 🌟", text: "You unlocked a new emote!" })
         .then()
