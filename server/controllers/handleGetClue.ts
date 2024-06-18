@@ -48,7 +48,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
               duration: 7,
             })
             .then()
-            .catch();
+            .catch((error) => JSON.stringify(error));
         }
         renderGetClueParticleEffects({ world, assetId, credentials })
           .then()
@@ -89,5 +89,5 @@ async function renderGetClueParticleEffects({ world, assetId, credentials }) {
       },
     })
     .then()
-    .catch();
+    .catch((error) => JSON.stringify(error));
 }
