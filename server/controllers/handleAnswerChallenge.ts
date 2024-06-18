@@ -67,7 +67,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
         duration: 6,
       })
       .then()
-      .catch();
+      .catch((error) => JSON.stringify(error));
 
     return res.json({ success: true, isCorrect: true });
   } catch (error) {
