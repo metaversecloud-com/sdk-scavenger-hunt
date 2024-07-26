@@ -7,6 +7,7 @@ import { backendAPI } from "@/utils/backendAPI";
 // context
 import { GlobalStateContext } from "@/context/GlobalContext";
 import { getFixedClueImages, NATIONAL_PARK } from "@/context/constants";
+import { themeData } from "@/context/themeData";
 
 export const EditClue = ({
   clue,
@@ -94,7 +95,9 @@ export const EditClue = ({
           <h4>Asset Image</h4>
           <p>Pick an image for this clue.</p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
-            {fixedClueImages?.map((item, index) => <ClueImages key={index} item={item} />)}
+            {fixedClueImages
+              ?.slice(0, themeData[theme].numberOfAssetsAvailableInAdminSection)
+              .map((item, index) => <ClueImages key={index} item={item} />)}
           </div>
 
           <div style={{ display: "flex", columnGap: "7px", marginTop: "16px" }}>

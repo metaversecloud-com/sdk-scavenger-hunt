@@ -51,15 +51,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
 
     const visitor = await Visitor.get(credentials?.visitorId, credentials?.urlSlug, { credentials });
 
-    if (theme === "national-park") {
-      if (buildableAssetUniqueName) {
-        dropLeaves({ buildableAssetUniqueName, credentials, sceneDropId })
-          .then()
-          .catch((error) => console.error(error));
-      }
-    } else {
-      await handleThemeExpression(world, visitor, theme);
-    }
+    await handleThemeExpression(world, visitor, theme);
 
     visitor
       .triggerParticle({
