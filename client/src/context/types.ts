@@ -31,6 +31,7 @@ export interface ThemeInfo {
   title: string;
   correctAnswerCongratulations: string;
   challengeTitleImgUrl: string;
+  numberOfAssetsAvailableInAdminSection?: number;
 }
 
 export interface ThemeData {
