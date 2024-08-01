@@ -25,4 +25,10 @@ export const themeData: ThemeData = {
     challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/bird/IMG_Start.png",
     numberOfAssetsAvailableInAdminSection: 14,
   },
+  "recycle": {
+    title: "Recycle",
+    correctAnswerCongratulations: "Nice one! You unlocked a new emote!",
+    challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/recycle/IMG_Start.png",
+    numberOfAssetsAvailableInAdminSection: 9,
+  },
 };
