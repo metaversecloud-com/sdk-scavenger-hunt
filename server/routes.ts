@@ -25,9 +25,9 @@ router.get("/system/health", (req, res) => {
   return res.json({
     appVersion: getVersion(),
     status: "OK",
+    deploymentDate: SERVER_START_DATE,
     envs: {
       NODE_ENV: process.env.NODE_ENV,
-      DEPLOYMENT_DATE: SERVER_START_DATE,
       COMMIT_HASH: process.env.COMMIT_HASH ? process.env.COMMIT_HASH : "NOT SET",
       SHOWCASE_WORLDS_URLS: ["https://topia.io/scavenger-hunt-prod"],
       INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN ? process.env.INSTANCE_DOMAIN : "NOT SET",
@@ -36,15 +36,6 @@ router.get("/system/health", (req, res) => {
       SKIP_PREFLIGHT_CHECK: process.env.SKIP_PREFLIGHT_CHECK ? process.env.SKIP_PREFLIGHT_CHECK : "NOT SET",
       INTERACTIVE_SECRET: process.env.INTERACTIVE_SECRET ? "SET" : "NOT SET",
       IMG_ASSET_ID: process.env.IMG_ASSET_ID ? process.env.IMG_ASSET_ID : "NOT SET",
-      PARTICLE_EFFECT_NAME_FOR_FINAL_CLUE: process.env.PARTICLE_EFFECT_NAME_FOR_FINAL_CLUE
-        ? process.env.PARTICLE_EFFECT_NAME_FOR_FINAL_CLUE
-        : "NOT SET",
-      PARTICLE_EFFECT_NAME_FOR_GET_CLUE: process.env.PARTICLE_EFFECT_NAME_FOR_GET_CLUE
-        ? process.env.PARTICLE_EFFECT_NAME_FOR_GET_CLUE
-        : "NOT SET",
-      PARTICLE_EFFECT_NAME_FOR_EMOTE_UNLOCK: process.env.PARTICLE_EFFECT_NAME_FOR_EMOTE_UNLOCK
-        ? process.env.PARTICLE_EFFECT_NAME_FOR_EMOTE_UNLOCK
-        : "NOT SET",
       GOOGLESHEETS_CLIENT_EMAIL: process.env.GOOGLESHEETS_CLIENT_EMAIL ? "SET" : "NOT SET",
       GOOGLESHEETS_SHEET_ID: process.env.GOOGLESHEETS_SHEET_ID ? "SET" : "NOT SET",
       GOOGLESHEETS_PRIVATE_KEY: process.env.GOOGLESHEETS_PRIVATE_KEY ? "SET" : "NOT SET",

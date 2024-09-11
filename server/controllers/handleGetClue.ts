@@ -44,7 +44,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
           const visitor = Visitor.create(credentials?.visitorId, credentials?.urlSlug, { credentials });
           visitor
             .triggerParticle({
-              name: process.env.PARTICLE_EFFECT_NAME_FOR_FINAL_CLUE || "Green Smoke",
+              name: "partyPopper_float",
               duration: 7,
             })
             .then()
@@ -81,7 +81,7 @@ async function renderGetClueParticleEffects({ world, assetId, credentials }) {
   const droppedAsset = await DroppedAsset.get(assetId, credentials?.urlSlug, { credentials });
   world
     .triggerParticle({
-      name: process.env.PARTICLE_EFFECT_NAME_FOR_GET_CLUE || "Flame",
+      name: "disco_float",
       duration: 3,
       position: {
         x: droppedAsset?.position?.x,

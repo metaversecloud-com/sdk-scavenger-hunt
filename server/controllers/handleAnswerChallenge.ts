@@ -55,7 +55,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
 
     visitor
       .triggerParticle({
-        name: "firework1_gold",
+        name: "explosion_float",
         duration: 6,
       })
       .then()
