@@ -1,5 +1,4 @@
 export * from "./cleanReturnPayload.js";
-export * from "./dropLeaves.js";
 export * from "./errorHandler.js";
 export * from "./getClueDroppedAssets.js";
 export * from "./getCredentials.js";

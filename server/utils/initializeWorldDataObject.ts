@@ -14,6 +14,8 @@ export const initializeWorldDataObject = async ({
   world: any;
 }) => {
   try {
+    if (world.dataObject?.scenes?.[sceneDropId]) return;
+
     const payload = {
       sceneDropId,
       buildableAssetUniqueName: "",
@@ -26,43 +28,26 @@ export const initializeWorldDataObject = async ({
       progress: {},
     };
 
-    if (!world.dataObject?.scenes || !world.dataObject?.scenes?.[sceneDropId]) {
-      const droppedAsset = await DroppedAsset.get(credentials?.assetId, world.urlSlug, {
-        credentials,
-      });
-      await droppedAsset.fetchDataObject();
+    const droppedAsset = await DroppedAsset.get(credentials.assetId, world.urlSlug, { credentials });
+    await droppedAsset.fetchDataObject();
 
-      const challenge = droppedAsset.dataObject?.challenge;
-      if (challenge) {
-        const { answer, text } = challenge;
-        payload.challenge = { answer, text };
-      }
+    const { challenge, theme } = droppedAsset.dataObject;
+    if (!challenge || !theme) throw "Key asset is missing required data object.";
 
-      payload.theme = droppedAsset?.dataObject?.theme;
-      payload.challenge.imgUrl = `https://sdk-scavenger-hunt.s3.amazonaws.com/${droppedAsset?.dataObject?.theme}/IMG_Start.png`;
-      payload.clues = await getClueDroppedAssets({
-        uniqueName: `ScavengerHunt_${droppedAsset?.dataObject?.theme}_clue`,
-        world,
-      });
-    }
+    payload.challenge = challenge;
+    payload.challenge.imgUrl = `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_Start.png`;
+    payload.clues = await getClueDroppedAssets({
+      uniqueName: `ScavengerHunt_${theme}_clue`,
+      world,
+    });
+    payload.theme = theme;
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
     if (!world.dataObject || !world.dataObject?.scenes) {
-      await world.setDataObject(
-        {
-          scenes: {
-            [sceneDropId]: {
-              ...payload,
-            },
-          },
-        },
-        { lock: { lockId, releaseLock: true } },
-      );
+      await world.setDataObject({ scenes: { [sceneDropId]: { ...payload } } }, { lock: { lockId, releaseLock: true } });
     } else if (!world.dataObject?.scenes?.[sceneDropId]) {
       await world.updateDataObject(
-        {
-          [`scenes.${sceneDropId}`]: { ...payload },
-        },
+        { [`scenes.${sceneDropId}`]: { ...payload } },
         { lock: { lockId, releaseLock: true } },
       );
     }

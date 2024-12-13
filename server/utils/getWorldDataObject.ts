@@ -12,11 +12,9 @@ type WorldDataObject = {
 
 export const getWorldDataObject = async ({
   credentials,
-  keyAssetId,
   sceneDropId,
 }: {
   credentials: Credentials;
-  keyAssetId?: string;
   sceneDropId: string;
 }) => {
   try {

@@ -7,18 +7,18 @@ import {
   getWorldDataObject,
 } from "../utils/index.js";
 import { DataObjectType } from "../types.js";
+import { DroppedAssetInterface } from "@rtsdk/topia";
 
 export const handleResetClues = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { assetId, sceneDropId, urlSlug } = credentials;
 
-    const { world, dataObject } = await getWorldDataObject({ credentials, keyAssetId: assetId, sceneDropId });
+    const { world, dataObject } = await getWorldDataObject({ credentials, sceneDropId });
     const { theme } = dataObject as DataObjectType;
 
-    const keyAsset = await DroppedAsset.get(assetId, urlSlug, { credentials });
+    const keyAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });
 
-    // @ts-ignore
     const clues = await getClueDroppedAssets({ uniqueName: `${keyAsset.uniqueName}_${theme}_clue`, world });
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;

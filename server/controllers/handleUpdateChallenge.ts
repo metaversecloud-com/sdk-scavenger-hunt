@@ -4,11 +4,10 @@ import { errorHandler, getCredentials, getWorldDataObject } from "../utils/index
 export const handleUpdateChallenge = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, sceneDropId } = credentials;
-
+    const { sceneDropId } = credentials;
     const { answer, buildableAssetUniqueName, text } = req.body;
 
-    const { world } = await getWorldDataObject({ credentials, keyAssetId: assetId, sceneDropId });
+    const { world } = await getWorldDataObject({ credentials, sceneDropId });
 
     const lowerCaseAnswer = answer.toLowerCase();
 

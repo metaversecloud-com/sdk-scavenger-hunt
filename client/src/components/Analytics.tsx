@@ -18,7 +18,7 @@ type ProgressType = {
 export const Analytics = () => {
   const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
-  const context = useContext(GlobalStateContext);
+  const { profileId } = useContext(GlobalStateContext);
 
   const [progressData, setProgressData] = useState<ProgressType>({});
   const [totalClues, setTotalClues] = useState(0);
@@ -34,7 +34,7 @@ export const Analytics = () => {
           setProgressData(progress);
           dispatch!({
             type: SET_THEME,
-            payload: theme,
+            payload: { theme },
           });
         }
       })
@@ -51,20 +51,21 @@ export const Analytics = () => {
         <div>Total clues (in world): {totalClues} </div>
       </div>
       <hr />
-      <table style={{ fontSize: "12px" }}>
+      <table className="table">
         <tr>
           <th>Username</th>
           <th align="right">Clues Found</th>
         </tr>
-        {Object.keys(progressData).map((row: any) => (
-          <tr key={progressData?.[context?.profileId]?.cluesFound?.length}>
-            <td scope="row">{progressData?.[context?.profileId]?.username}</td>
-            <td align="right">
-              {progressData?.[context?.profileId]?.cluesFound?.length || 0}{" "}
-              {progressData?.[context?.profileId]?.challengeDone ? "- Completed" : ""}
-            </td>
-          </tr>
-        ))}
+        {profileId &&
+          Object.keys(progressData).map(() => (
+            <tr key={progressData?.[profileId]?.cluesFound?.length}>
+              <td scope="row">{progressData?.[profileId!]?.username}</td>
+              <td align="right">
+                {progressData?.[profileId]?.cluesFound?.length || 0}{" "}
+                {progressData?.[profileId]?.challengeDone ? "- Completed" : ""}
+              </td>
+            </tr>
+          ))}
       </table>
     </>
   );

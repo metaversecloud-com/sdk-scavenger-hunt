@@ -8,18 +8,19 @@ import { backendAPI } from "@/utils/backendAPI";
 import { GlobalStateContext } from "@/context/GlobalContext";
 import { getFixedClueImages, NATIONAL_PARK } from "@/context/constants";
 import { themeData } from "@/context/themeData";
+import { ClueType } from "@/context/types";
 
 export const EditClue = ({
   clue,
   onCloseModal,
   onCluesUpdated,
 }: {
-  clue: any;
-  onCloseModal: any;
-  onCluesUpdated: any;
+  clue: ClueType;
+  onCloseModal: () => void;
+  onCluesUpdated: () => void;
 }) => {
-  const { theme } = useContext(GlobalStateContext) || NATIONAL_PARK;
-  const fixedClueImages = getFixedClueImages(theme);
+  const { theme } = useContext(GlobalStateContext);
+  const fixedClueImages = getFixedClueImages(theme || NATIONAL_PARK);
 
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(clue?.imgUrl || fixedClueImages[0].image);
@@ -29,15 +30,13 @@ export const EditClue = ({
 
   async function onSave() {
     try {
-      const result = await backendAPI.post(`/update-clue`, {
+      await backendAPI.post(`/update-clue`, {
         assetId: clue?.id,
         text,
         imgUrl: selectedImage,
         contentImgUrl,
       });
-      if (onCluesUpdated) {
-        onCluesUpdated();
-      }
+      if (onCluesUpdated) onCluesUpdated();
     } catch (error) {
       navigate("*");
     } finally {
@@ -47,8 +46,8 @@ export const EditClue = ({
     setIsSaving(true);
   }
 
-  const ClueImages = ({ item }: { item: any }) => {
-    const { id, image, text } = item;
+  const ClueImages = ({ clue }: { clue: { id: number; image: string; text: string } }) => {
+    const { id, image, text } = clue;
     return (
       <div
         key={id}
@@ -63,28 +62,24 @@ export const EditClue = ({
   return (
     <div style={{ overflow: "auto" }}>
       <div style={{ textAlign: "left", top: "100%" }}>
-        <h3>Clue Configuration</h3>
-        <p>
+        <h4>Clue Configuration</h4>
+        <p className="pb-3">
           You can change the clue text and image it shows in the drawer. Click on the Save button at the bottom of the
           screen to save the configuration.
         </p>
 
         <label>Clue Text</label>
         <textarea
+          className="input mb-4"
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
             setText(event.target.value);
           }}
           value={text}
-          style={{
-            resize: "none",
-            height: "100px",
-            padding: "10px",
-            border: "1px solid #ccc",
-          }}
         />
 
         <label>Clue Image URL</label>
         <input
+          className="input"
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setContentImgUrl(event.target.value);
           }}
@@ -93,18 +88,18 @@ export const EditClue = ({
 
         <div style={{ marginTop: "24px" }}>
           <h4>Asset Image</h4>
-          <p>Pick an image for this clue.</p>
+          <p className="pb-3">Pick an image for this clue.</p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
             {fixedClueImages
-              ?.slice(0, themeData[theme].numberOfAssetsAvailableInAdminSection)
-              .map((item, index) => <ClueImages key={index} item={item} />)}
+              ?.slice(0, themeData[theme!].numberOfAssetsAvailableInAdminSection)
+              .map((item, index) => <ClueImages key={index} clue={item} />)}
           </div>
 
           <div style={{ display: "flex", columnGap: "7px", marginTop: "16px" }}>
-            <button className="btn-outline" onClick={onCloseModal}>
+            <button className="btn btn-outline" onClick={onCloseModal}>
               Close
             </button>
-            <button onClick={onSave} disabled={isSaving}>
+            <button className="btn" onClick={onSave} disabled={isSaving}>
               Save
             </button>
           </div>
