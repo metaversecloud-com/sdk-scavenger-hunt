@@ -123,7 +123,7 @@ export const Challenge = () => {
         {getHeader()}
         <div className="container p-6 flex items-center justify-start">
           <div className="flex flex-col">
-            <h5>{themeData?.[theme!]?.correctAnswerCongratulations || "Nice one! You unlocked a new emote!"}</h5>
+            <h5>Nice one! You completed the challenge!</h5>
           </div>
         </div>
       </>

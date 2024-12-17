@@ -21,7 +21,7 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
         },
       });
     } else {
-      const cluesFound = progress[profileId].cluesFound.length;
+      const cluesFound = progress[profileId].cluesFound?.length || 0;
       const totalClues = Object.keys(clues).length;
       if (cluesFound === totalClues) hasCompletedClues = true;
       hasCompletedChallenge = progress[profileId].challengeDone;

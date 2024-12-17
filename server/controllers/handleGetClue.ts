@@ -43,27 +43,21 @@ export const handleGetClue = async (req: Request, res: Response) => {
 
         if (cluesFound.length === Object.keys(dataObject.clues).length) {
           const visitor = Visitor.create(visitorId, urlSlug, { credentials });
-          visitor
-            .triggerParticle({
-              name: "partyPopper_float",
-              duration: 7,
-            })
-            .then()
-            .catch((error) => JSON.stringify(error));
+          visitor.triggerParticle({
+            name: "partyPopper_float",
+            duration: 7,
+          });
         }
 
         const droppedAsset = await DroppedAsset.get(assetId, urlSlug, { credentials });
-        world
-          .triggerParticle({
-            name: "disco_float",
-            duration: 3,
-            position: {
-              x: droppedAsset?.position?.x,
-              y: droppedAsset?.position?.y,
-            },
-          })
-          .then()
-          .catch((error) => JSON.stringify(error));
+        world.triggerParticle({
+          name: "disco_float",
+          duration: 3,
+          position: {
+            x: droppedAsset?.position?.x,
+            y: droppedAsset?.position?.y,
+          },
+        });
       }
     }
 

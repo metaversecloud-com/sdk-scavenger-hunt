@@ -30,7 +30,6 @@ export type ActionType = {
 
 export interface ThemeInfo {
   title: string;
-  correctAnswerCongratulations: string;
   challengeTitleImgUrl: string;
   numberOfAssetsAvailableInAdminSection?: number;
 }

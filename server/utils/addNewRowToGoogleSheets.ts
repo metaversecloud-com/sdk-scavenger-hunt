@@ -12,25 +12,6 @@ const auth = new JWT({
 
 const sheetsClient = sheets?.sheets({ version: "v4", auth });
 
-/**
- * @summary
- * Insert a new row into a spreadsheet.
- * Currently this is being used for SpreadSheet in:
- * https://docs.google.com/spreadsheets/d/1BDUgJ1WJufqXlFqyfBO-vpDx0IfRk2VauMNZzLYohRU/edit#gid=0
- *
- * @usage
- * ```js
- *   addNewRowToGoogleSheets({
- *         identityId: req?.query?.identityId,
- *         displayName: req?.query?.displayName,
- *         appName: "App Name Example",
- *         event: "starts example event name",
- *         urlSlug
- *       })
- *         .then()
- *         .catch();
- * ```
- */
 export const addNewRowToGoogleSheets = async ({ identityId, displayName, username, appName, event, urlSlug }) => {
   try {
     // Only execute this function if we have GOOGLESHEETS_SHEET_ID in the environment variables.

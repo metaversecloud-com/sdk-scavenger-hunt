@@ -63,7 +63,7 @@ export const Clue = () => {
           src={imgUrl}
           alt="Clue"
         />
-        <h2>Congratulations!</h2>
+        <h2 className="pb-2">Congratulations!</h2>
         <h4>
           You have found a clue!
           <br />

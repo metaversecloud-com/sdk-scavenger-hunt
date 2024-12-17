@@ -23,33 +23,24 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
 
     const grantExpressionResult = await visitor.grantExpression({ name: `scavengerHunt-${theme}-1` });
-
     let text = "You completed the challenge!";
-
-    // @ts-ignore
-    if (grantExpressionResult.status === 200 || grantExpressionResult?.data?.statusCode === 200) {
+    if (grantExpressionResult.success === true) {
       analytics.push({ analyticName: `${theme}-1-emoteUnlocked` });
       text = "You unlocked a new emote!";
     }
 
-    world.updateDataObject({ [`scenes.${sceneDropId}.progress.${profileId}`]: { challengeDone: true } }, { analytics });
+    world.updateDataObject({ [`scenes.${sceneDropId}.progress.${profileId}.challengeDone`]: true }, { analytics });
 
-    visitor
-      .fireToast({
-        groupId: theme,
-        title: "Congratulations 🌟",
-        text,
-      })
-      .then()
-      .catch((error) => console.error(error));
+    visitor.fireToast({
+      groupId: theme,
+      title: "Congratulations 🌟",
+      text,
+    });
 
-    visitor
-      .triggerParticle({
-        name: "explosion_float",
-        duration: 6,
-      })
-      .then()
-      .catch((error) => JSON.stringify(error));
+    visitor.triggerParticle({
+      name: "explosion_float",
+      duration: 6,
+    });
 
     addNewRowToGoogleSheets({
       identityId: req?.query?.identityId,
@@ -58,9 +49,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       appName: "ScavengerHunt",
       event: `${theme}-completions`,
       urlSlug,
-    })
-      .then()
-      .catch();
+    });
 
     return res.json({ success: true, isCorrect: true });
   } catch (error) {
