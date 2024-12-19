@@ -1,19 +1,13 @@
 import { Link } from "react-router-dom";
 
-export const Header = ({
-  activeTab,
-  text,
-}: {
-  activeTab?: string;
-  text?: string;
-}) => {
+export const Header = ({ activeTab, text }: { activeTab?: string; text?: string }) => {
   return (
-    <div className="container p-6 items-center justify-start">
+    <div className="container p-6">
       <div className="tab-container">
-        <button className={activeTab === "challenge" ? "" : "btn-text"}>
+        <button className={activeTab === "challenge" ? "btn " : "btn btn-text"}>
           <Link to={`/challenge`}>Challenge</Link>
         </button>
-        <button className={activeTab === "admin" ? "" : "btn-text"}>
+        <button className={activeTab === "admin" ? "btn " : "btn btn-text"}>
           <Link to={`/admin`}>Admin</Link>
         </button>
       </div>

@@ -4,32 +4,32 @@ export const SET_THEME = "SET_THEME";
 
 export type InteractiveParams = {
   assetId: string;
+  displayName: string;
+  identityId: string;
   interactiveNonce: string;
   interactivePublicKey: string;
   profileId: string;
   sceneDropId: string;
+  uniqueName: string;
   urlSlug: string;
   username: string;
   visitorId: string;
-  identityId: string;
-  displayName: string;
 };
 
 export interface InitialState {
-  profileId: string;
-  hasInteractiveParams: boolean;
-  hasSetupBackend: boolean;
-  theme: string;
+  hasInteractiveParams?: boolean;
+  hasSetupBackend?: boolean;
+  profileId?: string;
+  theme?: string;
 }
 
 export type ActionType = {
   type: string;
-  payload?: any;
+  payload?: InitialState;
 };
 
 export interface ThemeInfo {
   title: string;
-  correctAnswerCongratulations: string;
   challengeTitleImgUrl: string;
   numberOfAssetsAvailableInAdminSection?: number;
 }
@@ -37,3 +37,10 @@ export interface ThemeInfo {
 export interface ThemeData {
   [key: string]: ThemeInfo;
 }
+
+export type ClueType = {
+  id: string;
+  imgUrl: string;
+  contentImgUrl: string;
+  text: string;
+};

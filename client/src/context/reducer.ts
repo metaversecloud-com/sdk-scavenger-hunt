@@ -6,7 +6,7 @@ const globalReducer = (state: InitialState, action: ActionType) => {
     case SET_INTERACTIVE_PARAMS:
       return {
         ...state,
-        ...payload,
+        profileId: payload?.profileId,
         hasInteractiveParams: true,
       };
     case SET_HAS_SETUP_BACKEND:
@@ -18,7 +18,8 @@ const globalReducer = (state: InitialState, action: ActionType) => {
     case SET_THEME: {
       return {
         ...state,
-        theme: payload,
+        ...payload,
+        theme: payload?.theme,
       };
     }
     default: {

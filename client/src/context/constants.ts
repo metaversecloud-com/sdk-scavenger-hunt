@@ -76,3 +76,10 @@ export function getFixedClueImages(theme: string) {
 export const TOPIA_WORKERS_URL = "https://topiaimages.s3.us-west-1.amazonaws.com/under-construction.png";
 
 export const NATIONAL_PARK = "national-park";
+
+export const initialState = {
+  hasInteractiveParams: false,
+  hasSetupBackend: false,
+  profileId: "",
+  theme: "",
+};

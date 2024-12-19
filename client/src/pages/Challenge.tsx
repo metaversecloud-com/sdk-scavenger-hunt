@@ -1,10 +1,11 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
+// components
+import { Header, Loading } from "@/components";
+
 // utils
 import { backendAPI } from "@/utils/backendAPI";
-import { Header } from "@/components/Header";
-import { Loading } from "@/components/Loading";
 
 // context
 import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
@@ -50,7 +51,7 @@ export const Challenge = () => {
           setIsLoading(false);
           dispatch!({
             type: SET_THEME,
-            payload: theme,
+            payload: { theme },
           });
         }
       })
@@ -86,12 +87,12 @@ export const Challenge = () => {
 
   const getExplorationText = () => {
     if (theme === "robot") {
-      return "Explore the world to find all of the clues! Once you’ve found all of the clues, come back here to answer the question and unlock a new emote!";
+      return "Explore the world to find all of the clues! Once you've found all of the clues, come back here to answer the question and unlock a new emote!";
     }
     if (theme === "national-park") {
-      return "Explore the world to find all of the clues! Once you’ve found all of the clues, come back here to answer the question.";
+      return "Explore the world to find all of the clues! Once you've found all of the clues, come back here to answer the question.";
     }
-    return "Explore the world to find all of the clues! Once you’ve found all of the clues, come back here to answer the question.";
+    return "Explore the world to find all of the clues! Once you've found all of the clues, come back here to answer the question.";
   };
 
   const getHeader = () => (
@@ -122,7 +123,7 @@ export const Challenge = () => {
         {getHeader()}
         <div className="container p-6 flex items-center justify-start">
           <div className="flex flex-col">
-            <h5>{themeData?.[theme]?.correctAnswerCongratulations || "Nice one! You unlocked a new emote!"}</h5>
+            <h5>Nice one! You completed the challenge!</h5>
           </div>
         </div>
       </>
@@ -137,20 +138,20 @@ export const Challenge = () => {
           <div className="flex flex-col">
             <h3>Nice Job! </h3>
             <p>{getAnswerQuestionDescription()}</p>
-            <div className="mt-6">
+            <div className="mt-8">
               <p>{question}</p>
             </div>
             <div className="mt-2">
               <label>Answer</label>
               <input
+                className="input"
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setAnswer(event.target.value);
                 }}
-                style={{ width: "100%" }}
                 value={answer}
               />
               <div className="mt-2">
-                <button onClick={completeChallenge} disabled={answering}>
+                <button className="btn" onClick={completeChallenge} disabled={answering}>
                   Submit
                 </button>
               </div>

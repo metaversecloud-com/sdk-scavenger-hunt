@@ -12,7 +12,7 @@ import { GlobalDispatchContext } from "@/context/GlobalContext";
 import { SET_THEME } from "@/context/types";
 import { TOPIA_WORKERS_URL } from "@/context/constants";
 
-const Clue = () => {
+export const Clue = () => {
   const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
   const [cluesFound, setCluesFound] = useState<string>("");
@@ -30,7 +30,7 @@ const Clue = () => {
     setIsLoading(true);
     backendAPI
       .get(`/clue`)
-      .then((result: any) => {
+      .then((result) => {
         const { success, cluesFound, totalClues, imgUrl, contentImgUrl, text, theme } = result.data;
         if (success) {
           setCluesFound(cluesFound);
@@ -56,37 +56,38 @@ const Clue = () => {
 
   return (
     <div className="container p-6">
-      <div className="text-center" style={{ marginBottom: "70px" }}>
+      <div className="text-center mb-10">
         <img
           className="mx-auto rounded-xl mb-4"
           style={{ maxWidth: "100%", maxHeight: "400px" }}
           src={imgUrl}
           alt="Clue"
         />
-        <h3 className="text-2xl font-bold mb-2">Congratulations!</h3>
-        <p className="text-lg">You have found a clue!</p>
-        <p className="text-lg">
+        <h2 className="pb-2">Congratulations!</h2>
+        <h4>
+          You have found a clue!
+          <br />
           Completed {cluesFound} of {totalClues}
-        </p>
+        </h4>
       </div>
       <div>
-        <img
-          className="mx-auto rounded-xl mb-4"
-          style={{ maxWidth: "100%", maxHeight: "400px" }}
-          src={contentImgUrl || TOPIA_WORKERS_URL}
-          alt="Final Challenge"
-        />
-        <div style={{ textAlign: "center", whiteSpace: "pre-wrap" }}>
-          <p>{text}</p>
-        </div>
+        {(contentImgUrl || TOPIA_WORKERS_URL) && (
+          <img
+            className="mx-auto rounded-xl mb-2"
+            style={{ maxWidth: "100%", maxHeight: "400px" }}
+            src={contentImgUrl || TOPIA_WORKERS_URL}
+            alt="Content Image"
+          />
+        )}
+        <p>{text}</p>
       </div>
       {cluesFound === totalClues ? (
-        <div className="mb-8">
-          <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mt-8" role="alert">
-            <p>Congratulations!</p>
-            <p>You have unlocked the final challenge question.</p>
-            <p>Please return to the first sign to continue.</p>
-          </div>
+        <div className="mb-8 mt-10">
+          <hr />
+          <p className="text-success pb-4 pt-4">
+            You have unlocked the final challenge question! Please return to the first sign to continue.
+          </p>
+          <hr />
         </div>
       ) : null}
     </div>

@@ -50,7 +50,6 @@ if (process.env.NODE_ENV === "development") {
 
 app.use(function (req, res, next) {
   const ogSend = res.send;
-  // @ts-ignore
   res.send = function (data) {
     if (data) {
       try {

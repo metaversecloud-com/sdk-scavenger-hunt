@@ -6,7 +6,7 @@ import { DroppedAsset, Visitor } from "../utils/topiaInit.js";
 export const handleGetClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, profileId, sceneDropId, username, urlSlug } = credentials;
+    const { assetId, profileId, sceneDropId, username, urlSlug, visitorId } = credentials;
     const { dataObject, world } = await getWorldDataObject({ credentials, sceneDropId });
     const { clues, progress, theme } = dataObject as DataObjectType;
     const clue: ClueType = clues?.[assetId];
@@ -40,25 +40,30 @@ export const handleGetClue = async (req: Request, res: Response) => {
         await world.updateDataObject({
           [`scenes.${sceneDropId}.progress.${profileId}.cluesFound`]: cluesFound,
         });
-        if (cluesFound.length == Object.keys(dataObject.clues).length) {
-          const visitor = Visitor.create(credentials?.visitorId, credentials?.urlSlug, { credentials });
-          visitor
-            .triggerParticle({
-              name: "partyPopper_float",
-              duration: 7,
-            })
-            .then()
-            .catch((error) => JSON.stringify(error));
+
+        if (cluesFound.length === Object.keys(dataObject.clues).length) {
+          const visitor = Visitor.create(visitorId, urlSlug, { credentials });
+          visitor.triggerParticle({
+            name: "partyPopper_float",
+            duration: 7,
+          });
         }
-        renderGetClueParticleEffects({ world, assetId, credentials })
-          .then()
-          .catch(() => console.error("Could not render particle effects for get clue"));
+
+        const droppedAsset = await DroppedAsset.get(assetId, urlSlug, { credentials });
+        world.triggerParticle({
+          name: "disco_float",
+          duration: 3,
+          position: {
+            x: droppedAsset?.position?.x,
+            y: droppedAsset?.position?.y,
+          },
+        });
       }
     }
 
     return res.send({
       success: true,
-      text: clue.text || "test clue text",
+      text: clue.text || "",
       imgUrl: clue.imgUrl || "",
       contentImgUrl: clue.contentImgUrl || "",
       totalClues: Object.keys(clues).length,
@@ -76,18 +81,3 @@ export const handleGetClue = async (req: Request, res: Response) => {
     });
   }
 };
-
-async function renderGetClueParticleEffects({ world, assetId, credentials }) {
-  const droppedAsset = await DroppedAsset.get(assetId, credentials?.urlSlug, { credentials });
-  world
-    .triggerParticle({
-      name: "disco_float",
-      duration: 3,
-      position: {
-        x: droppedAsset?.position?.x,
-        y: droppedAsset?.position?.y,
-      },
-    })
-    .then()
-    .catch((error) => JSON.stringify(error));
-}

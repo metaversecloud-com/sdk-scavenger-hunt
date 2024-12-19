@@ -2,10 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Routes, Route, useNavigate, useSearchParams } from "react-router-dom";
 
 // pages
-import Clue from "./pages/Clue";
-import Challenge from "./pages/Challenge";
-import Admin from "./pages/Admin";
-import Error from "./pages/Error";
+import { Clue, Challenge, Admin, Error } from "./pages";
 
 // context
 import { GlobalDispatchContext } from "./context/GlobalContext";
@@ -28,43 +25,24 @@ const App = () => {
   const interactiveParams: InteractiveParams = useMemo(() => {
     return {
       assetId: searchParams.get("assetId") || "",
+      displayName: searchParams.get("displayName") || "",
+      identityId: searchParams.get("identityId") || "",
       interactiveNonce: searchParams.get("interactiveNonce") || "",
       interactivePublicKey: searchParams.get("interactivePublicKey") || "",
       profileId: searchParams.get("profileId") || "",
       sceneDropId: searchParams.get("sceneDropId") || "",
+      uniqueName: searchParams.get("uniqueName") || "",
       urlSlug: searchParams.get("urlSlug") || "",
       username: searchParams.get("username") || "",
       visitorId: searchParams.get("visitorId") || "",
-      identityId: searchParams.get("identityId") || "",
-      displayName: searchParams.get("displayName") || "",
     };
   }, [searchParams]);
 
   const setInteractiveParams = useCallback(
-    ({
-      assetId,
-      interactiveNonce,
-      interactivePublicKey,
-      profileId,
-      sceneDropId,
-      urlSlug,
-      username,
-      visitorId,
-    }: InteractiveParams) => {
-      const isInteractiveIframe = visitorId && interactiveNonce && interactivePublicKey && assetId;
+    ({ profileId }: InteractiveParams) => {
       dispatch!({
         type: SET_INTERACTIVE_PARAMS,
-        payload: {
-          assetId,
-          interactiveNonce,
-          interactivePublicKey,
-          isInteractiveIframe,
-          profileId,
-          sceneDropId,
-          urlSlug,
-          username,
-          visitorId,
-        },
+        payload: { profileId },
       });
     },
     [dispatch],

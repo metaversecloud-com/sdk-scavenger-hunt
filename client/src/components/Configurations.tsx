@@ -10,12 +10,12 @@ import EditClue from "./EditClue";
 
 // context
 import { GlobalDispatchContext } from "@/context/GlobalContext";
-import { SET_THEME } from "@/context/types";
+import { ClueType, SET_THEME } from "@/context/types";
 
 export const Configurations = () => {
   const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
-  const [clues, setClues] = useState([]);
+  const [clues, setClues] = useState<{ [id: string]: ClueType }>({});
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [currentTheme, setTheme] = useState("robot");
@@ -23,13 +23,13 @@ export const Configurations = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const [isEditClueVisible, setIsEditClueVisible] = useState(false);
-  const [selectedClue, setSelectedClue] = useState(null);
+  const [selectedClue, setSelectedClue] = useState<ClueType | null>(null);
   const [allWalkButtonsDisabled, setAllWalkButtonsDisabled] = useState(false);
 
   useEffect(() => {
     backendAPI
       .get(`/config`)
-      .then((result: any) => {
+      .then((result) => {
         const { clues, challenge, theme, success } = result.data;
         if (success) {
           setQuestion(challenge.text);
@@ -39,7 +39,7 @@ export const Configurations = () => {
           if (dispatch) {
             dispatch({
               type: SET_THEME,
-              payload: theme,
+              payload: { theme },
             });
           }
         }
@@ -64,7 +64,7 @@ export const Configurations = () => {
     setAreButtonsDisabled(true);
     backendAPI
       .post(`/reset-clues`)
-      .then((result: any) => {
+      .then((result) => {
         setClues(result.data.clues);
       })
       .catch(() => navigate("*"))
@@ -75,14 +75,14 @@ export const Configurations = () => {
     setAreButtonsDisabled(true);
     backendAPI
       .post(`/add-new-clue`)
-      .then((result: any) => {
+      .then((result) => {
         setClues(result.data.clues);
       })
       .catch(() => navigate("*"))
       .finally(() => setAreButtonsDisabled(false));
   };
 
-  const handleOpenClueModal = (clue: any) => {
+  const handleOpenClueModal = (clue: ClueType) => {
     setSelectedClue(clue);
     setIsEditClueVisible(true);
   };
@@ -95,7 +95,7 @@ export const Configurations = () => {
     setIsLoading(true);
     backendAPI
       .get(`/config`)
-      .then((result: any) => {
+      .then((result) => {
         const { clues } = result.data;
         setClues(clues);
       })
@@ -103,7 +103,7 @@ export const Configurations = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const walkUpToClueAsset = async (clue: any) => {
+  const walkUpToClueAsset = async (clue: ClueType) => {
     setAllWalkButtonsDisabled(true);
     backendAPI
       .post(`/walk-up-to-clue-asset`, { clue })
@@ -118,15 +118,15 @@ export const Configurations = () => {
       });
   };
 
-  const Clue = ({ item }: { item: any }) => {
-    const { assetId, imgUrl, text } = item;
+  const Clue = ({ clue }: { clue: ClueType }) => {
+    const { id, imgUrl, text } = clue;
     let imgSrc = imgUrl;
     if (imgUrl === "layers/textAssetPreview.png") {
       imgSrc = "https://topiaimages.s3.us-west-1.amazonaws.com/under-construction.png";
     }
     const truncatedText = text?.length > 18 ? `${text.substring(0, 15)}...` : text;
     return (
-      <div className="card small mt-4 cursor-pointer" key={assetId} onClick={() => handleOpenClueModal(item)}>
+      <div className="card small mt-4 cursor-pointer" key={id} onClick={() => handleOpenClueModal(clue)}>
         <div className="card-image" style={{ height: "70px", width: "70px", minWidth: "70px" }}>
           <img src={imgSrc} style={{ maxWidth: "100%", maxHeight: "100%" }} />
         </div>
@@ -137,7 +137,7 @@ export const Configurations = () => {
               className="btn btn-icon cursor-pointer"
               onClick={(event) => {
                 event.stopPropagation();
-                walkUpToClueAsset(item);
+                walkUpToClueAsset(clue);
               }}
               disabled={allWalkButtonsDisabled}
             >
@@ -160,26 +160,26 @@ export const Configurations = () => {
 
   return (
     <>
-      <p className="mb-4">
+      <p className="pb-4">
         This is the final challenge question that the participants need to solve. Enter a question, and answer (non case
         sensitive) and click the save button.
       </p>
       <label>Question</label>
       <input
+        className="input"
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
           setQuestion(event.target.value);
         }}
         type="textarea"
-        style={{ width: "100%" }}
         value={question}
       />
 
       <label>Answer</label>
       <input
+        className="input"
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
           setAnswer(event.target.value?.trim()?.toLowerCase());
         }}
-        style={{ width: "100%" }}
         value={answer}
       />
 
@@ -187,27 +187,27 @@ export const Configurations = () => {
         <div>
           <label>Buildable Asset Unique Name</label>
           <input
+            className="input"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setBuildableAssetUniqueName(event.target.value);
             }}
-            style={{ width: "100%" }}
             value={buildableAssetUniqueName}
           />
         </div>
       )}
 
-      <button className="mt-4" onClick={onSave} disabled={areButtonsDisabled}>
+      <button className="btn mt-4" onClick={onSave} disabled={areButtonsDisabled}>
         Save
       </button>
 
       <div className="mt-10">
         <h4>Clues</h4>
         <p>These are the configured clues. Click on one to take you to the clue.</p>
-        {Object.keys(clues)?.map((item: any, index: any) => <Clue key={index} item={clues[item]} />)}
-        <button className="mt-4" onClick={handleAddNewClue} disabled={areButtonsDisabled}>
+        {Object.keys(clues)?.map((clue) => <Clue clue={clues[clue]} />)}
+        <button className="btn mt-4" onClick={handleAddNewClue} disabled={areButtonsDisabled}>
           Add New Clue
         </button>
-        <button className="mt-4" onClick={onResetClues} disabled={areButtonsDisabled}>
+        <button className="btn btn-danger mt-2" onClick={onResetClues} disabled={areButtonsDisabled}>
           Reset Clues
         </button>
       </div>

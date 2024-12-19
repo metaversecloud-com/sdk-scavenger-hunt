@@ -5,9 +5,9 @@ import { errorHandler, getCredentials, getWorldDataObject } from "../utils/index
 export const handleGetConfiguration = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, sceneDropId } = credentials;
+    const { sceneDropId } = credentials;
 
-    const { dataObject } = await getWorldDataObject({ credentials, keyAssetId: assetId, sceneDropId });
+    const { dataObject } = await getWorldDataObject({ credentials, sceneDropId });
     const { challenge, clues, theme } = dataObject as DataObjectType;
 
     return res.json({ success: true, clues, challenge, theme });

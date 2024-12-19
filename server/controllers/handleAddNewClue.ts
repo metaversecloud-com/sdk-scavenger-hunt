@@ -9,8 +9,7 @@ import {
   Visitor,
 } from "../utils/index.js";
 import { DataObjectType } from "../types.js";
-
-let BASE_URL;
+import { DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
 
 export const handleAddNewClue = async (req: Request, res: Response) => {
   try {
@@ -19,25 +18,45 @@ export const handleAddNewClue = async (req: Request, res: Response) => {
 
     const protocol = process.env.INSTANCE_PROTOCOL;
     const host = req.hostname;
-    const port = req.socket.localPort;
-    [];
+    let BASE_URL = `${protocol}://${host}`;
+    if (host === "localhost") BASE_URL = "http://localhost:3001";
 
-    if (host === "localhost") {
-      BASE_URL = "http://localhost:3001";
-    } else {
-      BASE_URL = `${protocol}://${host}`;
-    }
+    const visitor: VisitorInterface = await Visitor.get(visitorId, urlSlug, { credentials });
 
-    const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
-
-    const { world, dataObject } = await getWorldDataObject({ credentials, keyAssetId: assetId, sceneDropId });
+    const { world, dataObject } = await getWorldDataObject({ credentials, sceneDropId });
     const { theme } = dataObject as DataObjectType;
 
-    const keyAsset = await DroppedAsset.get(assetId, urlSlug, { credentials });
+    const keyAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });
 
-    await dropImageAsset({ urlSlug, credentials, visitor, theme, keyAsset });
+    const { moveTo } = visitor;
+    const position = {
+      x: moveTo.x + 100,
+      y: moveTo.y,
+    };
+    const uniqueName = `ScavengerHunt_${theme}_clue`;
 
-    // @ts-ignore
+    const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", { credentials });
+
+    const spawnedDroppedAsset: DroppedAssetInterface = await DroppedAsset.drop(asset, {
+      position,
+      uniqueName,
+      urlSlug,
+      isInteractive: true,
+      sceneDropId,
+      interactivePublicKey: process.env.INTERACTIVE_KEY,
+    });
+
+    await Promise.all([
+      spawnedDroppedAsset.setDataObject(keyAsset.dataObject, {}),
+      spawnedDroppedAsset.updateClickType({
+        clickableLink: `${BASE_URL}/clue`,
+        clickableLinkTitle: "Scavenger Hunt",
+        clickableDisplayTextDescription: "Scavenger Hunt",
+        clickableDisplayTextHeadline: "Scavenger Hunt",
+        isOpenLinkInDrawer: true,
+      }),
+    ]);
+
     const clues = await getClueDroppedAssets({ uniqueName: `${keyAsset.uniqueName}_${theme}_clue`, world });
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
@@ -47,72 +66,10 @@ export const handleAddNewClue = async (req: Request, res: Response) => {
   } catch (error) {
     return errorHandler({
       error,
-      functionName: "handleResetClues",
-      message: "Error resetting clues.",
+      functionName: "handleAddNewClue",
+      message: "Error adding new clue.",
       req,
       res,
     });
   }
 };
-
-async function dropImageAsset({
-  urlSlug,
-  credentials,
-  visitor,
-  theme,
-  keyAsset,
-}: {
-  urlSlug: any;
-  credentials: any;
-  visitor: any;
-  theme: any;
-  keyAsset: any;
-}) {
-  const imgUrlLayer0 = null;
-  const imgUrlLayer1 = null;
-
-  const { moveTo, username } = visitor;
-  const { x, y } = moveTo;
-  const position = {
-    x: x + 100,
-    y: y,
-  };
-  const uniqueName = `ScavengerHunt_${theme}_clue`;
-
-  const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", { credentials });
-
-  let spawnedDroppedAsset;
-  try {
-    spawnedDroppedAsset = await DroppedAsset.drop(asset, {
-      position,
-      uniqueName,
-      urlSlug,
-      isInteractive: true,
-      sceneDropId: keyAsset.sceneDropId,
-      interactivePublicKey: process.env.INTERACTIVE_KEY,
-      layer0: imgUrlLayer0,
-      layer1: imgUrlLayer1,
-    });
-  } catch (error) {
-    // This solves a bug where the asset is not dropped in the world for legacy assets with outdated urls from the old version.
-    await visitor?.closeIframe(credentials?.assetId);
-  }
-
-  await Promise.all([
-    spawnedDroppedAsset?.updateDataObject({
-      profileId: visitor?.profileId,
-    }),
-    spawnedDroppedAsset?.updateClickType({
-      clickType: "link",
-      clickableLink: `${BASE_URL}/clue`,
-      clickableLinkTitle: "Scavenger Hunt",
-      clickableDisplayTextDescription: "Scavenger Hunt",
-      clickableDisplayTextHeadline: "Scavenger Hunt",
-      isOpenLinkInDrawer: true,
-    }),
-  ]);
-
-  await spawnedDroppedAsset.setDataObject(keyAsset?.dataObject);
-
-  return spawnedDroppedAsset;
-}
