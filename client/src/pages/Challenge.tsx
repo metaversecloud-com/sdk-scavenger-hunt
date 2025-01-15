@@ -18,6 +18,8 @@ export const Challenge = () => {
   const { theme } = useContext(GlobalStateContext);
   const [imgUrl, setImgUrl] = useState();
   const [question, setQuestion] = useState("");
+  const [cluesFound, setCluesFound] = useState<string>("");
+  const [totalClues, setTotalClues] = useState<string>("");
   const [hasCompletedClues, setHasCompletedClues] = useState(true);
   const [answer, setAnswer] = useState("");
   const [hasAnsweredChallenge, setHasAnsweredChallenge] = useState(false);
@@ -39,11 +41,14 @@ export const Challenge = () => {
     backendAPI
       .get(`/challenge`)
       .then((result) => {
-        const { success, challenge, hasCompletedClues, hasCompletedChallenge, isAdmin, theme } = result.data;
+        const { success, cluesFound, challenge, hasCompletedClues, hasCompletedChallenge, isAdmin, theme, totalClues } =
+          result.data;
 
         if (success) {
           setImgUrl(challenge?.imgUrl || `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}IMG_Start.png`);
           setQuestion(challenge?.text || "Please, go to the admin section to edit the Challenge message.");
+          setCluesFound(cluesFound);
+          setTotalClues(totalClues);
           setHasCompletedClues(hasCompletedClues);
           setHasAnsweredChallenge(hasCompletedChallenge);
           setIsAdmin(isAdmin);
@@ -160,11 +165,11 @@ export const Challenge = () => {
           </div>
         ) : (
           <div className="flex flex-col">
-            <div className="mt-6">
-              <div>
-                <p>{getExplorationText()}</p>
-              </div>
-            </div>
+            <p>{getExplorationText()}</p>
+            <br />
+            <h4 className="text-center">
+              Completed {cluesFound} of {totalClues}
+            </h4>
           </div>
         )}
       </div>

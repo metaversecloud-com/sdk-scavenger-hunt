@@ -37,7 +37,7 @@ export const Clue = () => {
           setTotalClues(totalClues);
           setImgUrl(imgUrl);
           setContentImgUrl(contentImgUrl);
-          setText(text.replace(/\\n/g, "\n"));
+          setText(text);
           setIsLoading(false);
           dispatch!({
             type: SET_THEME,
@@ -79,7 +79,7 @@ export const Clue = () => {
             alt="Content Image"
           />
         )}
-        <p>{text}</p>
+        <p style={{ whiteSpace: "pre-line" }}>{text}</p>
       </div>
       {cluesFound === totalClues ? (
         <div className="mb-8 mt-10">
