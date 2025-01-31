@@ -29,6 +29,8 @@ export const handleGetClue = async (req: Request, res: Response) => {
           analytics: [
             { analyticName: `${theme}-starts`, uniqueKey: profileId, profileId, urlSlug },
             { analyticName: `starts`, uniqueKey: profileId, profileId, urlSlug },
+            { analyticName: `${theme}-cluesFound1`, uniqueKey: profileId, profileId, urlSlug },
+            { analyticName: `cluesFound1`, uniqueKey: profileId, profileId, urlSlug },
           ],
         },
       );
@@ -37,9 +39,17 @@ export const handleGetClue = async (req: Request, res: Response) => {
       cluesFound = progress[profileId].cluesFound;
       if (!cluesFound.includes(assetId)) {
         cluesFound = [...cluesFound, assetId];
-        await world.updateDataObject({
-          [`scenes.${sceneDropId}.progress.${profileId}.cluesFound`]: cluesFound,
-        });
+        await world.updateDataObject(
+          {
+            [`scenes.${sceneDropId}.progress.${profileId}.cluesFound`]: cluesFound,
+          },
+          {
+            analytics: [
+              { analyticName: `${theme}-cluesFound${cluesFound.length}`, uniqueKey: profileId, profileId, urlSlug },
+              { analyticName: `cluesFound${cluesFound.length}`, uniqueKey: profileId, profileId, urlSlug },
+            ],
+          },
+        );
 
         if (cluesFound.length === Object.keys(dataObject.clues).length) {
           const visitor = Visitor.create(visitorId, urlSlug, { credentials });
