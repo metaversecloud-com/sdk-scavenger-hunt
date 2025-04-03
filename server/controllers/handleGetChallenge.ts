@@ -18,8 +18,11 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
 
     if (!progress[profileId]) {
       await world.updateDataObject({
-        [`scenes.${sceneDropId}.progress`]: {
-          [profileId]: { challengeDone: false, cluesFound: [], profileId, username },
+        [`scenes.${sceneDropId}.progress.${[profileId]}`]: {
+          challengeDone: false,
+          cluesFound: [],
+          profileId,
+          username,
         },
       });
     } else {
