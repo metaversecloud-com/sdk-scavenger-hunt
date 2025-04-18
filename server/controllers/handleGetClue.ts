@@ -6,7 +6,7 @@ import { DroppedAsset, Visitor } from "../utils/topiaInit.js";
 export const handleGetClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, profileId, sceneDropId, username, urlSlug, visitorId } = credentials;
+    const { assetId, profileId, sceneDropId, displayName, urlSlug, visitorId } = credentials;
     const { dataObject, world } = await getWorldDataObject({ credentials, sceneDropId });
     const { clues, progress, theme } = dataObject as DataObjectType;
     const clue: ClueType = clues?.[assetId];
@@ -22,7 +22,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
             challengeDone: false,
             cluesFound: [assetId],
             profileId,
-            username,
+            username: displayName,
           },
         },
         {

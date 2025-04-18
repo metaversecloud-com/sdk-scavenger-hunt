@@ -5,7 +5,7 @@ import { DataObjectType } from "../types.js";
 export const handleGetChallenge = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { profileId, sceneDropId, username } = credentials;
+    const { profileId, sceneDropId, displayName } = credentials;
 
     const promises = [getProfile(credentials), getWorldDataObject({ credentials, sceneDropId })];
     const [{ isAdmin }, { world, dataObject }] = await Promise.all(promises);
@@ -22,7 +22,7 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
           challengeDone: false,
           cluesFound: [],
           profileId,
-          username,
+          username: displayName,
         },
       });
     } else {

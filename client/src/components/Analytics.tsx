@@ -8,7 +8,7 @@ import { Loading } from "@/components/Loading";
 import { backendAPI } from "@/utils/backendAPI";
 
 // context
-import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { GlobalDispatchContext } from "@/context/GlobalContext";
 import { SET_THEME } from "@/context/types";
 
 type ProgressType = {
@@ -18,7 +18,6 @@ type ProgressType = {
 export const Analytics = () => {
   const dispatch = useContext(GlobalDispatchContext);
   const navigate = useNavigate();
-  const { profileId } = useContext(GlobalStateContext);
 
   const [progressData, setProgressData] = useState<ProgressType>({});
   const [totalClues, setTotalClues] = useState(0);
@@ -56,16 +55,15 @@ export const Analytics = () => {
           <th>Username</th>
           <th align="right">Clues Found</th>
         </tr>
-        {profileId &&
-          Object.keys(progressData).map(() => (
-            <tr key={progressData?.[profileId]?.cluesFound?.length}>
-              <td scope="row">{progressData?.[profileId!]?.username}</td>
-              <td align="right">
-                {progressData?.[profileId]?.cluesFound?.length || 0}{" "}
-                {progressData?.[profileId]?.challengeDone ? "- Completed" : ""}
-              </td>
-            </tr>
-          ))}
+        {Object.keys(progressData).map((profileId) => (
+          <tr key={progressData?.[profileId]?.cluesFound?.length}>
+            <td scope="row">{progressData?.[profileId!]?.username}</td>
+            <td align="right">
+              {progressData?.[profileId]?.cluesFound?.length || 0}{" "}
+              {progressData?.[profileId]?.challengeDone ? "- Completed" : ""}
+            </td>
+          </tr>
+        ))}
       </table>
     </>
   );
