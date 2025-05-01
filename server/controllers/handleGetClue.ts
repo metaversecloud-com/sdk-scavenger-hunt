@@ -53,21 +53,37 @@ export const handleGetClue = async (req: Request, res: Response) => {
 
         if (cluesFound.length === Object.keys(dataObject.clues).length) {
           const visitor = Visitor.create(visitorId, urlSlug, { credentials });
-          visitor.triggerParticle({
-            name: "partyPopper_float",
-            duration: 7,
-          });
+          visitor
+            .triggerParticle({
+              name: "partyPopper_float",
+              duration: 7,
+            })
+            .catch((error) =>
+              errorHandler({
+                error,
+                functionName: "handleGetClue",
+                message: "Error triggering particle effects",
+              }),
+            );
         }
 
         const droppedAsset = await DroppedAsset.get(assetId, urlSlug, { credentials });
-        world.triggerParticle({
-          name: "disco_float",
-          duration: 3,
-          position: {
-            x: droppedAsset?.position?.x,
-            y: droppedAsset?.position?.y,
-          },
-        });
+        world
+          .triggerParticle({
+            name: "disco_float",
+            duration: 3,
+            position: {
+              x: droppedAsset?.position?.x,
+              y: droppedAsset?.position?.y,
+            },
+          })
+          .catch((error) =>
+            errorHandler({
+              error,
+              functionName: "handleGetClue",
+              message: "Error triggering particle effects",
+            }),
+          );
       }
     }
 
