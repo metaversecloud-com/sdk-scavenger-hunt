@@ -31,16 +31,32 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
 
     world.updateDataObject({ [`scenes.${sceneDropId}.progress.${profileId}.challengeDone`]: true }, { analytics });
 
-    visitor.fireToast({
-      groupId: theme,
-      title: "Congratulations 🌟",
-      text,
-    });
+    visitor
+      .fireToast({
+        groupId: theme,
+        title: "Congratulations 🌟",
+        text,
+      })
+      .catch((error) =>
+        errorHandler({
+          error,
+          functionName: "handleAnswerChallenge",
+          message: "Error firing toast",
+        }),
+      );
 
-    visitor.triggerParticle({
-      name: "explosion_float",
-      duration: 6,
-    });
+    visitor
+      .triggerParticle({
+        name: "explosion_float",
+        duration: 6,
+      })
+      .catch((error) =>
+        errorHandler({
+          error,
+          functionName: "handleAnswerChallenge",
+          message: "Error triggering particle effects",
+        }),
+      );
 
     addNewRowToGoogleSheets({
       identityId: req?.query?.identityId,
