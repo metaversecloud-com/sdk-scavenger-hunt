@@ -21,8 +21,8 @@ export const initializeWorldDataObject = async ({
       buildableAssetUniqueName: "",
       challenge: {
         answer: "",
-        text: "",
-        imgUrl: "",
+        text: "This challenge hasn't been set up yet. Please check back later.",
+        imgUrl: `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_Start.png`,
       },
       clues: {},
       progress: {},
@@ -32,15 +32,16 @@ export const initializeWorldDataObject = async ({
     await droppedAsset.fetchDataObject();
 
     const { challenge, theme } = droppedAsset.dataObject;
-    if (!challenge || !theme) throw "Key asset is missing required data object.";
 
-    payload.challenge = challenge;
-    payload.challenge.imgUrl = `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_Start.png`;
+    if (!theme) throw "Key asset is missing required theme in it's data object.";
+    payload.theme = theme;
+
+    if (challenge) payload.challenge = challenge;
+
     payload.clues = await getClueDroppedAssets({
       uniqueName: `ScavengerHunt_${theme}_clue`,
       world,
     });
-    payload.theme = theme;
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
     if (!world.dataObject || !world.dataObject?.scenes) {
