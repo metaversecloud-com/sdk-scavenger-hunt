@@ -1,8 +1,7 @@
 import { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 
 // components
-import Loading from "@/components/Loading";
+import { Loading } from "@/components";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
@@ -11,10 +10,10 @@ import { backendAPI } from "@/utils/backendAPI";
 import { GlobalDispatchContext } from "@/context/GlobalContext";
 import { SET_THEME } from "@/context/types";
 import { TOPIA_WORKERS_URL } from "@/context/constants";
+import { setErrorMessage } from "@/utils/setErrorMessage";
 
 export const Clue = () => {
   const dispatch = useContext(GlobalDispatchContext);
-  const navigate = useNavigate();
   const [cluesFound, setCluesFound] = useState<string>("");
   const [totalClues, setTotalClues] = useState<string>("");
   const [imgUrl, setImgUrl] = useState<string>("");
@@ -45,10 +44,7 @@ export const Clue = () => {
           });
         }
       })
-      .catch((error) => {
-        console.error("result error", error);
-        navigate("*");
-      })
+      .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => setIsLoading(false));
   };
 

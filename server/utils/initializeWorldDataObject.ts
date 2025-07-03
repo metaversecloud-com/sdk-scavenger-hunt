@@ -19,11 +19,7 @@ export const initializeWorldDataObject = async ({
     const payload = {
       sceneDropId,
       buildableAssetUniqueName: "",
-      challenge: {
-        answer: "",
-        text: "This challenge hasn't been set up yet. Please check back later.",
-        imgUrl: `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_Start.png`,
-      },
+
       clues: {},
       progress: {},
     };
@@ -36,7 +32,15 @@ export const initializeWorldDataObject = async ({
     if (!theme) throw "Key asset is missing required theme in it's data object.";
     payload.theme = theme;
 
-    if (challenge) payload.challenge = challenge;
+    if (challenge) {
+      payload.challenge = challenge;
+    } else {
+      payload.challenge = {
+        answer: "",
+        text: "This challenge hasn't been set up yet. Please check back later.",
+        imgUrl: `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_Start.png`,
+      };
+    }
 
     payload.clues = await getClueDroppedAssets({
       uniqueName: `ScavengerHunt_${theme}_clue`,

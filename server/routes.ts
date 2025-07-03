@@ -10,6 +10,7 @@ import {
   handleUpdateClue,
   handleMoveToClueAsset,
   handleAddNewClue,
+  handleRemoveClue,
 } from "./controllers/index.js";
 import { getVersion } from "./utils/getVersion.js";
 
@@ -52,6 +53,7 @@ router.post("/answer-challenge", handleAnswerChallenge);
 
 router.get("/clue", handleGetClue);
 router.post("/update-clue", handleUpdateClue);
+router.post("/remove-clue", handleRemoveClue);
 router.post("/reset-clues", handleResetClues);
 router.post("/walk-up-to-clue-asset", handleMoveToClueAsset);
 router.post("/add-new-clue", handleAddNewClue);
