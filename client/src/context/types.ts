@@ -1,6 +1,8 @@
 export const SET_HAS_SETUP_BACKEND = "SET_HAS_SETUP_BACKEND";
 export const SET_INTERACTIVE_PARAMS = "SET_INTERACTIVE_PARAMS";
 export const SET_THEME = "SET_THEME";
+export const SET_IS_ADMIN = "SET_IS_ADMIN";
+export const SET_ERROR = "SET_ERROR";
 
 export type InteractiveParams = {
   assetId: string;
@@ -21,6 +23,8 @@ export interface InitialState {
   hasSetupBackend?: boolean;
   profileId?: string;
   theme?: string;
+  isAdmin?: boolean;
+  error?: string;
 }
 
 export type ActionType = {

@@ -1,11 +1,11 @@
 import { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 
 // components
 import { Loading } from "@/components/Loading";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
+import { setErrorMessage } from "@/utils/setErrorMessage";
 
 // context
 import { GlobalDispatchContext } from "@/context/GlobalContext";
@@ -17,7 +17,6 @@ type ProgressType = {
 
 export const Analytics = () => {
   const dispatch = useContext(GlobalDispatchContext);
-  const navigate = useNavigate();
 
   const [progressData, setProgressData] = useState<ProgressType>({});
   const [totalClues, setTotalClues] = useState(0);
@@ -37,7 +36,7 @@ export const Analytics = () => {
           });
         }
       })
-      .catch(() => navigate("*"))
+      .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => setIsLoading(false));
   }, [backendAPI]);
 

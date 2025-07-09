@@ -10,11 +10,13 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
     const { world } = await getWorldDataObject({ credentials, sceneDropId });
     const droppedAsset = await DroppedAsset.create(assetId, urlSlug, { credentials });
 
-    await droppedAsset.updateWebImageLayers("", imgUrl);
-
-    await world.updateDataObject({
-      [`scenes.${sceneDropId}.clues.${assetId}`]: { id: assetId, text, imgUrl, contentImgUrl },
-    });
+    await Promise.all([
+      droppedAsset.updateWebImageLayers("", imgUrl),
+      await droppedAsset.updateDataObject({ id: assetId, text, imgUrl, contentImgUrl }),
+      world.updateDataObject({
+        [`scenes.${sceneDropId}.clues.${assetId}`]: { id: assetId, text, imgUrl, contentImgUrl },
+      }),
+    ]);
 
     return res.json({ success: true, text, imgUrl, contentImgUrl });
   } catch (error) {

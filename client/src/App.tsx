@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Routes, Route, useNavigate, useSearchParams } from "react-router-dom";
 
 // pages
-import { Clue, Challenge, Admin, Error } from "./pages";
+import { Home, Clue, Error } from "./pages";
 
 // context
 import { GlobalDispatchContext } from "./context/GlobalContext";
@@ -80,9 +80,8 @@ const App = () => {
 
   return (
     <Routes>
+      <Route path="challenge" element={<Home />} />
       <Route path="clue" element={<Clue />} />
-      <Route path="challenge" element={<Challenge />} />
-      <Route path="admin" element={<Admin />} />
       <Route path="*" element={<Error />} />
     </Routes>
   );

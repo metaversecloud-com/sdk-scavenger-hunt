@@ -1,16 +1,16 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
+import { setErrorMessage } from "@/utils/setErrorMessage";
 
 // context
-import { GlobalStateContext } from "@/context/GlobalContext";
+import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
 import { getFixedClueImages, NATIONAL_PARK } from "@/context/constants";
 import { themeData } from "@/context/themeData";
 import { ClueType } from "@/context/types";
 
-export const EditClue = ({
+export const EditClueModal = ({
   clue,
   onCloseModal,
   onCluesUpdated,
@@ -20,29 +20,32 @@ export const EditClue = ({
   onCluesUpdated: () => void;
 }) => {
   const { theme } = useContext(GlobalStateContext);
+  const dispatch = useContext(GlobalDispatchContext);
+
   const fixedClueImages = getFixedClueImages(theme || NATIONAL_PARK);
 
-  const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(clue?.imgUrl || fixedClueImages[0].image);
   const [contentImgUrl, setContentImgUrl] = useState(clue?.contentImgUrl);
   const [text, setText] = useState(clue?.text);
   const [isSaving, setIsSaving] = useState(false);
 
   async function onSave() {
-    try {
-      await backendAPI.post(`/update-clue`, {
+    backendAPI
+      .post(`/update-clue`, {
         assetId: clue?.id,
         text,
         imgUrl: selectedImage,
         contentImgUrl,
+      })
+      .then(() => {
+        if (onCluesUpdated) onCluesUpdated();
+      })
+      .catch((error) => setErrorMessage(dispatch, error))
+      .finally(() => {
+        setIsSaving(false);
+        onCloseModal();
       });
-      if (onCluesUpdated) onCluesUpdated();
-    } catch (error) {
-      navigate("*");
-    } finally {
-      setIsSaving(false);
-      onCloseModal();
-    }
+
     setIsSaving(true);
   }
 
@@ -60,8 +63,8 @@ export const EditClue = ({
   };
 
   return (
-    <div style={{ overflow: "auto" }}>
-      <div style={{ textAlign: "left", top: "100%" }}>
+    <div className="modal-container">
+      <div className="modal" style={{ maxHeight: "90vh" }}>
         <h4>Clue Configuration</h4>
         <p className="pb-3">
           You can change the clue text and image it shows in the drawer. Click on the Save button at the bottom of the
@@ -75,6 +78,7 @@ export const EditClue = ({
             setText(event.target.value);
           }}
           value={text}
+          style={{ minHeight: "100px" }}
         />
 
         <label>Clue Image URL</label>
@@ -109,4 +113,4 @@ export const EditClue = ({
   );
 };
 
-export default EditClue;
+export default EditClueModal;
