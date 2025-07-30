@@ -11,14 +11,23 @@ import { setErrorMessage } from "@/utils/setErrorMessage";
 import { GlobalDispatchContext } from "@/context/GlobalContext";
 import { ClueType, SET_THEME } from "@/context/types";
 
+type EmoteType = {
+  id: string;
+  name: string;
+  previewUrl: string;
+};
+
 export const Configurations = () => {
   const dispatch = useContext(GlobalDispatchContext);
 
   const [clues, setClues] = useState<{ [id: string]: ClueType }>({});
+
+  const [availableEmotes, setAvailableEmotes] = useState<EmoteType[]>([]);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [currentTheme, setTheme] = useState("robot");
   const [buildableAssetUniqueName, setBuildableAssetUniqueName] = useState("");
+  const [selectedEmote, setSelectedEmote] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const [showEditClueModal, setShowEditClueModal] = useState(false);
@@ -30,18 +39,17 @@ export const Configurations = () => {
     backendAPI
       .get(`/config`)
       .then((result) => {
-        const { clues, challenge, theme, success } = result.data;
-        if (success) {
-          setQuestion(challenge.text);
-          setAnswer(challenge.answer);
-          setClues(clues);
-          setTheme(theme);
-          if (dispatch) {
-            dispatch({
-              type: SET_THEME,
-              payload: { theme },
-            });
-          }
+        const { clues, challenge, emotes, theme } = result.data;
+        setQuestion(challenge.text);
+        setAnswer(challenge.answer);
+        setClues(clues);
+        setAvailableEmotes(emotes);
+        setTheme(theme);
+        if (dispatch) {
+          dispatch({
+            type: SET_THEME,
+            payload: { theme },
+          });
         }
       })
       .catch((error) => setErrorMessage(dispatch, error))
@@ -55,6 +63,7 @@ export const Configurations = () => {
         answer,
         buildableAssetUniqueName,
         text: question,
+        selectedEmote,
       })
       .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => {
@@ -222,6 +231,21 @@ export const Configurations = () => {
             />
           </div>
         )}
+
+        <label>Emote</label>
+        <select
+          value={selectedEmote}
+          onChange={(e) => setSelectedEmote(e.target.value)}
+          className="input"
+          disabled={areButtonsDisabled || availableEmotes.length === 0}
+        >
+          <option value="">Select an emote</option>
+          {availableEmotes.map((emote) => (
+            <option key={emote.id} value={emote.id}>
+              {emote.name}
+            </option>
+          ))}
+        </select>
 
         <button className="btn mt-4" onClick={onSave} disabled={areButtonsDisabled}>
           Save

@@ -7,10 +7,11 @@ export const handleGetClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { assetId, profileId, sceneDropId, displayName, urlSlug, visitorId } = credentials;
+
     const { dataObject, world } = await getWorldDataObject({ credentials, sceneDropId });
     const { clues, progress, theme } = dataObject as DataObjectType;
-    const clue: ClueType = clues?.[assetId];
 
+    const clue: ClueType = clues?.[assetId];
     if (!clue) throw new Error(`No clue asset found.`);
 
     let cluesFound = [];
@@ -92,6 +93,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
       text: clue.text || "",
       imgUrl: clue.imgUrl || "",
       contentImgUrl: clue.contentImgUrl || "",
+      isVideo: clue.isVideo || false,
       totalClues: Object.keys(clues).length,
       cluesFound: cluesFound.length,
       isAdmin: true,

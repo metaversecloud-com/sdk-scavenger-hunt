@@ -5,7 +5,7 @@ export const handleUpdateChallenge = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { sceneDropId } = credentials;
-    const { answer, buildableAssetUniqueName, text } = req.body;
+    const { answer, buildableAssetUniqueName, text, selectedEmote } = req.body;
 
     const { world } = await getWorldDataObject({ credentials, sceneDropId });
 
@@ -15,6 +15,7 @@ export const handleUpdateChallenge = async (req: Request, res: Response) => {
       [`scenes.${sceneDropId}.buildableAssetUniqueName`]: buildableAssetUniqueName,
       [`scenes.${sceneDropId}.challenge.answer`]: lowerCaseAnswer,
       [`scenes.${sceneDropId}.challenge.text`]: text,
+      [`scenes.${sceneDropId}.challenge.selectedEmote`]: selectedEmote,
     });
 
     return res.json({ success: true });

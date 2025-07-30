@@ -20,9 +20,10 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       { analyticName: `completions`, uniqueKey: profileId, profileId, urlSlug },
     ];
 
-    const visitor = await Visitor.get(visitorId, urlSlug, { credentials });
+    const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
 
-    const grantExpressionResult = await visitor.grantExpression({ name: `scavengerHunt-${theme}-1` });
+    const emote = challenge.selectedEmote ? { id: challenge.selectedEmote } : { name: `scavengerHunt-${theme}-1` };
+    const grantExpressionResult = await visitor.grantExpression(emote);
     let text = "You completed the challenge!";
     if (grantExpressionResult.success === true) {
       analytics.push({ analyticName: `${theme}-1-emoteUnlocked` });
