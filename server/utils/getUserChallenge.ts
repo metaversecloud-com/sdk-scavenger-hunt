@@ -1,6 +1,6 @@
-import { Credentials } from "../types";
-import { errorHandler } from "./errorHandler";
-import { Visitor } from "./topiaInit";
+import { Credentials } from "../types.js";
+import { errorHandler } from "./errorHandler.js";
+import { Visitor } from "./topiaInit.js";
 
 export const getUserChallenge = async (credentials: Credentials) => {
   try {
