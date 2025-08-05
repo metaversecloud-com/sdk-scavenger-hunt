@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { errorHandler, getCredentials, getWorldDataObject, Visitor } from "../utils/index.js";
-import { DataObjectType } from "../types.js";
+import { WorldDataObjectType } from "../types.js";
 import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
 
 export const handleAnswerChallenge = async (req: Request, res: Response) => {
@@ -9,8 +9,8 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { profileId, sceneDropId, urlSlug, visitorId } = credentials;
 
-    const { dataObject, world } = await getWorldDataObject({ credentials, sceneDropId });
-    const { challenge, theme } = dataObject as DataObjectType;
+    const { dataObject } = await getWorldDataObject({ credentials, sceneDropId });
+    const { challenge, theme } = dataObject as WorldDataObjectType;
 
     const isCorrect = challenge.answer?.trim()?.toLowerCase() === answer?.trim()?.toLowerCase();
     if (!isCorrect) return res.json({ isCorrect: false });
@@ -30,7 +30,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       text = "You unlocked a new emote!";
     }
 
-    world.updateDataObject({ [`scenes.${sceneDropId}.progress.${profileId}.challengeDone`]: true }, { analytics });
+    visitor.updateDataObject({ [`${urlSlug}-${sceneDropId}.challengeDone`]: true }, { analytics });
 
     visitor
       .fireToast({

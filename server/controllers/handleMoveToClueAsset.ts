@@ -14,7 +14,7 @@ export const handleMoveToClueAsset = async (req: Request, res: Response) => {
 
     const [droppedAsset, visitor] = await Promise.all([
       DroppedAsset.get(clue.id, urlSlug, { credentials }),
-      Visitor.get(visitorId, urlSlug, { credentials }),
+      Visitor.create(visitorId, urlSlug, { credentials }),
     ]);
 
     if (!droppedAsset.position) {

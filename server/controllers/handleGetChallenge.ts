@@ -1,34 +1,39 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials, getProfile, getWorldDataObject } from "../utils/index.js";
-import { DataObjectType } from "../types.js";
+import {
+  errorHandler,
+  getCredentials,
+  getProfile,
+  getUserChallenge,
+  getWorldDataObject,
+  Visitor,
+} from "../utils/index.js";
+import { WorldDataObjectType } from "../types.js";
 
 export const handleGetChallenge = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { profileId, sceneDropId, displayName } = credentials;
+    const { sceneDropId, visitorId, urlSlug } = credentials;
 
     const promises = [getProfile(credentials), getWorldDataObject({ credentials, sceneDropId })];
-    const [{ isAdmin }, { world, dataObject }] = await Promise.all(promises);
-    const { progress, challenge, clues, theme } = dataObject as DataObjectType;
+    const [{ isAdmin }, { dataObject }] = await Promise.all(promises);
+    const { challenge, clues, theme } = dataObject as WorldDataObjectType;
+
+    const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
+    const userChallenge = await getUserChallenge(credentials);
 
     let cluesFound = 0,
       hasCompletedClues = false,
       hasCompletedChallenge = false,
       totalClues = Object.keys(clues).length;
 
-    if (!progress[profileId]) {
-      await world.updateDataObject({
-        [`scenes.${sceneDropId}.progress.${[profileId]}`]: {
-          challengeDone: false,
-          cluesFound: [],
-          profileId,
-          username: displayName,
-        },
+    if (!userChallenge) {
+      await visitor.updateDataObject({
+        [`${urlSlug}-${sceneDropId}`]: { challengeDone: false, cluesFound: [] },
       });
     } else {
-      cluesFound = progress[profileId].cluesFound?.length || 0;
+      cluesFound = userChallenge.cluesFound?.length || 0;
       if (cluesFound === totalClues) hasCompletedClues = true;
-      hasCompletedChallenge = progress[profileId].challengeDone;
+      hasCompletedChallenge = userChallenge.challengeDone;
     }
 
     return res.json({

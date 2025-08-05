@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DataObjectType, Expression } from "../types.js";
+import { WorldDataObjectType, Expression } from "../types.js";
 import { errorHandler, getCredentials, getWorldDataObject, Visitor } from "../utils/index.js";
 
 export const handleGetConfiguration = async (req: Request, res: Response) => {
@@ -8,7 +8,7 @@ export const handleGetConfiguration = async (req: Request, res: Response) => {
     const { sceneDropId, urlSlug, visitorId } = credentials;
 
     const { dataObject } = await getWorldDataObject({ credentials, sceneDropId });
-    const { challenge, clues, theme } = dataObject as DataObjectType;
+    const { challenge, clues, theme } = dataObject as WorldDataObjectType;
 
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
     const availableExpressions = (await visitor.getExpressions({ getUnlockablesOnly: true })) as Expression[];

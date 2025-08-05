@@ -19,7 +19,7 @@ export type ClueType = {
   text: string;
 };
 
-export type DataObjectType = {
+export type WorldDataObjectType = {
   sceneDropId: string;
   keyAssetId: string;
   buildableAssetUniqueName?: string;
@@ -28,9 +28,7 @@ export type DataObjectType = {
   clues: {
     [id: string]: ClueType;
   };
-  progress: {
-    [profileId: string]: { challengeDone: boolean; cluesFound: string[]; profileId: string; username: string };
-  };
+  progress?: {}; // legacy, should be removed moving forward in getWorldDataObject
 };
 
 export type DroppedAssetType = {
