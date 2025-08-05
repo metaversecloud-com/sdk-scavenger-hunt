@@ -1,16 +1,26 @@
 import { Request, Response } from "express";
-import { DataObjectType } from "../types.js";
-import { errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
+import { WorldDataObjectType, Expression } from "../types.js";
+import { errorHandler, getCredentials, getWorldDataObject, Visitor } from "../utils/index.js";
 
 export const handleGetConfiguration = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { sceneDropId } = credentials;
+    const { sceneDropId, urlSlug, visitorId } = credentials;
 
     const { dataObject } = await getWorldDataObject({ credentials, sceneDropId });
-    const { challenge, clues, theme } = dataObject as DataObjectType;
+    const { challenge, clues, theme } = dataObject as WorldDataObjectType;
 
-    return res.json({ success: true, clues, challenge, theme });
+    const visitor = Visitor.create(visitorId, urlSlug, { credentials });
+    const availableExpressions = (await visitor.getExpressions({ getUnlockablesOnly: true })) as Expression[];
+
+    const emotes = availableExpressions.map((expression) => ({
+      id: expression.id,
+      name: expression.name,
+      type: expression.type,
+      previewUrl: expression.expressionImage,
+    }));
+
+    return res.json({ clues, challenge, emotes, theme });
   } catch (error) {
     return errorHandler({
       error,

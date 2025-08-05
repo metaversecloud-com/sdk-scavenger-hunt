@@ -1,29 +1,28 @@
 import { Request, Response } from "express";
-import { DataObjectType, ClueType } from "../types.js";
-import { errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
+import { WorldDataObjectType, ClueType } from "../types.js";
+import { errorHandler, getCredentials, getUserChallenge, getWorldDataObject } from "../utils/index.js";
 import { DroppedAsset, Visitor } from "../utils/topiaInit.js";
 
 export const handleGetClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { assetId, profileId, sceneDropId, displayName, urlSlug, visitorId } = credentials;
-    const { dataObject, world } = await getWorldDataObject({ credentials, sceneDropId });
-    const { clues, progress, theme } = dataObject as DataObjectType;
-    const clue: ClueType = clues?.[assetId];
 
+    const { dataObject, world } = await getWorldDataObject({ credentials, sceneDropId });
+    const { clues, theme } = dataObject as WorldDataObjectType;
+
+    const clue: ClueType = clues?.[assetId];
     if (!clue) throw new Error(`No clue asset found.`);
+
+    const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
+    const userChallenge = await getUserChallenge(credentials);
 
     let cluesFound = [];
 
-    if (!progress[profileId]) {
-      await world.updateDataObject(
+    if (!userChallenge) {
+      await visitor.updateDataObject(
         {
-          [`scenes.${sceneDropId}.progress.${profileId}`]: {
-            challengeDone: false,
-            cluesFound: [assetId],
-            profileId,
-            username: displayName,
-          },
+          [`${urlSlug}-${sceneDropId}`]: { challengeDone: false, cluesFound: [] },
         },
         {
           analytics: [
@@ -36,12 +35,12 @@ export const handleGetClue = async (req: Request, res: Response) => {
       );
       cluesFound = [assetId];
     } else {
-      cluesFound = progress[profileId].cluesFound;
-      if (!cluesFound.includes(assetId)) {
+      if (userChallenge.cluesFound) cluesFound = userChallenge.cluesFound;
+      if (!cluesFound?.includes(assetId)) {
         cluesFound = [...cluesFound, assetId];
-        await world.updateDataObject(
+        await visitor.updateDataObject(
           {
-            [`scenes.${sceneDropId}.progress.${profileId}.cluesFound`]: cluesFound,
+            [`${urlSlug}-${sceneDropId}.cluesFound`]: cluesFound,
           },
           {
             analytics: [
@@ -52,7 +51,6 @@ export const handleGetClue = async (req: Request, res: Response) => {
         );
 
         if (cluesFound.length === Object.keys(dataObject.clues).length) {
-          const visitor = Visitor.create(visitorId, urlSlug, { credentials });
           visitor
             .triggerParticle({
               name: "partyPopper_float",
@@ -92,6 +90,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
       text: clue.text || "",
       imgUrl: clue.imgUrl || "",
       contentImgUrl: clue.contentImgUrl || "",
+      isVideo: clue.isVideo || false,
       totalClues: Object.keys(clues).length,
       cluesFound: cluesFound.length,
       isAdmin: true,

@@ -18,6 +18,7 @@ export const Clue = () => {
   const [totalClues, setTotalClues] = useState<string>("");
   const [imgUrl, setImgUrl] = useState<string>("");
   const [contentImgUrl, setContentImgUrl] = useState<string>("");
+  const [isVideo, setIsVideo] = useState(false);
   const [text, setText] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -30,12 +31,13 @@ export const Clue = () => {
     backendAPI
       .get(`/clue`)
       .then((result) => {
-        const { success, cluesFound, totalClues, imgUrl, contentImgUrl, text, theme } = result.data;
+        const { success, cluesFound, totalClues, imgUrl, contentImgUrl, isVideo, text, theme } = result.data;
         if (success) {
           setCluesFound(cluesFound);
           setTotalClues(totalClues);
           setImgUrl(imgUrl);
           setContentImgUrl(contentImgUrl);
+          setIsVideo(isVideo);
           setText(text);
           setIsLoading(false);
           dispatch!({
@@ -67,15 +69,34 @@ export const Clue = () => {
         </h4>
       </div>
       <div>
-        {(contentImgUrl || TOPIA_WORKERS_URL) && (
-          <img
-            className="mx-auto rounded-xl mb-2"
-            style={{ maxWidth: "100%", maxHeight: "400px" }}
-            src={contentImgUrl || TOPIA_WORKERS_URL}
-            alt="Content Image"
-          />
-        )}
-        <p style={{ whiteSpace: "pre-line" }}>{text}</p>
+        {(contentImgUrl || TOPIA_WORKERS_URL) &&
+          (isVideo ? (
+            <div style={{ position: "relative", width: "100%", paddingBottom: "56.25%" }}>
+              <iframe
+                src={contentImgUrl}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  border: "none",
+                }}
+                allowFullScreen
+                title="Clue Video"
+              ></iframe>
+            </div>
+          ) : (
+            <img
+              className="mx-auto rounded-xl"
+              style={{ maxWidth: "100%", maxHeight: "400px" }}
+              src={contentImgUrl || TOPIA_WORKERS_URL}
+              alt="Content Image"
+            />
+          ))}
+        <p className="pt-2" style={{ whiteSpace: "pre-line" }}>
+          {text}
+        </p>
       </div>
       {cluesFound === totalClues ? (
         <div className="mb-8 mt-10">

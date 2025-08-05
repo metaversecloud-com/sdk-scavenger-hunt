@@ -19,9 +19,7 @@ export const initializeWorldDataObject = async ({
     const payload = {
       sceneDropId,
       buildableAssetUniqueName: "",
-
       clues: {},
-      progress: {},
     };
 
     const droppedAsset = await DroppedAsset.get(credentials.assetId, world.urlSlug, { credentials });

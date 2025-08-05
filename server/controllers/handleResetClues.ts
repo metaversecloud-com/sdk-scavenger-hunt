@@ -6,7 +6,7 @@ import {
   getCredentials,
   getWorldDataObject,
 } from "../utils/index.js";
-import { DataObjectType } from "../types.js";
+import { WorldDataObjectType } from "../types.js";
 import { DroppedAssetInterface } from "@rtsdk/topia";
 
 export const handleResetClues = async (req: Request, res: Response) => {
@@ -15,7 +15,7 @@ export const handleResetClues = async (req: Request, res: Response) => {
     const { assetId, sceneDropId, urlSlug } = credentials;
 
     const { world, dataObject } = await getWorldDataObject({ credentials, sceneDropId });
-    const { theme } = dataObject as DataObjectType;
+    const { theme } = dataObject as WorldDataObjectType;
 
     const keyAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });
 

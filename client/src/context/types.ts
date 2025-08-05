@@ -46,5 +46,7 @@ export type ClueType = {
   id: string;
   imgUrl: string;
   contentImgUrl: string;
+  isVideo: boolean;
+  linkBehavior: "modal" | "drawer" | "tab";
   text: string;
 };
