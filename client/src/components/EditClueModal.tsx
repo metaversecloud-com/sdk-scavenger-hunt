@@ -94,7 +94,7 @@ export const EditClueModal = ({
           value={contentImgUrl}
         />
 
-        <label className="mb-4 text-left">
+        <label className="text-left mb-2">
           <input
             className="input-checkbox mr-2"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,6 +105,11 @@ export const EditClueModal = ({
           />
           Is Media a Video?
         </label>
+
+        <p className=" text-left">📹 Heads up!</p>
+        <p className="p2 pb-4 text-left">
+          To make your video plays inside the app, be sure to use an embed link, not the regular share link.
+        </p>
 
         <label className="text-left">
           Link Behavior
