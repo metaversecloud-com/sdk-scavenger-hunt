@@ -20,6 +20,7 @@ export const Clue = () => {
   const [contentImgUrl, setContentImgUrl] = useState<string>("");
   const [isVideo, setIsVideo] = useState(false);
   const [text, setText] = useState<string>("");
+  const [isModal, setIsModal] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -31,20 +32,19 @@ export const Clue = () => {
     backendAPI
       .get(`/clue`)
       .then((result) => {
-        const { success, cluesFound, totalClues, imgUrl, contentImgUrl, isVideo, text, theme } = result.data;
-        if (success) {
-          setCluesFound(cluesFound);
-          setTotalClues(totalClues);
-          setImgUrl(imgUrl);
-          setContentImgUrl(contentImgUrl);
-          setIsVideo(isVideo);
-          setText(text);
-          setIsLoading(false);
-          dispatch!({
-            type: SET_THEME,
-            payload: theme,
-          });
-        }
+        const { cluesFound, totalClues, imgUrl, contentImgUrl, isVideo, text, theme, linkBehavior } = result.data;
+        setCluesFound(cluesFound);
+        setTotalClues(totalClues);
+        setImgUrl(imgUrl);
+        setContentImgUrl(contentImgUrl);
+        setIsVideo(isVideo);
+        setText(text);
+        setIsModal(linkBehavior === "modal");
+        setIsLoading(false);
+        dispatch!({
+          type: SET_THEME,
+          payload: theme,
+        });
       })
       .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => setIsLoading(false));
@@ -54,42 +54,46 @@ export const Clue = () => {
 
   return (
     <div className="container p-6">
-      <div className="text-center mb-10">
+      <div className="text-center mb-6">
         <img
           className="mx-auto rounded-xl mb-4"
-          style={{ maxWidth: "100%", maxHeight: "400px" }}
+          style={{ maxWidth: "100%", maxHeight: "150px" }}
           src={imgUrl}
           alt="Clue"
         />
-        <h2 className="pb-2">Congratulations!</h2>
-        <h4>
-          You have found a clue!
-          <br />
-          Completed {cluesFound} of {totalClues}
-        </h4>
+        {isModal ? (
+          <>
+            <h4>
+              Congratulations! You have found a clue! Completed {cluesFound} of {totalClues}.
+            </h4>
+          </>
+        ) : (
+          <>
+            <h2 className="pb-2">Congratulations!</h2>
+            <h4>
+              You have found a clue!
+              <br />
+              Completed {cluesFound} of {totalClues}
+            </h4>
+          </>
+        )}
       </div>
       <div>
         {(contentImgUrl || TOPIA_WORKERS_URL) &&
           (isVideo ? (
-            <div style={{ position: "relative", width: "100%", paddingBottom: "56.25%" }}>
-              <iframe
-                src={contentImgUrl}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  border: "none",
-                }}
-                allowFullScreen
-                title="Clue Video"
-              ></iframe>
-            </div>
+            <iframe
+              src={contentImgUrl}
+              style={{
+                margin: "auto",
+                height: "240px",
+              }}
+              allowFullScreen
+              title="Clue Video"
+            ></iframe>
           ) : (
             <img
               className="mx-auto rounded-xl"
-              style={{ maxWidth: "100%", maxHeight: "400px" }}
+              style={{ maxWidth: "100%", maxHeight: "200px" }}
               src={contentImgUrl || TOPIA_WORKERS_URL}
               alt="Content Image"
             />

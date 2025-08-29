@@ -44,6 +44,7 @@ export const Admin = () => {
         setAnswer(challenge.answer);
         setClues(clues);
         setAvailableEmotes(emotes);
+        setSelectedEmote(challenge.selectedEmote);
         setTheme(theme);
         if (dispatch) {
           dispatch({
