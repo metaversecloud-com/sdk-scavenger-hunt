@@ -4,7 +4,7 @@ import { DroppedAsset, errorHandler, getCredentials, getWorldDataObject } from "
 export const handleUpdateClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { sceneDropId, urlSlug } = credentials;
+    const { profileId, sceneDropId, urlSlug } = credentials;
     const { assetId, imgUrl, contentImgUrl, isVideo, linkBehavior, text } = req.body;
 
     const { world } = await getWorldDataObject({ credentials, sceneDropId });
@@ -18,9 +18,19 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
     await Promise.all([
       droppedAsset.updateWebImageLayers("", imgUrl),
       droppedAsset.updateDataObject({ id: assetId, text, imgUrl, contentImgUrl, isVideo, linkBehavior }),
-      world.updateDataObject({
-        [`scenes.${sceneDropId}.clues.${assetId}`]: { id: assetId, text, imgUrl, contentImgUrl, isVideo, linkBehavior },
-      }),
+      world.updateDataObject(
+        {
+          [`scenes.${sceneDropId}.clues.${assetId}`]: {
+            id: assetId,
+            text,
+            imgUrl,
+            contentImgUrl,
+            isVideo,
+            linkBehavior,
+          },
+        },
+        { analytics: [{ analyticName: `clueUpdates`, uniqueKey: profileId, profileId, urlSlug }] },
+      ),
       droppedAsset.updateClickType({
         clickableLink: `${BASE_URL}/clue`,
         clickableLinkTitle: "Scavenger Hunt",

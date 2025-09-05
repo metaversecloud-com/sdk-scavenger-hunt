@@ -6,12 +6,19 @@ import { DroppedAsset, Visitor } from "../utils/topiaInit.js";
 export const handleGetClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, profileId, sceneDropId, displayName, urlSlug, visitorId } = credentials;
+    const { assetId, profileId, sceneDropId, urlSlug, visitorId } = credentials;
 
     const { dataObject, world } = await getWorldDataObject({ credentials, sceneDropId });
     const { clues, theme } = dataObject as WorldDataObjectType;
 
-    const clue: ClueType = clues?.[assetId];
+    const clue: ClueType = clues?.[assetId] || {
+      id: "",
+      text: "",
+      imgUrl: "",
+      contentImgUrl: "",
+      isVideo: false,
+      linkBehavior: "drawer",
+    };
     if (!clue) throw new Error(`No clue asset found.`);
 
     const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
@@ -86,11 +93,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
     }
 
     return res.send({
-      success: true,
-      text: clue.text || "",
-      imgUrl: clue.imgUrl || "",
-      contentImgUrl: clue.contentImgUrl || "",
-      isVideo: clue.isVideo || false,
+      ...clue,
       totalClues: Object.keys(clues).length,
       cluesFound: cluesFound.length,
       isAdmin: true,

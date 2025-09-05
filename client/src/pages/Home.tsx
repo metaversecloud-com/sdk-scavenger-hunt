@@ -17,6 +17,7 @@ export const Home = () => {
   const { theme } = useContext(GlobalStateContext);
 
   const [imgUrl, setImgUrl] = useState();
+  const [lastUpdated, setLastUpdated] = useState<Date>();
   const [question, setQuestion] = useState("");
   const [cluesFound, setCluesFound] = useState<string>("");
   const [totalClues, setTotalClues] = useState<string>("");
@@ -39,12 +40,13 @@ export const Home = () => {
   useEffect(() => {
     backendAPI
       .get(`/challenge`)
-      .then((result) => {
+      .then((response) => {
         const { success, cluesFound, challenge, hasCompletedClues, hasCompletedChallenge, isAdmin, theme, totalClues } =
-          result.data;
+          response.data;
 
         if (success) {
           setImgUrl(challenge?.imgUrl || `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}IMG_Start.png`);
+          setLastUpdated(challenge?.lastUpdated);
           setQuestion(challenge?.text || "Please, go to the admin section to edit the Challenge message.");
           setCluesFound(cluesFound);
           setTotalClues(totalClues);
@@ -78,6 +80,20 @@ export const Home = () => {
       })
       .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => setAnswering(false));
+  };
+
+  const handleRestart = async () => {
+    await backendAPI
+      .post(`/restart-challenge`)
+      .then((response) => {
+        const { cluesFound, hasCompletedClues, hasCompletedChallenge, totalClues } = response.data;
+        setCluesFound(cluesFound);
+        setTotalClues(totalClues);
+        setHasCompletedClues(hasCompletedClues);
+        setHasAnsweredChallenge(hasCompletedChallenge);
+      })
+      .catch((error) => setErrorMessage(dispatch, error))
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -146,6 +162,18 @@ export const Home = () => {
               </div>
             )}
           </div>
+        )}
+        {parseInt(cluesFound) > 0 && (
+          <>
+            {lastUpdated && (
+              <div className="container py-6">
+                <h5>This Scavenger Hunt was last updated on {new Date(lastUpdated).toLocaleString()}</h5>
+              </div>
+            )}
+            <button className="btn" onClick={handleRestart}>
+              Restart Scavenger Hunt
+            </button>
+          </>
         )}
       </>
     </PageContainer>

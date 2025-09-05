@@ -11,6 +11,7 @@ import {
   handleMoveToClueAsset,
   handleAddNewClue,
   handleRemoveClue,
+  handleRestartChallenge,
 } from "./controllers/index.js";
 import { getVersion } from "./utils/getVersion.js";
 
@@ -50,6 +51,7 @@ router.get("/config", handleGetConfiguration);
 router.get("/challenge", handleGetChallenge);
 router.post("/update-challenge", handleUpdateChallenge);
 router.post("/answer-challenge", handleAnswerChallenge);
+router.post("/restart-challenge", handleRestartChallenge);
 
 router.get("/clue", handleGetClue);
 router.post("/update-clue", handleUpdateClue);
