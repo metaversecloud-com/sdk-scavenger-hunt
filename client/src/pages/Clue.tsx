@@ -80,7 +80,7 @@ export const Clue = () => {
       </div>
       <div>
         {(contentUrl || TOPIA_WORKERS_URL) &&
-          (mediaType === "video" || mediaType === "website" ? (
+          (mediaType === "video" ? (
             <iframe
               src={contentUrl}
               style={{
@@ -89,6 +89,15 @@ export const Clue = () => {
               }}
               allowFullScreen
               title="Clue Video"
+            ></iframe>
+          ) : mediaType === "website" ? (
+            <iframe
+              src={contentUrl}
+              style={{
+                height: "240px",
+                width: "100%",
+              }}
+              title="Clue Website"
             ></iframe>
           ) : (
             <img
