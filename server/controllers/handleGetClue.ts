@@ -16,10 +16,15 @@ export const handleGetClue = async (req: Request, res: Response) => {
       text: "",
       imgUrl: "",
       contentImgUrl: "",
+      contentUrl: "",
+      mediaType: "image",
       isVideo: false,
       linkBehavior: "drawer",
     };
     if (!clue) throw new Error(`No clue asset found.`);
+
+    if (clue.isVideo === true) clue.mediaType = "video";
+    if (clue.contentImgUrl && !clue.contentUrl) clue.contentUrl = clue.contentImgUrl;
 
     const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
     const userChallenge = await getUserChallenge(credentials);

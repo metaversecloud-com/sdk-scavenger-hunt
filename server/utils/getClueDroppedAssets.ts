@@ -11,7 +11,9 @@ export const getClueDroppedAssets = async ({ uniqueName, world }: { uniqueName: 
         id: droppedAssets[index].id,
         imgUrl: droppedAssets[index].topLayerURL || droppedAssets[index].bottomLayerURL,
         text: droppedAssets?.[0]?.dataObject?.clues?.[index]?.text || `Clue ${parseInt(index) + 1}`,
-        contentImgUrl: droppedAssets?.[0]?.dataObject?.clues?.[index]?.contentImgUrl,
+        contentUrl:
+          droppedAssets?.[0]?.dataObject?.clues?.[index]?.contentUrl ||
+          droppedAssets?.[0]?.dataObject?.clues?.[index]?.contentImgUrl,
       };
     }
 

@@ -62,22 +62,21 @@ Example of what to put inside of each droppedAsset dataObject
   "theme": "robot",
   "clues": [
     {
-      "contentImgUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/65546505c732cb3fd47036ad_download%2520(15)-p-800.png",
+      "contentUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/65546505c732cb3fd47036ad_download%2520(15)-p-800.png",
       "text": "Clue 1"
     },
     {
-      "contentImgUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554650b477b93838a94d5c5_ANALYTICS%20APPROVED%20IMAGE.png",
+      "contentUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554650b477b93838a94d5c5_ANALYTICS%20APPROVED%20IMAGE.png",
       "text": "Clue 2"
     },
     {
-      "contentImgUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554652ab384111406b994f1_why%2520image-p-800.png",
+      "contentUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554652ab384111406b994f1_why%2520image-p-800.png",
       "text": "Clue 3"
     },
     {
-      "contentImgUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554652ab384111406b994f1_why%2520image-p-800.png",
+      "contentUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554652ab384111406b994f1_why%2520image-p-800.png",
       "text": "Clue 4"
     }
   ]
 }
 ```
-

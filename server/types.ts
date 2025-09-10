@@ -13,8 +13,10 @@ export interface Credentials {
 export type ClueType = {
   id: string;
   imgUrl: string;
-  contentImgUrl: string;
-  isVideo: boolean;
+  contentImgUrl: string; // legacy, replaced by contentUrl
+  contentUrl: string;
+  isVideo: boolean; // legacy, replaced by mediaType
+  mediaType: "image" | "video" | "website";
   linkBehavior: "modal" | "drawer" | "tab";
   text: string;
 };

@@ -5,7 +5,7 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { profileId, sceneDropId, urlSlug } = credentials;
-    const { assetId, imgUrl, contentImgUrl, isVideo, linkBehavior, text } = req.body;
+    const { assetId, imgUrl, contentUrl, mediaType, linkBehavior, text } = req.body;
 
     const { world } = await getWorldDataObject({ credentials, sceneDropId });
     const droppedAsset = await DroppedAsset.create(assetId, urlSlug, { credentials });
@@ -17,15 +17,15 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
 
     await Promise.all([
       droppedAsset.updateWebImageLayers("", imgUrl),
-      droppedAsset.updateDataObject({ id: assetId, text, imgUrl, contentImgUrl, isVideo, linkBehavior }),
+      droppedAsset.updateDataObject({ id: assetId, text, imgUrl, contentUrl, mediaType, linkBehavior }),
       world.updateDataObject(
         {
           [`scenes.${sceneDropId}.clues.${assetId}`]: {
             id: assetId,
             text,
             imgUrl,
-            contentImgUrl,
-            isVideo,
+            contentUrl,
+            mediaType,
             linkBehavior,
           },
         },
@@ -41,7 +41,7 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
       }),
     ]);
 
-    return res.json({ success: true, text, imgUrl, contentImgUrl, isVideo, linkBehavior });
+    return res.json({ success: true, text, imgUrl, contentUrl, mediaType, linkBehavior });
   } catch (error) {
     return errorHandler({
       error,
