@@ -10,6 +10,12 @@ export const handleGetConfiguration = async (req: Request, res: Response) => {
     const { dataObject } = await getWorldDataObject({ credentials, sceneDropId });
     const { challenge, clues, theme } = dataObject as WorldDataObjectType;
 
+    for (const clueId in clues) {
+      if (clues[clueId].isVideo === true && !clues[clueId].mediaType) clues[clueId].mediaType = "video";
+      if (clues[clueId].contentImgUrl && !clues[clueId].contentUrl)
+        clues[clueId].contentUrl = clues[clueId].contentImgUrl;
+    }
+
     const visitor = Visitor.create(visitorId, urlSlug, { credentials });
     const availableExpressions = (await visitor.getExpressions({ getUnlockablesOnly: true })) as Expression[];
 
