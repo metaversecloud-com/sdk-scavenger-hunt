@@ -17,8 +17,8 @@ export const Clue = () => {
   const [cluesFound, setCluesFound] = useState<string>("");
   const [totalClues, setTotalClues] = useState<string>("");
   const [imgUrl, setImgUrl] = useState<string>("");
-  const [contentImgUrl, setContentImgUrl] = useState<string>("");
-  const [isVideo, setIsVideo] = useState(false);
+  const [contentUrl, setContentUrl] = useState<string>("");
+  const [mediaType, setMediaType] = useState<"image" | "video" | "website">("image");
   const [text, setText] = useState<string>("");
   const [isModal, setIsModal] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -31,13 +31,13 @@ export const Clue = () => {
     setIsLoading(true);
     backendAPI
       .get(`/clue`)
-      .then((result) => {
-        const { cluesFound, totalClues, imgUrl, contentImgUrl, isVideo, text, theme, linkBehavior } = result.data;
+      .then(async (result) => {
+        const { cluesFound, totalClues, imgUrl, contentUrl, mediaType, text, theme, linkBehavior } = result.data;
         setCluesFound(cluesFound);
         setTotalClues(totalClues);
         setImgUrl(imgUrl);
-        setContentImgUrl(contentImgUrl);
-        setIsVideo(isVideo);
+        setContentUrl(contentUrl);
+        setMediaType(mediaType);
         setText(text);
         setIsModal(linkBehavior === "modal");
         setIsLoading(false);
@@ -79,10 +79,10 @@ export const Clue = () => {
         )}
       </div>
       <div>
-        {(contentImgUrl || TOPIA_WORKERS_URL) &&
-          (isVideo ? (
+        {(contentUrl || TOPIA_WORKERS_URL) &&
+          (mediaType === "video" ? (
             <iframe
-              src={contentImgUrl}
+              src={contentUrl}
               style={{
                 margin: "auto",
                 height: "240px",
@@ -90,11 +90,20 @@ export const Clue = () => {
               allowFullScreen
               title="Clue Video"
             ></iframe>
+          ) : mediaType === "website" ? (
+            <iframe
+              src={contentUrl}
+              style={{
+                height: "240px",
+                width: "100%",
+              }}
+              title="Clue Website"
+            ></iframe>
           ) : (
             <img
               className="mx-auto rounded-xl"
               style={{ maxWidth: "100%", maxHeight: "200px" }}
-              src={contentImgUrl || TOPIA_WORKERS_URL}
+              src={contentUrl || TOPIA_WORKERS_URL}
               alt="Content Image"
             />
           ))}

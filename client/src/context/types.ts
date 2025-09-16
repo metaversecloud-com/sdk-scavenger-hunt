@@ -45,8 +45,8 @@ export interface ThemeData {
 export type ClueType = {
   id: string;
   imgUrl: string;
-  contentImgUrl: string;
-  isVideo: boolean;
+  contentUrl: string;
+  mediaType: "image" | "video" | "website";
   linkBehavior: "modal" | "drawer" | "tab";
   text: string;
 };

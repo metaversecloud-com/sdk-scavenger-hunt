@@ -25,8 +25,8 @@ export const EditClueModal = ({
   const fixedClueImages = getFixedClueImages(theme || NATIONAL_PARK);
 
   const [selectedImage, setSelectedImage] = useState(clue?.imgUrl || fixedClueImages[0].image);
-  const [contentImgUrl, setContentImgUrl] = useState(clue?.contentImgUrl);
-  const [isVideo, setIsVideo] = useState(clue?.isVideo);
+  const [contentUrl, setContentUrl] = useState(clue?.contentUrl);
+  const [mediaType, setMediaType] = useState(clue?.mediaType || "image");
   const [linkBehavior, setLinkBehavior] = useState(clue?.linkBehavior || "drawer");
   const [text, setText] = useState(clue?.text);
   const [isSaving, setIsSaving] = useState(false);
@@ -37,8 +37,8 @@ export const EditClueModal = ({
         assetId: clue?.id,
         text,
         imgUrl: selectedImage,
-        contentImgUrl,
-        isVideo,
+        contentUrl,
+        mediaType,
         linkBehavior,
       })
       .then(() => {
@@ -89,21 +89,24 @@ export const EditClueModal = ({
         <input
           className="input mb-4"
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setContentImgUrl(event.target.value);
+            setContentUrl(event.target.value);
           }}
-          value={contentImgUrl}
+          value={contentUrl}
         />
 
         <label className="text-left mb-2">
-          <input
-            className="input-checkbox mr-2"
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setIsVideo(event.target.checked);
+          Media Type
+          <select
+            className="input"
+            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+              setMediaType(event.target.value as "image" | "video" | "website");
             }}
-            type="checkbox"
-            checked={isVideo}
-          />
-          Is Media a Video?
+            value={mediaType}
+          >
+            <option value="image">Image</option>
+            <option value="video">Video</option>
+            <option value="website">Website Embed</option>
+          </select>
         </label>
 
         <p className=" text-left">📹 Heads up!</p>
