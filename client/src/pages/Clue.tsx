@@ -94,7 +94,8 @@ export const Clue = () => {
             <iframe
               src={contentUrl}
               style={{
-                height: "240px",
+                margin: "auto",
+                height: "440px",
                 width: "100%",
               }}
               title="Clue Website"
