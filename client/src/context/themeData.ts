@@ -26,4 +26,19 @@ export const themeData: ThemeData = {
     challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/recycle/IMG_Start.png",
     numberOfAssetsAvailableInAdminSection: 9,
   },
+  "book": {
+    title: "Book",
+    challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/book/IMG_Start.png",
+    numberOfAssetsAvailableInAdminSection: 10,
+  },
+  "numbers": {
+    title: "Numbers",
+    challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/numbers/IMG_Start.png",
+    numberOfAssetsAvailableInAdminSection: 10,
+  },
+  "letters": {
+    title: "Letters",
+    challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/letters/IMG_Start.png",
+    numberOfAssetsAvailableInAdminSection: 10,
+  },
 };
