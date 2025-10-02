@@ -53,7 +53,7 @@ export const Clue = () => {
   if (isLoading || !cluesFound) return <Loading />;
 
   return (
-    <div className="container p-6">
+    <div className="container p-6 m-auto">
       <div className="text-center mb-6">
         <img
           className="mx-auto rounded-xl mb-4"
