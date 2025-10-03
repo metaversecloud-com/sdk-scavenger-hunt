@@ -24,7 +24,7 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
     let cluesFound = 0,
       hasCompletedClues = false,
       hasCompletedChallenge = false,
-      totalClues = Object.keys(clues).length;
+      totalClues = Object.keys(clues ?? {}).length || 0;
 
     if (!userChallenge) {
       await visitor.updateDataObject({

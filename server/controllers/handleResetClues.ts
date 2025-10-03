@@ -19,7 +19,11 @@ export const handleResetClues = async (req: Request, res: Response) => {
 
     const keyAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });
 
-    const clues = await getClueDroppedAssets({ uniqueName: `${keyAsset.uniqueName}_${theme}_clue`, world });
+    const clues = await getClueDroppedAssets({
+      sceneDropId,
+      uniqueName: `${keyAsset.uniqueName}_${theme}_clue`,
+      world,
+    });
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
     await world.updateDataObject(
