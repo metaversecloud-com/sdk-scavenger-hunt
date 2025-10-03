@@ -260,7 +260,7 @@ export const Admin = () => {
       <div className="mt-10">
         <h4>Clues</h4>
         <p>These are the configured clues. Click on one to take you to the clue.</p>
-        {Object.keys(clues)?.map((clue) => <Clue clue={clues[clue]} />)}
+        {clues && Object.keys(clues)?.map((clue) => <Clue clue={clues[clue]} />)}
         <button className="btn mt-4" onClick={handleAddNewClue} disabled={areButtonsDisabled}>
           Add New Clue
         </button>

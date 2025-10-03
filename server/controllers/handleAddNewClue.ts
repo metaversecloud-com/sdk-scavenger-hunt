@@ -38,6 +38,11 @@ export const handleAddNewClue = async (req: Request, res: Response) => {
     const asset = await Asset.create(process.env.IMG_ASSET_ID || "webImageAsset", { credentials });
 
     const spawnedDroppedAsset: DroppedAssetInterface = await DroppedAsset.drop(asset, {
+      clickableLink: `${BASE_URL}/clue`,
+      clickableLinkTitle: "Scavenger Hunt",
+      clickableDisplayTextDescription: "Scavenger Hunt",
+      clickableDisplayTextHeadline: "Scavenger Hunt",
+      isOpenLinkInDrawer: true,
       position,
       uniqueName,
       urlSlug,
@@ -46,18 +51,13 @@ export const handleAddNewClue = async (req: Request, res: Response) => {
       interactivePublicKey: process.env.INTERACTIVE_KEY,
     });
 
-    await Promise.all([
-      spawnedDroppedAsset.setDataObject(keyAsset.dataObject, {}),
-      spawnedDroppedAsset.updateClickType({
-        clickableLink: `${BASE_URL}/clue`,
-        clickableLinkTitle: "Scavenger Hunt",
-        clickableDisplayTextDescription: "Scavenger Hunt",
-        clickableDisplayTextHeadline: "Scavenger Hunt",
-        isOpenLinkInDrawer: true,
-      }),
-    ]);
+    await spawnedDroppedAsset.setDataObject(keyAsset.dataObject, {});
 
-    const clues = await getClueDroppedAssets({ uniqueName: `${keyAsset.uniqueName}_${theme}_clue`, world });
+    const clues = await getClueDroppedAssets({
+      sceneDropId,
+      uniqueName: `${keyAsset.uniqueName}_${theme}_clue`,
+      world,
+    });
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
     await world.updateDataObject({ [`scenes.${sceneDropId}.clues`]: clues }, { lock: { lockId, releaseLock: true } });

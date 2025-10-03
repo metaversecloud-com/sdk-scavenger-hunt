@@ -1,11 +1,18 @@
 import { errorHandler } from "./errorHandler.js";
 
-export const getClueDroppedAssets = async ({ uniqueName, world }: { uniqueName: string; world: any }) => {
+export const getClueDroppedAssets = async ({
+  sceneDropId,
+  uniqueName,
+  world,
+}: {
+  sceneDropId: string;
+  uniqueName: string;
+  world: any;
+}) => {
   try {
     const clues = {};
 
-    const droppedAssets = await world.fetchDroppedAssetsWithUniqueName({ uniqueName });
-    await droppedAssets?.[0]?.fetchDataObject();
+    const droppedAssets = await world.fetchDroppedAssetsBySceneDropId({ sceneDropId, uniqueName });
     for (const index in droppedAssets) {
       clues[droppedAssets[index].id] = {
         id: droppedAssets[index].id,

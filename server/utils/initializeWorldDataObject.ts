@@ -41,6 +41,7 @@ export const initializeWorldDataObject = async ({
     }
 
     payload.clues = await getClueDroppedAssets({
+      sceneDropId,
       uniqueName: `ScavengerHunt_${theme}_clue`,
       world,
     });
