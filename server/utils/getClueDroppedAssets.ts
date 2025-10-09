@@ -13,14 +13,20 @@ export const getClueDroppedAssets = async ({
     const clues = {};
 
     const droppedAssets = await world.fetchDroppedAssetsBySceneDropId({ sceneDropId, uniqueName });
-    for (const index in droppedAssets) {
-      clues[droppedAssets[index].id] = {
-        id: droppedAssets[index].id,
-        imgUrl: droppedAssets[index].topLayerURL || droppedAssets[index].bottomLayerURL,
-        text: droppedAssets?.[0]?.dataObject?.clues?.[index]?.text || `Clue ${parseInt(index) + 1}`,
-        contentUrl:
-          droppedAssets?.[0]?.dataObject?.clues?.[index]?.contentUrl ||
-          droppedAssets?.[0]?.dataObject?.clues?.[index]?.contentImgUrl,
+
+    for (const droppedAsset of droppedAssets) {
+      const dataObject = await droppedAsset.fetchDataObject();
+      const { contentUrl, openInModal, isVideo, contentImgUrl, mediaType, linkBehavior, imgUrl, text } = dataObject;
+      clues[droppedAsset.id] = {
+        id: droppedAsset.id,
+        imgUrl: imgUrl || droppedAsset.topLayerURL || droppedAsset.bottomLayerURL,
+        text: text || `Clue ${Object.keys(clues).length + 1}`,
+        contentUrl,
+        openInModal,
+        isVideo,
+        contentImgUrl,
+        mediaType,
+        linkBehavior,
       };
     }
 
