@@ -7,5 +7,4 @@ export * from "./getWorldDataObject.js";
 export * from "./getRandomPointInCircle.js";
 export * from "./getUserChallenge.js";
 export * from "./getVersion.js";
-export * from "./initializeWorldDataObject.js";
 export * from "./topiaInit.js";
