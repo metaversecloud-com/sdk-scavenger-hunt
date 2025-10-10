@@ -10,26 +10,13 @@ type WorldDataObject = {
   };
 };
 
-export const getWorldDataObject = async ({
-  credentials,
-  sceneDropId,
-}: {
-  credentials: Credentials;
-  sceneDropId: string;
-}) => {
+export const getWorldDataObject = async ({ credentials }: { credentials: Credentials }) => {
   try {
-    const { urlSlug } = credentials;
+    const { sceneDropId, urlSlug } = credentials;
 
     const world = World.create(urlSlug, { credentials });
     await world.fetchDataObject();
-    await initializeWorldDataObject({ credentials, sceneDropId, world });
-
-    let dataObject = world.dataObject as WorldDataObject;
-
-    if (!dataObject?.scenes?.[sceneDropId]) {
-      await world.fetchDataObject();
-      dataObject = world.dataObject as WorldDataObject;
-    }
+    const dataObject = await initializeWorldDataObject({ credentials, world });
 
     // remove profile from all scenes in data object to clean up legacy data
     let shouldUpdate = false;

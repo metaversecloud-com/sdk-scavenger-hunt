@@ -5,9 +5,8 @@ import { WorldDataObjectType } from "../types.js";
 export const handleGetProgress = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { sceneDropId } = credentials;
 
-    const { dataObject } = await getWorldDataObject({ credentials, sceneDropId });
+    const { dataObject } = await getWorldDataObject({ credentials });
     const { clues, theme } = dataObject as WorldDataObjectType;
 
     const userChallenge = await getUserChallenge(credentials);

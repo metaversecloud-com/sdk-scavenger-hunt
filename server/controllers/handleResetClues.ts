@@ -14,7 +14,7 @@ export const handleResetClues = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, sceneDropId, urlSlug } = credentials;
 
-    const { world, dataObject } = await getWorldDataObject({ credentials, sceneDropId });
+    const { world, dataObject } = await getWorldDataObject({ credentials });
     const { theme } = dataObject as WorldDataObjectType;
 
     const keyAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });

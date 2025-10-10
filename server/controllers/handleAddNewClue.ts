@@ -8,7 +8,7 @@ import {
   Asset,
   Visitor,
 } from "../utils/index.js";
-import { WorldDataObjectType } from "../types.js";
+import { ClueType, WorldDataObjectType } from "../types.js";
 import { DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
 
 export const handleAddNewClue = async (req: Request, res: Response) => {
@@ -23,8 +23,8 @@ export const handleAddNewClue = async (req: Request, res: Response) => {
 
     const visitor: VisitorInterface = await Visitor.get(visitorId, urlSlug, { credentials });
 
-    const { world, dataObject } = await getWorldDataObject({ credentials, sceneDropId });
-    const { theme } = dataObject as WorldDataObjectType;
+    const { world, dataObject } = await getWorldDataObject({ credentials });
+    const { clues, theme } = dataObject as WorldDataObjectType;
 
     const keyAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });
 
@@ -51,16 +51,23 @@ export const handleAddNewClue = async (req: Request, res: Response) => {
       interactivePublicKey: process.env.INTERACTIVE_KEY,
     });
 
-    await spawnedDroppedAsset.setDataObject(keyAsset.dataObject, {});
+    const clueData: ClueType = {
+      id: spawnedDroppedAsset.id,
+      imgUrl: "",
+      text: `Clue ${Object.keys(clues).length + 1}`,
+      contentUrl: "",
+      mediaType: "image",
+      linkBehavior: "drawer",
+    };
+    clues[spawnedDroppedAsset.id] = clueData;
 
-    const clues = await getClueDroppedAssets({
-      sceneDropId,
-      uniqueName: `${keyAsset.uniqueName}_${theme}_clue`,
-      world,
-    });
+    await spawnedDroppedAsset.setDataObject(clueData, {});
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
-    await world.updateDataObject({ [`scenes.${sceneDropId}.clues`]: clues }, { lock: { lockId, releaseLock: true } });
+    await world.updateDataObject(
+      { [`scenes.${sceneDropId}.clues.${spawnedDroppedAsset.id}`]: clueData },
+      { lock: { lockId, releaseLock: true } },
+    );
 
     return res.json({ success: true, clues });
   } catch (error) {

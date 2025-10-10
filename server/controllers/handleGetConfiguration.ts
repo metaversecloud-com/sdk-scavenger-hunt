@@ -7,7 +7,7 @@ export const handleGetConfiguration = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { sceneDropId, urlSlug, visitorId } = credentials;
 
-    const { dataObject } = await getWorldDataObject({ credentials, sceneDropId });
+    const { dataObject } = await getWorldDataObject({ credentials });
     const { challenge, clues, theme } = dataObject as WorldDataObjectType;
 
     for (const clueId in clues) {

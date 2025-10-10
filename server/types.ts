@@ -5,6 +5,7 @@ export interface Credentials {
   interactivePublicKey: string;
   profileId: string;
   sceneDropId: string;
+  uniqueName: string;
   username: string;
   urlSlug: string;
   visitorId: number;
@@ -13,9 +14,9 @@ export interface Credentials {
 export type ClueType = {
   id: string;
   imgUrl: string;
-  contentImgUrl: string; // legacy, replaced by contentUrl
+  contentImgUrl?: string; // legacy, replaced by contentUrl
   contentUrl: string;
-  isVideo: boolean; // legacy, replaced by mediaType
+  isVideo?: boolean; // legacy, replaced by mediaType
   mediaType: "image" | "video" | "website";
   linkBehavior: "modal" | "drawer" | "tab";
   text: string;
@@ -33,8 +34,9 @@ export type WorldDataObjectType = {
   progress?: {}; // legacy, should be removed moving forward in getWorldDataObject
 };
 
-export type DroppedAssetType = {
-  position?: { x?: number; y?: number };
+export type KeyAssetDataObjectType = {
+  theme?: string;
+  challenge?: { answer: string; text: string; imgUrl: string; selectedEmote?: string };
 };
 
 export interface Expression {

@@ -12,7 +12,7 @@ export const handleRemoveClue = async (req: Request, res: Response) => {
       return res.status(400).send({ success: false, message: "The clue asset id is missing." });
     }
 
-    const { dataObject, world } = await getWorldDataObject({ credentials, sceneDropId });
+    const { dataObject, world } = await getWorldDataObject({ credentials });
 
     const clues = dataObject.clues;
     delete clues[clue.id];
