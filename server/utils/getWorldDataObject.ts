@@ -30,9 +30,12 @@ export const getWorldDataObject = async ({ credentials }: { credentials: Credent
           sceneDropId,
           uniqueName: "ScavengerHunt",
         });
-        if (droppedAssets.length === 0) throw "No key asset found with unique name 'ScavengerHunt' in this scene.";
 
         const keyAsset = droppedAssets.find((asset) => asset.uniqueName === "ScavengerHunt");
+        if (droppedAssets.length === 0 || !keyAsset) {
+          throw "No key asset found with unique name 'ScavengerHunt' in this scene.";
+        }
+
         keyAssetId = keyAsset.id;
         keyAssetDataObject = (await keyAsset.fetchDataObject()) as KeyAssetDataObjectType;
       }
