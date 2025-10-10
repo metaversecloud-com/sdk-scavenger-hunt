@@ -8,19 +8,10 @@ export const handleGetClue = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, profileId, sceneDropId, urlSlug, visitorId } = credentials;
 
-    const { dataObject, world } = await getWorldDataObject({ credentials, sceneDropId });
+    const { dataObject, world } = await getWorldDataObject({ credentials });
     const { clues, theme } = dataObject as WorldDataObjectType;
 
-    const clue: ClueType = clues?.[assetId] || {
-      id: "",
-      text: "",
-      imgUrl: "",
-      contentImgUrl: "",
-      contentUrl: "",
-      mediaType: "image",
-      isVideo: false,
-      linkBehavior: "drawer",
-    };
+    const clue: ClueType = clues?.[assetId];
     if (!clue) throw new Error(`No clue asset found.`);
 
     if (clue.isVideo === true && !clue.mediaType) clue.mediaType = "video";

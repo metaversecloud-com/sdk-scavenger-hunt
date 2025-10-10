@@ -14,7 +14,7 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { sceneDropId, visitorId, urlSlug } = credentials;
 
-    const promises = [getProfile(credentials), getWorldDataObject({ credentials, sceneDropId })];
+    const promises = [getProfile(credentials), getWorldDataObject({ credentials })];
     const [{ isAdmin }, { dataObject }] = await Promise.all(promises);
     const { challenge, clues, theme } = dataObject as WorldDataObjectType;
 

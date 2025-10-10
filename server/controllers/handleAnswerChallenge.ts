@@ -9,7 +9,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { profileId, sceneDropId, urlSlug, visitorId } = credentials;
 
-    const { dataObject } = await getWorldDataObject({ credentials, sceneDropId });
+    const { dataObject } = await getWorldDataObject({ credentials });
     const { challenge, theme } = dataObject as WorldDataObjectType;
 
     const isCorrect = challenge.answer?.trim()?.toLowerCase() === answer?.trim()?.toLowerCase();

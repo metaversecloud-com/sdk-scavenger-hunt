@@ -7,7 +7,7 @@ export const handleUpdateChallenge = async (req: Request, res: Response) => {
     const { profileId, sceneDropId, urlSlug } = credentials;
     const { answer, buildableAssetUniqueName, text, selectedEmote } = req.body;
 
-    const { world } = await getWorldDataObject({ credentials, sceneDropId });
+    const { world } = await getWorldDataObject({ credentials });
 
     const lowerCaseAnswer = answer.toLowerCase();
 

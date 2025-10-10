@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { DroppedAsset, errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
+import { ClueType } from "../types.js";
 
 export const handleUpdateClue = async (req: Request, res: Response) => {
   try {
@@ -7,7 +8,7 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
     const { profileId, sceneDropId, urlSlug } = credentials;
     const { assetId, imgUrl, contentUrl, mediaType, linkBehavior, text } = req.body;
 
-    const { world } = await getWorldDataObject({ credentials, sceneDropId });
+    const { world } = await getWorldDataObject({ credentials });
     const droppedAsset = await DroppedAsset.create(assetId, urlSlug, { credentials });
 
     const protocol = process.env.INSTANCE_PROTOCOL;
@@ -15,19 +16,14 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
     let BASE_URL = `${protocol}://${host}`;
     if (host === "localhost") BASE_URL = "http://localhost:3001";
 
+    const clueData: ClueType = { id: assetId, text, imgUrl, contentUrl, mediaType, linkBehavior };
+
     await Promise.all([
       droppedAsset.updateWebImageLayers("", imgUrl),
-      droppedAsset.updateDataObject({ id: assetId, text, imgUrl, contentUrl, mediaType, linkBehavior }),
+      droppedAsset.updateDataObject(clueData),
       world.updateDataObject(
         {
-          [`scenes.${sceneDropId}.clues.${assetId}`]: {
-            id: assetId,
-            text,
-            imgUrl,
-            contentUrl,
-            mediaType,
-            linkBehavior,
-          },
+          [`scenes.${sceneDropId}.clues.${assetId}`]: clueData,
         },
         { analytics: [{ analyticName: `clueUpdates`, uniqueKey: profileId, profileId, urlSlug }] },
       ),
