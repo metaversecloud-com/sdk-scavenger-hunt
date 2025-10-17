@@ -41,4 +41,9 @@ export const themeData: ThemeData = {
     challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/letters/IMG_Start.png",
     numberOfAssetsAvailableInAdminSection: 10,
   },
+  "hat": {
+    title: "Hat",
+    challengeTitleImgUrl: "https://sdk-scavenger-hunt.s3.amazonaws.com/hat/IMG_Start.png",
+    numberOfAssetsAvailableInAdminSection: 8,
+  },
 };
