@@ -5,7 +5,7 @@ export const handleUpdateChallenge = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { profileId, sceneDropId, urlSlug } = credentials;
-    const { answer, buildableAssetUniqueName, text, selectedEmote } = req.body;
+    const { answer, buildableAssetUniqueName, imgUrl, title, text, selectedEmote } = req.body;
 
     const { world } = await getWorldDataObject({ credentials });
 
@@ -15,6 +15,8 @@ export const handleUpdateChallenge = async (req: Request, res: Response) => {
       {
         [`scenes.${sceneDropId}.buildableAssetUniqueName`]: buildableAssetUniqueName,
         [`scenes.${sceneDropId}.challenge.answer`]: lowerCaseAnswer,
+        [`scenes.${sceneDropId}.challenge.imgUrl`]: imgUrl,
+        [`scenes.${sceneDropId}.challenge.title`]: title,
         [`scenes.${sceneDropId}.challenge.text`]: text,
         [`scenes.${sceneDropId}.challenge.selectedEmote`]: selectedEmote,
         [`scenes.${sceneDropId}.challenge.lastUpdated`]: new Date().toISOString(),

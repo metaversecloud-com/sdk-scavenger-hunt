@@ -3,6 +3,10 @@ export const SET_INTERACTIVE_PARAMS = "SET_INTERACTIVE_PARAMS";
 export const SET_THEME = "SET_THEME";
 export const SET_IS_ADMIN = "SET_IS_ADMIN";
 export const SET_ERROR = "SET_ERROR";
+export const SET_CHALLENGE = "SET_CHALLENGE";
+export const SET_CONFIG = "SET_CONFIG";
+export const SET_CLUES = "SET_CLUES";
+export const SET_PROGRESS = "SET_PROGRESS";
 
 export type InteractiveParams = {
   assetId: string;
@@ -18,6 +22,30 @@ export type InteractiveParams = {
   visitorId: string;
 };
 
+export type ClueType = {
+  id: string;
+  imgUrl: string;
+  contentUrl: string;
+  mediaType: "image" | "video" | "website";
+  linkBehavior: "modal" | "drawer" | "tab";
+  text: string;
+};
+
+export type EmoteType = {
+  id: string;
+  name: string;
+  previewUrl: string;
+};
+
+export type ChallengeType = {
+  imgUrl?: string;
+  title?: string;
+  text?: string;
+  answer?: string;
+  selectedEmote?: string;
+  lastUpdated?: string;
+};
+
 export interface InitialState {
   hasInteractiveParams?: boolean;
   hasSetupBackend?: boolean;
@@ -25,11 +53,18 @@ export interface InitialState {
   theme?: string;
   isAdmin?: boolean;
   error?: string;
+  challenge?: ChallengeType;
+  clues?: { [id: string]: ClueType };
+  emotes?: EmoteType[];
+  cluesFound?: number;
+  totalClues?: number;
+  hasCompletedClues?: boolean;
+  hasCompletedChallenge?: boolean;
 }
 
 export type ActionType = {
   type: string;
-  payload?: InitialState;
+  payload?: Partial<InitialState>;
 };
 
 export interface ThemeInfo {
@@ -41,12 +76,3 @@ export interface ThemeInfo {
 export interface ThemeData {
   [key: string]: ThemeInfo;
 }
-
-export type ClueType = {
-  id: string;
-  imgUrl: string;
-  contentUrl: string;
-  mediaType: "image" | "video" | "website";
-  linkBehavior: "modal" | "drawer" | "tab";
-  text: string;
-};

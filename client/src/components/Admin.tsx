@@ -8,24 +8,17 @@ import { backendAPI } from "@/utils/backendAPI";
 import { setErrorMessage } from "@/utils/setErrorMessage";
 
 // context
-import { GlobalDispatchContext } from "@/context/GlobalContext";
-import { ClueType, SET_THEME } from "@/context/types";
-
-type EmoteType = {
-  id: string;
-  name: string;
-  previewUrl: string;
-};
+import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
+import { ClueType, SET_CONFIG, SET_CLUES, SET_CHALLENGE } from "@/context/types";
 
 export const Admin = () => {
   const dispatch = useContext(GlobalDispatchContext);
+  const { theme, challenge, clues, emotes } = useContext(GlobalStateContext);
 
-  const [clues, setClues] = useState<{ [id: string]: ClueType }>({});
-
-  const [availableEmotes, setAvailableEmotes] = useState<EmoteType[]>([]);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-  const [currentTheme, setTheme] = useState("robot");
+  const [challengeImgUrl, setChallengeImgUrl] = useState("");
+  const [challengeTitle, setChallengeTitle] = useState("");
   const [buildableAssetUniqueName, setBuildableAssetUniqueName] = useState("");
   const [selectedEmote, setSelectedEmote] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -40,22 +33,35 @@ export const Admin = () => {
       .get(`/config`)
       .then((result) => {
         const { clues, challenge, emotes, theme } = result.data;
-        setQuestion(challenge.text);
-        setAnswer(challenge.answer);
-        setClues(clues);
-        setAvailableEmotes(emotes);
-        setSelectedEmote(challenge.selectedEmote);
-        setTheme(theme);
-        if (dispatch) {
-          dispatch({
-            type: SET_THEME,
-            payload: { theme },
-          });
-        }
+
+        // Update local form state
+        setQuestion(challenge.text || "");
+        setAnswer(challenge.answer || "");
+        setChallengeImgUrl(challenge.imgUrl || "");
+        setChallengeTitle(challenge.title || "");
+        setSelectedEmote(challenge.selectedEmote || "");
+
+        // Update context
+        dispatch!({
+          type: SET_CONFIG,
+          payload: {
+            challenge: {
+              imgUrl: challenge.imgUrl,
+              title: challenge.title,
+              text: challenge.text,
+              answer: challenge.answer,
+              selectedEmote: challenge.selectedEmote,
+              lastUpdated: challenge.lastUpdated,
+            },
+            clues,
+            emotes,
+            theme,
+          },
+        });
       })
       .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => setIsLoading(false));
-  }, [backendAPI, dispatch]);
+  }, [dispatch]);
 
   const onSave = async () => {
     setAreButtonsDisabled(true);
@@ -63,8 +69,26 @@ export const Admin = () => {
       .post(`/update-challenge`, {
         answer,
         buildableAssetUniqueName,
+        imgUrl: challengeImgUrl,
+        title: challengeTitle,
         text: question,
         selectedEmote,
+      })
+      .then(() => {
+        // Update context with new challenge data
+        dispatch!({
+          type: SET_CHALLENGE,
+          payload: {
+            challenge: {
+              ...challenge,
+              imgUrl: challengeImgUrl,
+              title: challengeTitle,
+              text: question,
+              answer,
+              selectedEmote,
+            },
+          },
+        });
       })
       .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => {
@@ -77,7 +101,10 @@ export const Admin = () => {
     backendAPI
       .post(`/reset-clues`)
       .then((result) => {
-        setClues(result.data.clues);
+        dispatch!({
+          type: SET_CLUES,
+          payload: { clues: result.data.clues },
+        });
       })
       .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => {
@@ -90,7 +117,10 @@ export const Admin = () => {
     backendAPI
       .post(`/add-new-clue`)
       .then((result) => {
-        setClues(result.data.clues);
+        dispatch!({
+          type: SET_CLUES,
+          payload: { clues: result.data.clues },
+        });
       })
       .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => {
@@ -112,7 +142,10 @@ export const Admin = () => {
     backendAPI
       .get(`/config`)
       .then((result) => {
-        setClues(result.data.clues);
+        dispatch!({
+          type: SET_CLUES,
+          payload: { clues: result.data.clues },
+        });
       })
       .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => setIsLoading(false));
@@ -136,7 +169,10 @@ export const Admin = () => {
     backendAPI
       .post(`/remove-clue`, { clue: selectedClue })
       .then((result) => {
-        setClues(result.data.clues);
+        dispatch!({
+          type: SET_CLUES,
+          payload: { clues: result.data.clues },
+        });
       })
       .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => {
@@ -196,10 +232,50 @@ export const Admin = () => {
 
   return (
     <div className="container items-center justify-start grid gap-4">
+      {theme === "custom" && (
+        <>
+          <div>
+            <label>Title</label>
+            <input
+              className="input"
+              placeholder="My Scavenger Hunt"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setChallengeTitle(event.target.value);
+              }}
+              value={challengeTitle}
+            />
+          </div>
+
+          <div>
+            <label>Challenge Image URL</label>
+            <input
+              className="input"
+              placeholder="https://example.com/challenge-image.png"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setChallengeImgUrl(event.target.value);
+              }}
+              value={challengeImgUrl}
+            />
+            {challengeImgUrl && (
+              <div className="mt-2 mb-2">
+                <p className="p2 pb-2">Preview:</p>
+                <img
+                  src={challengeImgUrl}
+                  alt="Challenge preview"
+                  className="m-auto"
+                  style={{ maxWidth: "200px", maxHeight: "200px", objectFit: "contain" }}
+                />
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
       <p>
         This is the final challenge question that the participants need to solve. Enter a question, and answer (non case
         sensitive) and click the save button.
       </p>
+
       <div>
         <label>Question</label>
         <input
@@ -223,7 +299,7 @@ export const Admin = () => {
         />
       </div>
 
-      {currentTheme === "national-park" && (
+      {theme === "national-park" && (
         <div>
           <label>Buildable Asset Unique Name</label>
           <input
@@ -242,10 +318,10 @@ export const Admin = () => {
           value={selectedEmote}
           onChange={(e) => setSelectedEmote(e.target.value)}
           className="input"
-          disabled={areButtonsDisabled || availableEmotes.length === 0}
+          disabled={areButtonsDisabled || !emotes || emotes.length === 0}
         >
           <option value="">Select an emote</option>
-          {availableEmotes.map((emote) => (
+          {emotes?.map((emote) => (
             <option key={emote.id} value={emote.id}>
               {emote.name}
             </option>
@@ -260,7 +336,7 @@ export const Admin = () => {
       <div className="mt-10">
         <h4>Clues</h4>
         <p>These are the configured clues. Click on one to take you to the clue.</p>
-        {clues && Object.keys(clues)?.map((clue) => <Clue clue={clues[clue]} />)}
+        {clues && Object.keys(clues)?.map((clueKey) => <Clue key={clueKey} clue={clues[clueKey]} />)}
         <button className="btn mt-4" onClick={handleAddNewClue} disabled={areButtonsDisabled}>
           Add New Clue
         </button>

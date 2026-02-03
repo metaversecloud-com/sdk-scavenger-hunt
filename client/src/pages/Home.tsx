@@ -9,25 +9,18 @@ import { setErrorMessage } from "@/utils/setErrorMessage";
 
 // context
 import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
-import { SET_IS_ADMIN, SET_THEME } from "@/context/types";
+import { SET_CONFIG, SET_PROGRESS } from "@/context/types";
 import { themeData } from "@/context/themeData";
 
 export const Home = () => {
   const dispatch = useContext(GlobalDispatchContext);
-  const { theme } = useContext(GlobalStateContext);
+  const { hasSetupBackend, theme, challenge, cluesFound, totalClues, hasCompletedClues, hasCompletedChallenge } =
+    useContext(GlobalStateContext);
 
-  const [imgUrl, setImgUrl] = useState();
-  const [lastUpdated, setLastUpdated] = useState<Date>();
-  const [question, setQuestion] = useState("");
-  const [cluesFound, setCluesFound] = useState<string>("");
-  const [totalClues, setTotalClues] = useState<string>("");
-  const [hasCompletedClues, setHasCompletedClues] = useState(true);
   const [answer, setAnswer] = useState("");
-  const [hasAnsweredChallenge, setHasAnsweredChallenge] = useState(false);
   const [incorrectAnswer, setIncorrectAnswer] = useState(-1);
   const [isLoading, setIsLoading] = useState(true);
   const [answering, setAnswering] = useState(false);
-  const [currentTheme, setTheme] = useState("");
 
   const incorrectAnswerRotation = [
     "Try one more time!",
@@ -38,35 +31,41 @@ export const Home = () => {
   ];
 
   useEffect(() => {
-    backendAPI
+    if (hasSetupBackend) getChallenge();
+  }, [hasSetupBackend]);
+
+  const getChallenge = async () => {
+    await backendAPI
       .get(`/challenge`)
       .then((response) => {
-        const { success, cluesFound, challenge, hasCompletedClues, hasCompletedChallenge, isAdmin, theme, totalClues } =
+        const { cluesFound, challenge, hasCompletedClues, hasCompletedChallenge, isAdmin, theme, totalClues } =
           response.data;
-
-        if (success) {
-          setImgUrl(challenge?.imgUrl || `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}IMG_Start.png`);
-          setLastUpdated(challenge?.lastUpdated);
-          setQuestion(challenge?.text || "Please, go to the admin section to edit the Challenge message.");
-          setCluesFound(cluesFound);
-          setTotalClues(totalClues);
-          setHasCompletedClues(hasCompletedClues);
-          setHasAnsweredChallenge(hasCompletedChallenge);
-          setTheme(theme);
-          setIsLoading(false);
-          dispatch!({
-            type: SET_THEME,
-            payload: { theme },
-          });
-          dispatch!({
-            type: SET_IS_ADMIN,
-            payload: { isAdmin },
-          });
-        }
+        dispatch!({
+          type: SET_CONFIG,
+          payload: {
+            challenge: {
+              imgUrl: challenge?.imgUrl || `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_Start.png`,
+              title: challenge?.title || "",
+              text: challenge?.text || "Please, go to the admin section to edit the Challenge message.",
+              lastUpdated: challenge?.lastUpdated,
+            },
+            theme,
+            isAdmin,
+          },
+        });
+        dispatch!({
+          type: SET_PROGRESS,
+          payload: {
+            cluesFound,
+            totalClues,
+            hasCompletedClues,
+            hasCompletedChallenge,
+          },
+        });
       })
       .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => setIsLoading(false));
-  }, [backendAPI]);
+  };
 
   const completeChallenge = async () => {
     setIncorrectAnswer(-1);
@@ -76,7 +75,12 @@ export const Home = () => {
       .then((result) => {
         const { isCorrect } = result.data;
         if (!isCorrect) setIncorrectAnswer(Math.floor(Math.random() * 5));
-        setHasAnsweredChallenge(isCorrect);
+        if (isCorrect) {
+          dispatch!({
+            type: SET_PROGRESS,
+            payload: { hasCompletedChallenge: true },
+          });
+        }
       })
       .catch((error) => setErrorMessage(dispatch, error))
       .finally(() => setAnswering(false));
@@ -87,33 +91,39 @@ export const Home = () => {
       .post(`/restart-challenge`)
       .then((response) => {
         const { cluesFound, hasCompletedClues, hasCompletedChallenge, totalClues } = response.data;
-        setCluesFound(cluesFound);
-        setTotalClues(totalClues);
-        setHasCompletedClues(hasCompletedClues);
-        setHasAnsweredChallenge(hasCompletedChallenge);
+        dispatch!({
+          type: SET_PROGRESS,
+          payload: {
+            cluesFound,
+            totalClues,
+            hasCompletedClues,
+            hasCompletedChallenge,
+          },
+        });
       })
-      .catch((error) => setErrorMessage(dispatch, error))
-      .finally(() => setIsLoading(false));
+      .catch((error) => setErrorMessage(dispatch, error));
   };
 
+  const imgUrl = challenge?.imgUrl || `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_Start.png`;
+
   return (
-    <PageContainer isLoading={isLoading || !imgUrl} headerText="Challenge">
+    <PageContainer isLoading={isLoading} headerText="Challenge">
       <>
         <div className="container px-6 justify-start">
           <div className="mt-6" style={{ textAlign: "center", margin: "0 auto" }}>
             <img
               style={{ width: "130px", borderRadius: "10%", textAlign: "center", margin: "0 auto" }}
-              src={themeData?.[currentTheme]?.challengeTitleImgUrl || imgUrl}
+              src={themeData?.[theme || ""]?.challengeTitleImgUrl || imgUrl}
             />
           </div>
           <div className="pl-4" style={{ textAlign: "center", margin: "0 auto" }}>
-            <h3 style={{ marginBottom: "0px" }}>{themeData?.[currentTheme]?.title}</h3>
+            <h3 style={{ marginBottom: "0px" }}>{challenge?.title || themeData?.[theme || ""]?.title}</h3>
             <div>
               <p>Scavenger Hunt</p>
             </div>
           </div>
         </div>
-        {hasAnsweredChallenge ? (
+        {hasCompletedChallenge ? (
           <div className="container py-6 flex text-center">
             <h5>Nice one! You completed the challenge!</h5>
           </div>
@@ -128,7 +138,7 @@ export const Home = () => {
                     : "Answer the final question and see what happens!"}
                 </p>
                 <div className="mt-8">
-                  <p>{question}</p>
+                  <p>{challenge?.text}</p>
                 </div>
                 <div className="mt-2">
                   <label>Answer</label>
@@ -163,11 +173,11 @@ export const Home = () => {
             )}
           </div>
         )}
-        {parseInt(cluesFound) > 0 && (
+        {(cluesFound || 0) > 0 && (
           <>
-            {lastUpdated && (
+            {challenge?.lastUpdated && (
               <div className="container py-6">
-                <h5>This Scavenger Hunt was last updated on {new Date(lastUpdated).toLocaleString()}</h5>
+                <h5>This Scavenger Hunt was last updated on {new Date(challenge.lastUpdated).toLocaleString()}</h5>
               </div>
             )}
             <button className="btn" onClick={handleRestart}>

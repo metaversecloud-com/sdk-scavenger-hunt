@@ -80,6 +80,7 @@ const App = () => {
 
   return (
     <Routes>
+      <Route path="/" element={<Home />} />
       <Route path="challenge" element={<Home />} />
       <Route path="clue" element={<Clue />} />
       <Route path="*" element={<Error />} />

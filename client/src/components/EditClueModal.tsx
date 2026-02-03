@@ -10,6 +10,8 @@ import { getFixedClueImages, NATIONAL_PARK } from "@/context/constants";
 import { themeData } from "@/context/themeData";
 import { ClueType } from "@/context/types";
 
+const CUSTOM_THEME = "custom";
+
 export const EditClueModal = ({
   clue,
   onCloseModal,
@@ -22,9 +24,12 @@ export const EditClueModal = ({
   const { theme } = useContext(GlobalStateContext);
   const dispatch = useContext(GlobalDispatchContext);
 
+  const isCustomTheme = theme === CUSTOM_THEME;
   const fixedClueImages = getFixedClueImages(theme || NATIONAL_PARK);
 
-  const [selectedImage, setSelectedImage] = useState(clue?.imgUrl || fixedClueImages[0].image);
+  const [selectedImage, setSelectedImage] = useState(
+    clue?.imgUrl || (isCustomTheme ? "" : fixedClueImages[0].image),
+  );
   const [contentUrl, setContentUrl] = useState(clue?.contentUrl);
   const [mediaType, setMediaType] = useState(clue?.mediaType || "image");
   const [linkBehavior, setLinkBehavior] = useState(clue?.linkBehavior || "drawer");
@@ -131,12 +136,38 @@ export const EditClueModal = ({
 
         <div style={{ marginTop: "24px" }}>
           <h4>Asset Image</h4>
-          <p className="pb-3">Pick an image for this clue.</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
-            {fixedClueImages
-              ?.slice(0, themeData[theme!].numberOfAssetsAvailableInAdminSection)
-              .map((item, index) => <ClueImages key={index} clue={item} />)}
-          </div>
+          {isCustomTheme ? (
+            <>
+              <p className="pb-3">Enter a URL for the clue image.</p>
+              <input
+                className="input mb-4"
+                placeholder="https://example.com/image.png"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setSelectedImage(event.target.value);
+                }}
+                value={selectedImage}
+              />
+              {selectedImage && (
+                <div className="mb-4">
+                  <p className="p2 pb-2 text-left">Preview:</p>
+                  <img
+                    src={selectedImage}
+                    alt="Preview"
+                    style={{ maxWidth: "200px", maxHeight: "200px", objectFit: "contain" }}
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <p className="pb-3">Pick an image for this clue.</p>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+                {fixedClueImages
+                  ?.slice(0, themeData[theme!].numberOfAssetsAvailableInAdminSection)
+                  .map((item, index) => <ClueImages key={index} clue={item} />)}
+              </div>
+            </>
+          )}
 
           <div style={{ display: "flex", columnGap: "7px", marginTop: "16px" }}>
             <button className="btn btn-outline" onClick={onCloseModal}>
