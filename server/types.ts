@@ -22,12 +22,24 @@ export type ClueType = {
   text: string;
 };
 
+export type QuestionTypeOption = "text" | "multiple_choice" | "all_that_apply";
+
+export type ChallengeType = {
+  answer?: string;
+  text: string;
+  imgUrl: string;
+  selectedEmote?: string;
+  questionType?: QuestionTypeOption;
+  options?: { [key: string]: string };
+  correctAnswers?: string[];
+};
+
 export type WorldDataObjectType = {
   sceneDropId: string;
   keyAssetId: string;
   buildableAssetUniqueName?: string;
   theme?: string;
-  challenge: { answer: string; text: string; imgUrl: string; selectedEmote?: string };
+  challenge: ChallengeType;
   clues: {
     [id: string]: ClueType;
   };
@@ -36,7 +48,7 @@ export type WorldDataObjectType = {
 
 export type KeyAssetDataObjectType = {
   theme?: string;
-  challenge?: { answer: string; text: string; imgUrl: string; selectedEmote?: string };
+  challenge?: ChallengeType;
 };
 
 export interface Expression {

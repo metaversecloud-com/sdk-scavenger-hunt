@@ -9,7 +9,7 @@ import { setErrorMessage } from "@/utils/setErrorMessage";
 
 // context
 import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
-import { ClueType, SET_CONFIG, SET_CLUES, SET_CHALLENGE } from "@/context/types";
+import { ClueType, QuestionTypeOption, SET_CONFIG, SET_CLUES, SET_CHALLENGE } from "@/context/types";
 
 export const Admin = () => {
   const dispatch = useContext(GlobalDispatchContext);
@@ -21,6 +21,14 @@ export const Admin = () => {
   const [challengeTitle, setChallengeTitle] = useState("");
   const [buildableAssetUniqueName, setBuildableAssetUniqueName] = useState("");
   const [selectedEmote, setSelectedEmote] = useState("");
+  const [questionType, setQuestionType] = useState<QuestionTypeOption>("text");
+  const [options, setOptions] = useState<{ [key: string]: string }>({
+    "1": "",
+    "2": "",
+    "3": "",
+    "4": "",
+  });
+  const [correctAnswers, setCorrectAnswers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
   const [showEditClueModal, setShowEditClueModal] = useState(false);
@@ -40,6 +48,9 @@ export const Admin = () => {
         setChallengeImgUrl(challenge.imgUrl || "");
         setChallengeTitle(challenge.title || "");
         setSelectedEmote(challenge.selectedEmote || "");
+        setQuestionType(challenge.questionType || "text");
+        if (challenge.options) setOptions(challenge.options);
+        if (challenge.correctAnswers) setCorrectAnswers(challenge.correctAnswers);
 
         // Update context
         dispatch!({
@@ -67,12 +78,15 @@ export const Admin = () => {
     setAreButtonsDisabled(true);
     backendAPI
       .post(`/update-challenge`, {
-        answer,
+        answer: questionType === "text" ? answer : undefined,
         buildableAssetUniqueName,
         imgUrl: challengeImgUrl,
         title: challengeTitle,
         text: question,
         selectedEmote,
+        questionType,
+        options: questionType !== "text" ? options : undefined,
+        correctAnswers: questionType !== "text" ? correctAnswers : undefined,
       })
       .then(() => {
         // Update context with new challenge data
@@ -84,8 +98,11 @@ export const Admin = () => {
               imgUrl: challengeImgUrl,
               title: challengeTitle,
               text: question,
-              answer,
+              answer: questionType === "text" ? answer : undefined,
               selectedEmote,
+              questionType,
+              options: questionType !== "text" ? options : undefined,
+              correctAnswers: questionType !== "text" ? correctAnswers : undefined,
             },
           },
         });
@@ -277,6 +294,19 @@ export const Admin = () => {
       </p>
 
       <div>
+        <label>Question Type</label>
+        <select
+          className="input"
+          value={questionType}
+          onChange={(e) => setQuestionType(e.target.value as QuestionTypeOption)}
+        >
+          <option value="text">Text Answer</option>
+          <option value="multiple_choice">Multiple Choice</option>
+          <option value="all_that_apply">All That Apply</option>
+        </select>
+      </div>
+
+      <div>
         <label>Question</label>
         <input
           className="input"
@@ -288,16 +318,59 @@ export const Admin = () => {
         />
       </div>
 
-      <div>
-        <label>Answer</label>
-        <input
-          className="input"
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setAnswer(event.target.value?.trim()?.toLowerCase());
-          }}
-          value={answer}
-        />
-      </div>
+      {questionType === "text" ? (
+        <div>
+          <label>Answer</label>
+          <input
+            className="input"
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setAnswer(event.target.value?.trim()?.toLowerCase());
+            }}
+            value={answer}
+          />
+        </div>
+      ) : (
+        <div>
+          <label>Options</label>
+          <p className="p2 pb-2">
+            {questionType === "multiple_choice"
+              ? "Select the correct answer using the radio button."
+              : "Select all correct answers using the checkboxes."}
+          </p>
+          {Object.keys(options).map((key) => (
+            <div key={key} className="flex items-center mb-2">
+              {questionType === "multiple_choice" ? (
+                <input
+                  type="radio"
+                  name="correctAnswer"
+                  checked={correctAnswers.includes(key)}
+                  onChange={() => setCorrectAnswers([key])}
+                  className="mr-2"
+                  style={{ width: "20px", height: "20px" }}
+                />
+              ) : (
+                <input
+                  type="checkbox"
+                  checked={correctAnswers.includes(key)}
+                  onChange={() =>
+                    setCorrectAnswers((prev) =>
+                      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+                    )
+                  }
+                  className="mr-2"
+                  style={{ width: "20px", height: "20px" }}
+                />
+              )}
+              <input
+                className="input flex-1"
+                placeholder={`Option ${key}`}
+                value={options[key]}
+                onChange={(e) => setOptions((prev) => ({ ...prev, [key]: e.target.value }))}
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       {theme === "national-park" && (
         <div>
@@ -334,14 +407,14 @@ export const Admin = () => {
       </button>
 
       <div className="mt-10">
-        <h4>Clues</h4>
-        <p>These are the configured clues. Click on one to take you to the clue.</p>
+        <h4>Items</h4>
+        <p>These are the configured items. Click on one to take you to the item.</p>
         {clues && Object.keys(clues)?.map((clueKey) => <Clue key={clueKey} clue={clues[clueKey]} />)}
         <button className="btn mt-4" onClick={handleAddNewClue} disabled={areButtonsDisabled}>
-          Add New Clue
+          Add New Item
         </button>
         <button className="btn btn-danger mt-2" onClick={onResetClues} disabled={areButtonsDisabled}>
-          Reset Clues
+          Reset Items
         </button>
       </div>
       {showEditClueModal && selectedClue && (
@@ -350,8 +423,8 @@ export const Admin = () => {
 
       {showConfirmationModal && (
         <ConfirmationModal
-          title="Remove Clue"
-          message="Are you sure you want to remove this clue from the world? This action cannot be undone."
+          title="Remove Item"
+          message="Are you sure you want to remove this item from the world? This action cannot be undone."
           handleOnConfirm={removeClue}
           handleToggleShowConfirmationModal={handleToggleShowConfirmationModal}
         />

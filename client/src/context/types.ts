@@ -22,6 +22,8 @@ export type InteractiveParams = {
   visitorId: string;
 };
 
+export type QuestionTypeOption = "text" | "multiple_choice" | "all_that_apply";
+
 export type ClueType = {
   id: string;
   imgUrl: string;
@@ -44,6 +46,9 @@ export type ChallengeType = {
   answer?: string;
   selectedEmote?: string;
   lastUpdated?: string;
+  questionType?: QuestionTypeOption;
+  options?: { [key: string]: string };
+  correctAnswers?: string[];
 };
 
 export interface InitialState {

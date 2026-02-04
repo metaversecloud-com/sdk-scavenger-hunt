@@ -18,6 +18,7 @@ export const Home = () => {
     useContext(GlobalStateContext);
 
   const [answer, setAnswer] = useState("");
+  const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [incorrectAnswer, setIncorrectAnswer] = useState(-1);
   const [isLoading, setIsLoading] = useState(true);
   const [answering, setAnswering] = useState(false);
@@ -27,7 +28,7 @@ export const Home = () => {
     "Not correct but keep going!",
     "Close! Try again!",
     "Not quite right, double check and come back!",
-    "Check the clues again for help with the answer!",
+    "Check the items again for help with the answer!",
   ];
 
   useEffect(() => {
@@ -48,6 +49,9 @@ export const Home = () => {
               title: challenge?.title || "",
               text: challenge?.text || "Please, go to the admin section to edit the Challenge message.",
               lastUpdated: challenge?.lastUpdated,
+              questionType: challenge?.questionType || "text",
+              options: challenge?.options,
+              correctAnswers: challenge?.correctAnswers,
             },
             theme,
             isAdmin,
@@ -70,8 +74,12 @@ export const Home = () => {
   const completeChallenge = async () => {
     setIncorrectAnswer(-1);
     setAnswering(true);
+    const questionType = challenge?.questionType || "text";
+    const payload =
+      questionType === "text" ? { answer } : { selectedAnswers, questionType };
+
     await backendAPI
-      .post(`/answer-challenge`, { answer })
+      .post(`/answer-challenge`, payload)
       .then((result) => {
         const { isCorrect } = result.data;
         if (!isCorrect) setIncorrectAnswer(Math.floor(Math.random() * 5));
@@ -141,14 +149,58 @@ export const Home = () => {
                   <p>{challenge?.text}</p>
                 </div>
                 <div className="mt-2">
-                  <label>Answer</label>
-                  <input
-                    className="input"
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setAnswer(event.target.value);
-                    }}
-                    value={answer}
-                  />
+                  {(!challenge?.questionType || challenge.questionType === "text") ? (
+                    <>
+                      <label>Answer</label>
+                      <input
+                        className="input"
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                          setAnswer(event.target.value);
+                        }}
+                        value={answer}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <label>
+                        {challenge.questionType === "multiple_choice"
+                          ? "Select the correct answer:"
+                          : "Select all that apply:"}
+                      </label>
+                      <div className="mt-2">
+                        {challenge.options &&
+                          Object.keys(challenge.options).map((key) => (
+                            <div key={key} className="flex items-center mb-2">
+                              {challenge.questionType === "multiple_choice" ? (
+                                <input
+                                  type="radio"
+                                  name="challengeAnswer"
+                                  checked={selectedAnswers.includes(key)}
+                                  onChange={() => setSelectedAnswers([key])}
+                                  className="mr-2"
+                                  style={{ width: "20px", height: "20px" }}
+                                />
+                              ) : (
+                                <input
+                                  type="checkbox"
+                                  checked={selectedAnswers.includes(key)}
+                                  onChange={() =>
+                                    setSelectedAnswers((prev) =>
+                                      prev.includes(key)
+                                        ? prev.filter((k) => k !== key)
+                                        : [...prev, key]
+                                    )
+                                  }
+                                  className="mr-2"
+                                  style={{ width: "20px", height: "20px" }}
+                                />
+                              )}
+                              <span>{challenge.options![key]}</span>
+                            </div>
+                          ))}
+                      </div>
+                    </>
+                  )}
                   <div className="mt-2">
                     <button className="btn" onClick={completeChallenge} disabled={answering}>
                       Submit
@@ -162,7 +214,7 @@ export const Home = () => {
             ) : (
               <div className="flex flex-col">
                 <p>
-                  Explore the world to find all of the clues! Once you've found all of the clues, come back here to
+                  Explore the world to find all of the items! Once you've found all of the items, come back here to
                   answer the question and unlock a new emote!
                 </p>
                 <br />

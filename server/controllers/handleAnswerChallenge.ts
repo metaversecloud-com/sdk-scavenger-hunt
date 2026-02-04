@@ -5,14 +5,30 @@ import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
 
 export const handleAnswerChallenge = async (req: Request, res: Response) => {
   try {
-    const answer = req.body.answer.toLowerCase();
+    const { answer, selectedAnswers } = req.body;
     const credentials = getCredentials(req.query);
     const { profileId, sceneDropId, urlSlug, visitorId } = credentials;
 
     const { dataObject } = await getWorldDataObject({ credentials });
     const { challenge, theme } = dataObject as WorldDataObjectType;
 
-    const isCorrect = challenge.answer?.trim()?.toLowerCase() === answer?.trim()?.toLowerCase();
+    const questionType = challenge.questionType || "text";
+    let isCorrect = false;
+
+    if (questionType === "text") {
+      // Text answer comparison
+      const submittedAnswer = answer?.toLowerCase()?.trim();
+      isCorrect = challenge.answer?.trim()?.toLowerCase() === submittedAnswer;
+    } else if (questionType === "multiple_choice" || questionType === "all_that_apply") {
+      // Multiple choice or all that apply comparison
+      const correctAnswers = challenge.correctAnswers || [];
+      const submitted = selectedAnswers || [];
+
+      if (correctAnswers.length === submitted.length) {
+        isCorrect = correctAnswers.every((ans: string) => submitted.includes(ans));
+      }
+    }
+
     if (!isCorrect) return res.json({ isCorrect: false });
 
     const analytics: { analyticName: string; uniqueKey?: string; profileId?: string; urlSlug?: string }[] = [

@@ -27,9 +27,7 @@ export const EditClueModal = ({
   const isCustomTheme = theme === CUSTOM_THEME;
   const fixedClueImages = getFixedClueImages(theme || NATIONAL_PARK);
 
-  const [selectedImage, setSelectedImage] = useState(
-    clue?.imgUrl || (isCustomTheme ? "" : fixedClueImages[0].image),
-  );
+  const [selectedImage, setSelectedImage] = useState(clue?.imgUrl || (isCustomTheme ? "" : fixedClueImages[0].image));
   const [contentUrl, setContentUrl] = useState(clue?.contentUrl);
   const [mediaType, setMediaType] = useState(clue?.mediaType || "image");
   const [linkBehavior, setLinkBehavior] = useState(clue?.linkBehavior || "drawer");
@@ -74,13 +72,13 @@ export const EditClueModal = ({
   return (
     <div className="modal-container">
       <div className="modal" style={{ maxHeight: "90vh" }}>
-        <h4>Clue Configuration</h4>
+        <h4>Item Configuration</h4>
         <p className="pb-3">
-          You can change the clue text and image it shows in the drawer. Click on the Save button at the bottom of the
+          You can change the item text and image it shows in the drawer. Click on the Save button at the bottom of the
           screen to save the configuration.
         </p>
 
-        <label className="text-left">Clue Text</label>
+        <label className="text-left">Item Text</label>
         <textarea
           className="input mb-4"
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -90,7 +88,7 @@ export const EditClueModal = ({
           style={{ minHeight: "100px" }}
         />
 
-        <label className="text-left">Clue Media URL</label>
+        <label className="text-left">Item Media URL</label>
         <input
           className="input mb-4"
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,7 +136,7 @@ export const EditClueModal = ({
           <h4>Asset Image</h4>
           {isCustomTheme ? (
             <>
-              <p className="pb-3">Enter a URL for the clue image.</p>
+              <p className="pb-3">Enter a URL for the item image.</p>
               <input
                 className="input mb-4"
                 placeholder="https://example.com/image.png"
@@ -160,7 +158,7 @@ export const EditClueModal = ({
             </>
           ) : (
             <>
-              <p className="pb-3">Pick an image for this clue.</p>
+              <p className="pb-3">Pick an image for this Item.</p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
                 {fixedClueImages
                   ?.slice(0, themeData[theme!].numberOfAssetsAvailableInAdminSection)
