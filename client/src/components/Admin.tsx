@@ -9,11 +9,20 @@ import { setErrorMessage } from "@/utils/setErrorMessage";
 
 // context
 import { GlobalDispatchContext, GlobalStateContext } from "@/context/GlobalContext";
-import { ClueType, QuestionTypeOption, SET_CONFIG, SET_CLUES, SET_CHALLENGE } from "@/context/types";
+import {
+  ClueType,
+  LeaderboardEntryType,
+  QuestionTypeOption,
+  SET_CONFIG,
+  SET_CLUES,
+  SET_CHALLENGE,
+} from "@/context/types";
 
 export const Admin = () => {
   const dispatch = useContext(GlobalDispatchContext);
-  const { theme, challenge, clues, emotes } = useContext(GlobalStateContext);
+  const { theme, challenge, clues, emotes, leaderboard } = useContext(GlobalStateContext);
+
+  const [activeTab, setActiveTab] = useState<"settings" | "results">("settings");
 
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -245,9 +254,36 @@ export const Admin = () => {
     );
   };
 
-  if (isLoading) return <Loading />;
+  const getResultsContent = () => (
+    <div className="items-center">
+      {!leaderboard || leaderboard.length === 0 ? (
+        <p>No results yet. Results will appear here as visitors participate in the scavenger hunt.</p>
+      ) : (
+        <table className="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th className="h5">Name</th>
+              <th className="h5">Items Found</th>
+              <th className="h5">Completed</th>
+            </tr>
+          </thead>
+          <tbody>
+            {leaderboard.map((entry: LeaderboardEntryType, index: number) => (
+              <tr key={entry.profileId}>
+                <td className="p2">{index + 1}</td>
+                <td className="p2">{entry.name}</td>
+                <td className="p2">{entry.cluesCollected}</td>
+                <td className="p2">{entry.challengeDone ? "Yes" : "No"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
 
-  return (
+  const getSettingsContent = () => (
     <div className="container items-center justify-start grid gap-4">
       {theme === "custom" && (
         <>
@@ -353,9 +389,7 @@ export const Admin = () => {
                   type="checkbox"
                   checked={correctAnswers.includes(key)}
                   onChange={() =>
-                    setCorrectAnswers((prev) =>
-                      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
-                    )
+                    setCorrectAnswers((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]))
                   }
                   className="mr-2"
                   style={{ width: "20px", height: "20px" }}
@@ -430,6 +464,23 @@ export const Admin = () => {
         />
       )}
     </div>
+  );
+
+  if (isLoading) return <Loading />;
+
+  return (
+    <>
+      <div className="tab-container mb-4">
+        <button className={activeTab === "settings" ? "btn" : "btn btn-text"} onClick={() => setActiveTab("settings")}>
+          Settings
+        </button>
+        <button className={activeTab === "results" ? "btn" : "btn btn-text"} onClick={() => setActiveTab("results")}>
+          Results
+        </button>
+      </div>
+
+      {activeTab === "settings" ? getSettingsContent() : getResultsContent()}
+    </>
   );
 };
 

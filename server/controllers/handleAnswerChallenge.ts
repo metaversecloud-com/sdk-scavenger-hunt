@@ -1,16 +1,37 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials, getWorldDataObject, Visitor } from "../utils/index.js";
+import {
+  awardBadge,
+  errorHandler,
+  getCredentials,
+  getVisitorBadges,
+  getVisitorProgress,
+  getWorldDataObject,
+  updateLeaderboard,
+  Visitor,
+} from "../utils/index.js";
 import { WorldDataObjectType } from "../types.js";
 import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
 
 export const handleAnswerChallenge = async (req: Request, res: Response) => {
   try {
-    const { answer, selectedAnswers } = req.body;
     const credentials = getCredentials(req.query);
-    const { profileId, sceneDropId, urlSlug, visitorId } = credentials;
+    const { assetId, profileId, sceneDropId, urlSlug, visitorId } = credentials;
+
+    const { answer, selectedAnswers } = req.body;
 
     const { dataObject } = await getWorldDataObject({ credentials });
-    const { challenge, theme } = dataObject as WorldDataObjectType;
+    const { challenge, clues, theme } = dataObject as WorldDataObjectType;
+
+    // Create visitor and fetch inventory/data for badge tracking
+    const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
+    await visitor.fetchInventoryItems();
+    await visitor.fetchDataObject();
+    const visitorInventory = getVisitorBadges(visitor.inventoryItems);
+
+    // Get current answer attempts and increment
+    const visitorChallengeKey = `${urlSlug}-${sceneDropId}`;
+    const currentAttempts = visitor.dataObject?.[visitorChallengeKey]?.answerAttempts || 0;
+    const answerAttempts = currentAttempts + 1;
 
     const questionType = challenge.questionType || "text";
     let isCorrect = false;
@@ -29,51 +50,101 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       }
     }
 
-    if (!isCorrect) return res.json({ isCorrect: false });
+    if (!isCorrect) {
+      // Update answer attempts in visitor data object
+      await visitor.updateDataObject({ [`${visitorChallengeKey}.answerAttempts`]: answerAttempts });
+      return res.json({ isCorrect: false, answerAttempts, visitorInventory });
+    }
 
     const analytics: { analyticName: string; uniqueKey?: string; profileId?: string; urlSlug?: string }[] = [
       { analyticName: `${theme}-completions`, uniqueKey: profileId, profileId, urlSlug },
       { analyticName: `completions`, uniqueKey: profileId, profileId, urlSlug },
     ];
 
-    const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
-
-    const emote = challenge.selectedEmote ? { id: challenge.selectedEmote } : { name: `scavengerHunt-${theme}-1` };
-    const grantExpressionResult = await visitor.grantExpression(emote);
     let text = "You completed the challenge!";
-    if (grantExpressionResult.success === true) {
-      analytics.push({ analyticName: `${theme}-1-emoteUnlocked` });
-      text = "You unlocked a new emote!";
+    const emote = challenge.selectedEmote ? { id: challenge.selectedEmote } : { name: `scavengerHunt-${theme}-1` };
+    await visitor
+      .grantExpression(emote)
+      .then((response) => {
+        if (response.success === true) {
+          analytics.push({ analyticName: `${theme}-1-emoteUnlocked` });
+          text = "You unlocked a new emote!";
+        }
+      })
+      .catch((error) =>
+        errorHandler({
+          error,
+          functionName: "handleAnswerChallenge",
+          message: "Error granting emote",
+        }),
+      );
+
+    await visitor.updateDataObject(
+      { [`${visitorChallengeKey}.challengeDone`]: true, [`${visitorChallengeKey}.answerAttempts`]: answerAttempts },
+      { analytics },
+    );
+
+    // Award badges based on achievements
+    // Refresh visitor data object to get updated state after marking challenge done
+    await visitor.fetchDataObject();
+    const progress = getVisitorProgress(visitor.dataObject);
+
+    let badgeAwarded = false;
+    let updatedVisitorInventory = visitorInventory;
+
+    // "Quick Thinker" - Answered correctly on first attempt
+    if (answerAttempts === 1) {
+      const result = await awardBadge({ credentials, visitor, visitorInventory, badgeName: "Quick Thinker" });
+      if (result.awarded) badgeAwarded = true;
     }
 
-    visitor.updateDataObject({ [`${urlSlug}-${sceneDropId}.challengeDone`]: true }, { analytics });
+    // "Curious Mind" - Completed 5 scavenger hunts
+    if (progress.totalCompletions >= 10) {
+      const result = await awardBadge({ credentials, visitor, visitorInventory, badgeName: "Curious Mind" });
+      if (result.awarded) badgeAwarded = true;
+    }
 
-    visitor
-      .fireToast({
-        groupId: theme,
-        title: "Congratulations 🌟",
-        text,
-      })
-      .catch((error) =>
-        errorHandler({
-          error,
-          functionName: "handleAnswerChallenge",
-          message: "Error firing toast",
-        }),
-      );
+    // Re-fetch inventory if a badge was awarded
+    if (badgeAwarded) {
+      await visitor.fetchInventoryItems();
+      updatedVisitorInventory = getVisitorBadges(visitor.inventoryItems);
+    }
 
-    visitor
-      .triggerParticle({
-        name: "explosion_float",
-        duration: 6,
-      })
-      .catch((error) =>
-        errorHandler({
-          error,
-          functionName: "handleAnswerChallenge",
-          message: "Error triggering particle effects",
-        }),
-      );
+    await Promise.all([
+      visitor
+        .fireToast({
+          groupId: theme,
+          title: "Congratulations",
+          text,
+        })
+        .catch((error) =>
+          errorHandler({
+            error,
+            functionName: "handleAnswerChallenge",
+            message: "Error firing toast",
+          }),
+        ),
+      visitor
+        .triggerParticle({
+          name: "explosion_float",
+          duration: 6,
+        })
+        .catch((error) =>
+          errorHandler({
+            error,
+            functionName: "handleAnswerChallenge",
+            message: "Error triggering particle effects",
+          }),
+        ),
+    ]);
+
+    const updateLeaderboardResponse = await updateLeaderboard({
+      credentials,
+      keyAssetId: assetId,
+      cluesCount: Object.keys(clues).length,
+      challengeDone: true,
+    });
+    if (updateLeaderboardResponse instanceof Error) throw updateLeaderboardResponse;
 
     addNewRowToGoogleSheets({
       identityId: req?.query?.identityId,
@@ -84,7 +155,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       urlSlug,
     });
 
-    return res.json({ success: true, isCorrect: true });
+    return res.json({ success: true, isCorrect: true, answerAttempts, visitorInventory: updatedVisitorInventory });
   } catch (error) {
     return errorHandler({
       error,

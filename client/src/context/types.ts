@@ -39,6 +39,24 @@ export type EmoteType = {
   previewUrl: string;
 };
 
+export type BadgeType = {
+  id: string;
+  icon: string;
+  description?: string;
+  name: string;
+};
+
+export type VisitorInventoryType = {
+  badges: { [name: string]: BadgeType };
+};
+
+export type LeaderboardEntryType = {
+  name: string;
+  cluesCollected: number;
+  challengeDone: boolean;
+  profileId: string;
+};
+
 export type ChallengeType = {
   imgUrl?: string;
   title?: string;
@@ -58,6 +76,7 @@ export interface InitialState {
   theme?: string;
   isAdmin?: boolean;
   error?: string;
+  badges?: { [name: string]: BadgeType };
   challenge?: ChallengeType;
   clues?: { [id: string]: ClueType };
   emotes?: EmoteType[];
@@ -65,6 +84,8 @@ export interface InitialState {
   totalClues?: number;
   hasCompletedClues?: boolean;
   hasCompletedChallenge?: boolean;
+  visitorInventory?: VisitorInventoryType;
+  leaderboard?: LeaderboardEntryType[];
 }
 
 export type ActionType = {

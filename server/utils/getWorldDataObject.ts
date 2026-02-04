@@ -19,51 +19,54 @@ export const getWorldDataObject = async ({ credentials }: { credentials: Credent
     const world = (await World.create(urlSlug, { credentials })) as IWorld;
     await world.fetchDataObject();
 
-    if (!world.dataObject?.scenes?.[sceneDropId]) {
-      let keyAssetId, keyAsset, keyAssetDataObject;
+    let keyAssetId = world.dataObject?.scenes?.[sceneDropId]?.keyAssetId;
+    let keyAsset: DroppedAssetInterface;
 
+    if (!keyAssetId) {
       if (uniqueName === "ScavengerHunt") {
         keyAsset = await DroppedAsset.create(assetId, urlSlug, { credentials });
-        keyAssetDataObject = (await keyAsset.fetchDataObject()) as KeyAssetDataObjectType;
       } else {
         const droppedAssets: DroppedAssetInterface[] = await world.fetchDroppedAssetsBySceneDropId({
           sceneDropId,
-          uniqueName: "ScavengerHunt",
         });
 
-        const keyAsset = droppedAssets.find((asset) => asset.uniqueName === "ScavengerHunt");
+        keyAsset = droppedAssets.find((asset) => asset.uniqueName === "ScavengerHunt");
         if (droppedAssets.length === 0 || !keyAsset) {
           throw "No key asset found with unique name 'ScavengerHunt' in this scene.";
         }
-
-        keyAssetId = keyAsset.id;
-        keyAssetDataObject = (await keyAsset.fetchDataObject()) as KeyAssetDataObjectType;
       }
 
-      const { challenge, theme } = keyAssetDataObject;
+      keyAssetId = keyAsset.id;
+      let payload = world.dataObject?.scenes?.[sceneDropId];
 
-      if (!theme) throw "Key asset is missing required theme in it's data object.";
+      if (!payload) {
+        const keyAssetDataObject = (await keyAsset.fetchDataObject()) as KeyAssetDataObjectType;
 
-      const clues = await getClueDroppedAssets({
-        sceneDropId,
-        uniqueName: `ScavengerHunt_${theme}_clue`,
-        world,
-      });
+        const { challenge, theme } = keyAssetDataObject;
 
-      const payload: WorldDataObjectType = {
-        keyAssetId,
-        sceneDropId,
-        buildableAssetUniqueName: "",
-        clues,
-        challenge: challenge
-          ? challenge
-          : {
-              answer: "",
-              text: "This challenge hasn't been set up yet. Please check back later.",
-              imgUrl: `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_Start.png`,
-            },
-        theme,
-      };
+        if (!theme) throw "Key asset is missing required theme in it's data object.";
+
+        const clues = await getClueDroppedAssets({
+          sceneDropId,
+          uniqueName: `ScavengerHunt_${theme}_clue`,
+          world,
+        });
+
+        payload = {
+          keyAssetId,
+          sceneDropId,
+          buildableAssetUniqueName: "",
+          clues,
+          challenge: challenge
+            ? challenge
+            : {
+                answer: "",
+                text: "This challenge hasn't been set up yet. Please check back later.",
+                imgUrl: `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_Start.png`,
+              },
+          theme,
+        };
+      }
 
       const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
       if (!world.dataObject?.scenes) {
@@ -76,9 +79,12 @@ export const getWorldDataObject = async ({ credentials }: { credentials: Credent
           { [`scenes.${sceneDropId}`]: { ...payload } },
           { lock: { lockId, releaseLock: true } },
         );
+      } else {
+        await world.updateDataObject(
+          { [`scenes.${sceneDropId}.keyAssetId`]: keyAssetId },
+          { lock: { lockId, releaseLock: true } },
+        );
       }
-
-      await world.fetchDataObject();
     } else {
       // remove profile from all scenes in data object to clean up legacy data
       let shouldUpdate = false;
@@ -91,7 +97,9 @@ export const getWorldDataObject = async ({ credentials }: { credentials: Credent
       if (shouldUpdate) await world.updateDataObject(world.dataObject, {});
     }
 
-    return { dataObject: world.dataObject.scenes[sceneDropId], world };
+    await world.fetchDataObject();
+
+    return { keyAssetId, dataObject: world.dataObject.scenes[sceneDropId], world };
   } catch (error) {
     return errorHandler({ error, functionName: "getWorldDataObject", message: "Error getting world details" });
   }

@@ -56,11 +56,14 @@ const globalReducer = (state: InitialState, action: ActionType) => {
     case SET_CONFIG: {
       return {
         ...state,
+        badges: payload?.badges ?? state.badges,
         challenge: payload?.challenge ?? state.challenge,
         clues: payload?.clues ?? state.clues,
         emotes: payload?.emotes ?? state.emotes,
+        leaderboard: payload?.leaderboard ?? state.leaderboard,
         theme: payload?.theme ?? state.theme,
         isAdmin: payload?.isAdmin ?? state.isAdmin,
+        visitorInventory: payload?.visitorInventory ?? state.visitorInventory,
         error: "",
       };
     }
