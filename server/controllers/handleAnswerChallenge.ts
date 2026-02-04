@@ -19,7 +19,10 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
 
     const { answer, selectedAnswers } = req.body;
 
-    const { dataObject } = await getWorldDataObject({ credentials });
+    const getWorldDataObjectResult = await getWorldDataObject({ credentials });
+    if (getWorldDataObjectResult instanceof Error) throw getWorldDataObjectResult;
+
+    const { dataObject } = getWorldDataObjectResult;
     const { challenge, clues, theme } = dataObject as WorldDataObjectType;
 
     // Create visitor and fetch inventory/data for badge tracking

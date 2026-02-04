@@ -20,7 +20,7 @@ import {
 
 export const Admin = () => {
   const dispatch = useContext(GlobalDispatchContext);
-  const { theme, challenge, clues, emotes, leaderboard } = useContext(GlobalStateContext);
+  const { theme, challenge, clues, totalClues, emotes, leaderboard } = useContext(GlobalStateContext);
 
   const [activeTab, setActiveTab] = useState<"settings" | "results">("settings");
 
@@ -273,7 +273,9 @@ export const Admin = () => {
               <tr key={entry.profileId}>
                 <td className="p2">{index + 1}</td>
                 <td className="p2">{entry.name}</td>
-                <td className="p2">{entry.cluesCollected}</td>
+                <td className="p2">
+                  {entry.cluesCollected} of {totalClues}
+                </td>
                 <td className="p2">{entry.challengeDone ? "Yes" : "No"}</td>
               </tr>
             ))}

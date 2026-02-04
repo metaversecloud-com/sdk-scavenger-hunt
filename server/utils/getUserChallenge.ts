@@ -1,5 +1,5 @@
 import { Credentials } from "../types.js";
-import { errorHandler } from "./errorHandler.js";
+import { standardizeError } from "./standardizeError.js";
 import { Visitor } from "./topiaInit.js";
 
 export const getUserChallenge = async (credentials: Credentials) => {
@@ -30,10 +30,6 @@ export const getUserChallenge = async (credentials: Credentials) => {
 
     return visitor.dataObject[`${urlSlug}-${sceneDropId}`];
   } catch (error) {
-    return errorHandler({
-      error,
-      functionName: "getUserChallenge",
-      message: "Error getting user challenge data.",
-    });
+    return standardizeError(error);
   }
 };

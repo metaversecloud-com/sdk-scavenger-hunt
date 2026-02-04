@@ -8,7 +8,10 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
     const { profileId, sceneDropId, urlSlug } = credentials;
     const { assetId, imgUrl, contentUrl, mediaType, linkBehavior, text } = req.body;
 
-    const { world } = await getWorldDataObject({ credentials });
+    const getWorldDataObjectResult = await getWorldDataObject({ credentials });
+    if (getWorldDataObjectResult instanceof Error) throw getWorldDataObjectResult;
+    const { world } = getWorldDataObjectResult;
+
     const droppedAsset = await DroppedAsset.create(assetId, urlSlug, { credentials });
 
     const protocol = process.env.INSTANCE_PROTOCOL;

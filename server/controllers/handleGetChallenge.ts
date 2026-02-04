@@ -17,15 +17,20 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { sceneDropId, visitorId, urlSlug } = credentials;
 
-    const promises = [getProfile(credentials), getWorldDataObject({ credentials }), getBadges(credentials)];
-    const [{ isAdmin }, { dataObject }, badges] = await Promise.all(promises);
+    const [{ isAdmin }, badges] = await Promise.all([getProfile(credentials), getBadges(credentials)]);
+    const getWorldDataObjectResult = await getWorldDataObject({ credentials });
+    if (getWorldDataObjectResult instanceof Error) throw getWorldDataObjectResult;
+
+    const { dataObject } = getWorldDataObjectResult;
     const { challenge, clues, theme } = dataObject as WorldDataObjectType;
 
     const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
     await visitor.fetchInventoryItems();
     const visitorInventory = getVisitorBadges(visitor.inventoryItems);
 
-    const userChallenge = await getUserChallenge(credentials);
+    const userChallengeResult = await getUserChallenge(credentials);
+    if (userChallengeResult instanceof Error) throw userChallengeResult;
+    const userChallenge = userChallengeResult;
 
     let cluesFound = 0,
       hasCompletedClues = false,

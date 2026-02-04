@@ -14,26 +14,32 @@ export const handleResetClues = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, sceneDropId, urlSlug } = credentials;
 
-    const { world, dataObject } = await getWorldDataObject({ credentials });
+    const getWorldDataObjectResult = await getWorldDataObject({ credentials });
+    if (getWorldDataObjectResult instanceof Error) throw getWorldDataObjectResult;
+
+    const { world, dataObject } = getWorldDataObjectResult;
     const { theme } = dataObject as WorldDataObjectType;
 
     const keyAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });
 
-    const clues = await getClueDroppedAssets({
+    const getClueDroppedAssetsResult = await getClueDroppedAssets({
       sceneDropId,
       uniqueName: `${keyAsset.uniqueName}_${theme}_clue`,
       world,
     });
+    if (getClueDroppedAssetsResult instanceof Error) throw getClueDroppedAssetsResult;
+
+    const clues = getClueDroppedAssetsResult;
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
     await world.updateDataObject(
       { [`scenes.${sceneDropId}.clues`]: clues },
-      { lock: { lockId, releaseLock: true } },
       {
         analytics: [
           { analyticName: `${theme}-resets`, urlSlug },
           { analyticName: `resets`, urlSlug },
         ],
+        lock: { lockId, releaseLock: true },
       },
     );
 

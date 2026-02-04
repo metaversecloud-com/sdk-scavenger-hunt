@@ -40,6 +40,6 @@ export const updateLeaderboard = async ({
       );
     }
   } catch (error) {
-    standardizeError(error);
+    return standardizeError(error);
   }
 };

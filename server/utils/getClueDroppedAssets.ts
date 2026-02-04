@@ -1,5 +1,5 @@
 import { DroppedAssetInterface } from "@rtsdk/topia";
-import { errorHandler } from "./errorHandler.js";
+import { standardizeError } from "./standardizeError.js";
 import { ClueType } from "../types.js";
 
 export const getClueDroppedAssets = async ({
@@ -40,10 +40,6 @@ export const getClueDroppedAssets = async ({
 
     return clues;
   } catch (error) {
-    errorHandler({
-      error,
-      functionName: "resetClues",
-      message: "Error resetting clues on world data object",
-    });
+    return standardizeError(error);
   }
 };

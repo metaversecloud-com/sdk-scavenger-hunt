@@ -1,4 +1,4 @@
-import { errorHandler } from "./errorHandler.js";
+import { standardizeError } from "./standardizeError.js";
 import { DroppedAsset, World } from "./topiaInit.js";
 import { Credentials, KeyAssetDataObjectType, WorldDataObjectType } from "../types.js";
 import { DroppedAssetInterface, WorldInterface } from "@rtsdk/topia";
@@ -46,11 +46,14 @@ export const getWorldDataObject = async ({ credentials }: { credentials: Credent
 
         if (!theme) throw "Key asset is missing required theme in it's data object.";
 
-        const clues = await getClueDroppedAssets({
+        const getClueDroppedAssetsResult = await getClueDroppedAssets({
           sceneDropId,
           uniqueName: `ScavengerHunt_${theme}_clue`,
           world,
         });
+        if (getClueDroppedAssetsResult instanceof Error) throw getClueDroppedAssetsResult;
+
+        const clues = getClueDroppedAssetsResult;
 
         payload = {
           keyAssetId,
@@ -101,6 +104,6 @@ export const getWorldDataObject = async ({ credentials }: { credentials: Credent
 
     return { keyAssetId, dataObject: world.dataObject.scenes[sceneDropId], world };
   } catch (error) {
-    return errorHandler({ error, functionName: "getWorldDataObject", message: "Error getting world details" });
+    throw standardizeError(error);
   }
 };

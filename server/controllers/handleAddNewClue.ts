@@ -23,7 +23,10 @@ export const handleAddNewClue = async (req: Request, res: Response) => {
 
     const visitor: VisitorInterface = await Visitor.get(visitorId, urlSlug, { credentials });
 
-    const { world, dataObject } = await getWorldDataObject({ credentials });
+    const getWorldDataObjectResult = await getWorldDataObject({ credentials });
+    if (getWorldDataObjectResult instanceof Error) throw getWorldDataObjectResult;
+    const { world, dataObject } = getWorldDataObjectResult;
+
     const { clues, theme } = dataObject as WorldDataObjectType;
 
     const keyAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });

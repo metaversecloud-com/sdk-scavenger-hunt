@@ -17,7 +17,10 @@ export const handleGetClue = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, profileId, sceneDropId, urlSlug, visitorId } = credentials;
 
-    const { keyAssetId, dataObject, world } = await getWorldDataObject({ credentials });
+    const getWorldDataObjectResult = await getWorldDataObject({ credentials });
+    if (getWorldDataObjectResult instanceof Error) throw getWorldDataObjectResult;
+
+    const { keyAssetId, world, dataObject } = getWorldDataObjectResult;
     const { clues, theme } = dataObject as WorldDataObjectType;
 
     const clue: ClueType = clues?.[assetId];
@@ -31,7 +34,9 @@ export const handleGetClue = async (req: Request, res: Response) => {
     await visitor.fetchDataObject();
     const visitorInventory = getVisitorBadges(visitor.inventoryItems);
 
-    const userChallenge = await getUserChallenge(credentials);
+    const userChallengeResult = await getUserChallenge(credentials);
+    if (userChallengeResult instanceof Error) throw userChallengeResult;
+    const userChallenge = userChallengeResult;
 
     let cluesFound = [];
     let isNewClue = false;

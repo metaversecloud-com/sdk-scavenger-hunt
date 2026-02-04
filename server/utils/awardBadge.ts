@@ -1,7 +1,7 @@
 import { Credentials } from "../types.js";
 import { getCachedInventoryItems } from "./inventoryCache.js";
 import { VisitorInventory } from "./getVisitorBadges.js";
-import { errorHandler } from "./errorHandler.js";
+import { standardizeError } from "./standardizeError.js";
 
 /**
  * Award a badge to a visitor if they don't already have it
@@ -44,20 +44,12 @@ export const awardBadge = async ({
         text: `You earned the "${badgeName}" badge!`,
       })
       .catch((error: any) =>
-        errorHandler({
-          error,
-          functionName: "awardBadge",
-          message: `Error firing toast for badge ${badgeName}`,
-        }),
+        console.error(`Error firing toast for badge ${badgeName}:`, standardizeError(error).message),
       );
 
     return { success: true, awarded: true };
   } catch (error) {
-    errorHandler({
-      error,
-      functionName: "awardBadge",
-      message: `Error awarding badge ${badgeName}`,
-    });
+    console.error(`Error awarding badge ${badgeName}:`, standardizeError(error).message);
     return { success: false, awarded: false };
   }
 };
