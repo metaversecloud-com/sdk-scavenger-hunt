@@ -10,7 +10,7 @@ export const handleRestartChallenge = async (req: Request, res: Response) => {
 
     await visitor.updateDataObject(
       {
-        [`${urlSlug}-${sceneDropId}`]: { challengeDone: false, cluesFound: [], answerAttempts: 0 },
+        [`${urlSlug}_${sceneDropId}`]: { challengeDone: false, cluesFound: [], answerAttempts: 0 },
       },
       { analytics: [{ analyticName: "restarts", uniqueKey: profileId, profileId, urlSlug }] },
     );

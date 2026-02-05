@@ -18,34 +18,27 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
     const { sceneDropId, visitorId, urlSlug } = credentials;
 
     const [{ isAdmin }, badges] = await Promise.all([getProfile(credentials), getBadges(credentials)]);
-    const getWorldDataObjectResult = await getWorldDataObject({ credentials });
-    if (getWorldDataObjectResult instanceof Error) throw getWorldDataObjectResult;
+    const getWorldDataObjectResponse = await getWorldDataObject({ credentials });
+    if (getWorldDataObjectResponse instanceof Error) throw getWorldDataObjectResponse;
 
-    const { dataObject } = getWorldDataObjectResult;
+    const { dataObject } = getWorldDataObjectResponse;
     const { challenge, clues, theme } = dataObject as WorldDataObjectType;
 
     const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
-    await visitor.fetchInventoryItems();
-    const visitorInventory = getVisitorBadges(visitor.inventoryItems);
+    const visitorInventory = await getVisitorBadges(visitor);
 
-    const userChallengeResult = await getUserChallenge(credentials);
-    if (userChallengeResult instanceof Error) throw userChallengeResult;
-    const userChallenge = userChallengeResult;
+    const userChallengeResponse = await getUserChallenge(credentials);
+    if (userChallengeResponse instanceof Error) throw userChallengeResponse;
+    const userChallenge = userChallengeResponse;
 
     let cluesFound = 0,
       hasCompletedClues = false,
       hasCompletedChallenge = false,
       totalClues = Object.keys(clues ?? {}).length || 0;
 
-    if (!userChallenge) {
-      await visitor.updateDataObject({
-        [`${urlSlug}-${sceneDropId}`]: { challengeDone: false, cluesFound: [] },
-      });
-    } else {
-      cluesFound = userChallenge.cluesFound?.length || 0;
-      if (cluesFound === totalClues) hasCompletedClues = true;
-      hasCompletedChallenge = userChallenge.challengeDone;
-    }
+    cluesFound = userChallenge.cluesFound?.length || 0;
+    if (cluesFound === totalClues) hasCompletedClues = true;
+    hasCompletedChallenge = userChallenge.challengeDone;
 
     // Fetch leaderboard for admins
     let leaderboard: { name: string; cluesCollected: number; challengeDone: boolean; profileId: string }[] = [];

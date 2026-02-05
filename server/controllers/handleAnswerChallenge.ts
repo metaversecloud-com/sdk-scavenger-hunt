@@ -3,6 +3,7 @@ import {
   awardBadge,
   errorHandler,
   getCredentials,
+  getUserChallenge,
   getVisitorBadges,
   getVisitorProgress,
   getWorldDataObject,
@@ -19,21 +20,23 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
 
     const { answer, selectedAnswers } = req.body;
 
-    const getWorldDataObjectResult = await getWorldDataObject({ credentials });
-    if (getWorldDataObjectResult instanceof Error) throw getWorldDataObjectResult;
+    const getWorldDataObjectResponse = await getWorldDataObject({ credentials });
+    if (getWorldDataObjectResponse instanceof Error) throw getWorldDataObjectResponse;
 
-    const { dataObject } = getWorldDataObjectResult;
+    const { dataObject } = getWorldDataObjectResponse;
     const { challenge, clues, theme } = dataObject as WorldDataObjectType;
 
     // Create visitor and fetch inventory/data for badge tracking
     const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
-    await visitor.fetchInventoryItems();
-    await visitor.fetchDataObject();
-    const visitorInventory = getVisitorBadges(visitor.inventoryItems);
+    const visitorInventory = await getVisitorBadges(visitor);
+
+    const userChallengeResponse = await getUserChallenge(credentials);
+    if (userChallengeResponse instanceof Error) throw userChallengeResponse;
+    const userChallenge = userChallengeResponse;
 
     // Get current answer attempts and increment
-    const visitorChallengeKey = `${urlSlug}-${sceneDropId}`;
-    const currentAttempts = visitor.dataObject?.[visitorChallengeKey]?.answerAttempts || 0;
+    const visitorChallengeKey = `${urlSlug}_${sceneDropId}`;
+    const currentAttempts = userChallenge?.answerAttempts || 0;
     const answerAttempts = currentAttempts + 1;
 
     const questionType = challenge.questionType || "text";
@@ -109,8 +112,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
 
     // Re-fetch inventory if a badge was awarded
     if (badgeAwarded) {
-      await visitor.fetchInventoryItems();
-      updatedVisitorInventory = getVisitorBadges(visitor.inventoryItems);
+      updatedVisitorInventory = await getVisitorBadges(visitor);
     }
 
     await Promise.all([

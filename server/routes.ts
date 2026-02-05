@@ -4,7 +4,6 @@ import {
   handleGetChallenge,
   handleGetConfiguration,
   handleGetClue,
-  handleGetProgress,
   handleResetClues,
   handleUpdateChallenge,
   handleUpdateClue,
@@ -45,7 +44,6 @@ router.get("/system/health", (req, res) => {
   });
 });
 
-router.get("/progress", handleGetProgress);
 router.get("/config", handleGetConfiguration);
 
 router.get("/challenge", handleGetChallenge);

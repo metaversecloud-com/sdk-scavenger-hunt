@@ -14,22 +14,22 @@ export const handleResetClues = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, sceneDropId, urlSlug } = credentials;
 
-    const getWorldDataObjectResult = await getWorldDataObject({ credentials });
-    if (getWorldDataObjectResult instanceof Error) throw getWorldDataObjectResult;
+    const getWorldDataObjectResponse = await getWorldDataObject({ credentials });
+    if (getWorldDataObjectResponse instanceof Error) throw getWorldDataObjectResponse;
 
-    const { world, dataObject } = getWorldDataObjectResult;
+    const { world, dataObject } = getWorldDataObjectResponse;
     const { theme } = dataObject as WorldDataObjectType;
 
     const keyAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });
 
-    const getClueDroppedAssetsResult = await getClueDroppedAssets({
+    const getClueDroppedAssetsResponse = await getClueDroppedAssets({
       sceneDropId,
       uniqueName: `${keyAsset.uniqueName}_${theme}_clue`,
       world,
     });
-    if (getClueDroppedAssetsResult instanceof Error) throw getClueDroppedAssetsResult;
+    if (getClueDroppedAssetsResponse instanceof Error) throw getClueDroppedAssetsResponse;
 
-    const clues = getClueDroppedAssetsResult;
+    const clues = getClueDroppedAssetsResponse;
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
     await world.updateDataObject(

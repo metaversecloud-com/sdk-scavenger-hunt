@@ -8,9 +8,9 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
     const { profileId, sceneDropId, urlSlug } = credentials;
     const { assetId, imgUrl, contentUrl, mediaType, linkBehavior, text } = req.body;
 
-    const getWorldDataObjectResult = await getWorldDataObject({ credentials });
-    if (getWorldDataObjectResult instanceof Error) throw getWorldDataObjectResult;
-    const { world } = getWorldDataObjectResult;
+    const getWorldDataObjectResponse = await getWorldDataObject({ credentials });
+    if (getWorldDataObjectResponse instanceof Error) throw getWorldDataObjectResponse;
+    const { world } = getWorldDataObjectResponse;
 
     const droppedAsset = await DroppedAsset.create(assetId, urlSlug, { credentials });
 

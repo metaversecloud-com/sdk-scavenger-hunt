@@ -23,9 +23,9 @@ export const handleAddNewClue = async (req: Request, res: Response) => {
 
     const visitor: VisitorInterface = await Visitor.get(visitorId, urlSlug, { credentials });
 
-    const getWorldDataObjectResult = await getWorldDataObject({ credentials });
-    if (getWorldDataObjectResult instanceof Error) throw getWorldDataObjectResult;
-    const { world, dataObject } = getWorldDataObjectResult;
+    const getWorldDataObjectResponse = await getWorldDataObject({ credentials });
+    if (getWorldDataObjectResponse instanceof Error) throw getWorldDataObjectResponse;
+    const { world, dataObject } = getWorldDataObjectResponse;
 
     const { clues, theme } = dataObject as WorldDataObjectType;
 

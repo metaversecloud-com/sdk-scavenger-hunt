@@ -46,14 +46,14 @@ export const getWorldDataObject = async ({ credentials }: { credentials: Credent
 
         if (!theme) throw "Key asset is missing required theme in it's data object.";
 
-        const getClueDroppedAssetsResult = await getClueDroppedAssets({
+        const getClueDroppedAssetsResponse = await getClueDroppedAssets({
           sceneDropId,
           uniqueName: `ScavengerHunt_${theme}_clue`,
           world,
         });
-        if (getClueDroppedAssetsResult instanceof Error) throw getClueDroppedAssetsResult;
+        if (getClueDroppedAssetsResponse instanceof Error) throw getClueDroppedAssetsResponse;
 
-        const clues = getClueDroppedAssetsResult;
+        const clues = getClueDroppedAssetsResponse;
 
         payload = {
           keyAssetId,

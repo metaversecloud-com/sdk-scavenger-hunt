@@ -17,10 +17,10 @@ export const handleGetClue = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, profileId, sceneDropId, urlSlug, visitorId } = credentials;
 
-    const getWorldDataObjectResult = await getWorldDataObject({ credentials });
-    if (getWorldDataObjectResult instanceof Error) throw getWorldDataObjectResult;
+    const getWorldDataObjectResponse = await getWorldDataObject({ credentials });
+    if (getWorldDataObjectResponse instanceof Error) throw getWorldDataObjectResponse;
 
-    const { keyAssetId, world, dataObject } = getWorldDataObjectResult;
+    const { keyAssetId, world, dataObject } = getWorldDataObjectResponse;
     const { clues, theme } = dataObject as WorldDataObjectType;
 
     const clue: ClueType = clues?.[assetId];
@@ -30,13 +30,11 @@ export const handleGetClue = async (req: Request, res: Response) => {
     if (clue.contentImgUrl && !clue.contentUrl) clue.contentUrl = clue.contentImgUrl;
 
     const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
-    await visitor.fetchInventoryItems();
-    await visitor.fetchDataObject();
-    const visitorInventory = getVisitorBadges(visitor.inventoryItems);
+    const visitorInventory = await getVisitorBadges(visitor);
 
-    const userChallengeResult = await getUserChallenge(credentials);
-    if (userChallengeResult instanceof Error) throw userChallengeResult;
-    const userChallenge = userChallengeResult;
+    const userChallengeResponse = await getUserChallenge(credentials);
+    if (userChallengeResponse instanceof Error) throw userChallengeResponse;
+    const userChallenge = userChallengeResponse;
 
     let cluesFound = [];
     let isNewClue = false;
@@ -44,7 +42,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
     if (!userChallenge) {
       await visitor.updateDataObject(
         {
-          [`${urlSlug}-${sceneDropId}`]: { challengeDone: false, cluesFound: [] },
+          [`${urlSlug}_${sceneDropId}`]: { challengeDone: false, cluesFound: [] },
         },
         {
           analytics: [
@@ -64,7 +62,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
         isNewClue = true;
         await visitor.updateDataObject(
           {
-            [`${urlSlug}-${sceneDropId}.cluesFound`]: cluesFound,
+            [`${urlSlug}_${sceneDropId}.cluesFound`]: cluesFound,
           },
           {
             analytics: [
@@ -153,8 +151,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
 
       // Re-fetch inventory if a badge was awarded
       if (badgeAwarded) {
-        await visitor.fetchInventoryItems();
-        updatedVisitorInventory = getVisitorBadges(visitor.inventoryItems);
+        updatedVisitorInventory = await getVisitorBadges(visitor);
       }
     }
 
