@@ -52,6 +52,11 @@ export const getWorldDataObject = async ({ credentials }: { credentials: Credent
           world,
         });
 
+        const imgUrl =
+          theme === "custom"
+            ? "https://sdk-scavenger-hunt.s3.us-east-1.amazonaws.com/IMG_Start.png"
+            : `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_Start.png`;
+
         payload = {
           keyAssetId,
           sceneDropId,
@@ -62,7 +67,7 @@ export const getWorldDataObject = async ({ credentials }: { credentials: Credent
             : {
                 answer: "",
                 text: "This challenge hasn't been set up yet. Please check back later.",
-                imgUrl: `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_Start.png`,
+                imgUrl,
               },
           theme,
         };

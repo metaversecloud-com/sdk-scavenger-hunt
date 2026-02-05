@@ -9,7 +9,6 @@ import { backendAPI } from "@/utils/backendAPI";
 // context
 import { GlobalDispatchContext } from "@/context/GlobalContext";
 import { SET_THEME } from "@/context/types";
-import { TOPIA_WORKERS_URL } from "@/context/constants";
 import { setErrorMessage } from "@/utils/setErrorMessage";
 
 export const Clue = () => {
@@ -82,7 +81,7 @@ export const Clue = () => {
         <p className="pb-2" style={{ whiteSpace: "pre-line" }}>
           {text}
         </p>
-        {(contentUrl || TOPIA_WORKERS_URL) &&
+        {contentUrl &&
           (mediaType === "video" ? (
             <iframe
               src={contentUrl}
@@ -109,7 +108,7 @@ export const Clue = () => {
             <img
               className="mx-auto rounded-xl"
               style={{ maxWidth: "100%", maxHeight: "200px" }}
-              src={contentUrl || TOPIA_WORKERS_URL}
+              src={contentUrl}
               alt="Content Image"
             />
           ))}

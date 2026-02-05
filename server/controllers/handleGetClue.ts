@@ -156,6 +156,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
       keyAssetId,
       cluesCount: cluesFound.length,
       challengeDone: userChallenge?.challengeDone || false,
+      answerAttempts: userChallenge?.answerAttempts || 0,
     });
 
     return res.send({

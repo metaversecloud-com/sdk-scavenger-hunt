@@ -38,7 +38,13 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
     hasCompletedChallenge = userChallenge.challengeDone;
 
     // Fetch leaderboard for admins
-    let leaderboard: { name: string; cluesCollected: number; challengeDone: boolean; profileId: string }[] = [];
+    let leaderboard: {
+      name: string;
+      cluesCollected: number;
+      challengeDone: boolean;
+      answerAttempts: number;
+      profileId: string;
+    }[] = [];
     if (visitor.isAdmin) {
       const keyAsset = await DroppedAsset.create(credentials.assetId, urlSlug, { credentials });
       await keyAsset.fetchDataObject();
@@ -47,12 +53,13 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
       if (leaderboardData) {
         for (const visitorProfileId in leaderboardData) {
           const data = leaderboardData[visitorProfileId];
-          const [displayName, cluesCount, done] = data.split("|");
+          const [displayName, cluesCount, done, attempts] = data.split("|");
 
           leaderboard.push({
             name: displayName,
             cluesCollected: parseInt(cluesCount) || 0,
             challengeDone: done === "true",
+            answerAttempts: parseInt(attempts) || 0,
             profileId: visitorProfileId,
           });
         }

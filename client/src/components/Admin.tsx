@@ -17,6 +17,7 @@ import {
   SET_CLUES,
   SET_CHALLENGE,
 } from "@/context/types";
+import { themeData } from "@/context/themeData";
 
 export const Admin = () => {
   const dispatch = useContext(GlobalDispatchContext);
@@ -54,8 +55,12 @@ export const Admin = () => {
         // Update local form state
         setQuestion(challenge.text || "");
         setAnswer(challenge.answer || "");
-        setChallengeImgUrl(challenge.imgUrl || "");
-        setChallengeTitle(challenge.title || "");
+        setChallengeImgUrl(
+          challenge?.imgUrl ||
+            themeData?.[theme || ""]?.challengeTitleImgUrl ||
+            `https://sdk-scavenger-hunt.s3.us-east-1.amazonaws.com/IMG_Start.png`,
+        );
+        setChallengeTitle(challenge.title || themeData?.[theme || ""]?.title || "");
         setSelectedEmote(challenge.selectedEmote || "");
         setQuestionType(challenge.questionType || "text");
         if (challenge.options) setOptions(challenge.options);
@@ -255,76 +260,103 @@ export const Admin = () => {
   };
 
   const getResultsContent = () => (
-    <div className="items-center">
+    <div className="grid gap-4 items-center">
       {!leaderboard || leaderboard.length === 0 ? (
         <p>No results yet. Results will appear here as visitors participate in the scavenger hunt.</p>
       ) : (
-        <table className="table">
-          <thead>
-            <tr>
-              <th></th>
-              <th className="h5">Name</th>
-              <th className="h5">Items Found</th>
-              <th className="h5">Completed</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leaderboard.map((entry: LeaderboardEntryType, index: number) => (
-              <tr key={entry.profileId}>
-                <td className="p2">{index + 1}</td>
-                <td className="p2">{entry.name}</td>
-                <td className="p2">
-                  {entry.cluesCollected} of {totalClues}
-                </td>
-                <td className="p2">{entry.challengeDone ? "Yes" : "No"}</td>
+        <>
+          <div className="grid grid-cols-2 gap-4 text-center">
+            <div className="card">
+              <h2>{leaderboard.length}</h2>
+              <p className="p2">Total Participants</p>
+            </div>
+            <div className="card">
+              <h2>{leaderboard.filter((entry) => entry.challengeDone).length}</h2>
+              <p className="p2">Completions</p>
+            </div>
+            <div className="card">
+              <h2>
+                {(leaderboard.reduce((sum, entry) => sum + entry.cluesCollected, 0) / leaderboard.length).toFixed(1)}
+              </h2>
+              <p className="p2">Average # Found</p>
+            </div>
+            <div className="card">
+              <h2>
+                {(leaderboard.reduce((sum, entry) => sum + entry.answerAttempts, 0) / leaderboard.length).toFixed(1)}
+              </h2>
+              <p className="p2">Average Attempts</p>
+            </div>
+          </div>
+          <table className="table" style={{ position: "relative" }}>
+            <thead>
+              <tr>
+                <th className="h6">Name</th>
+                <th className="h6">Found</th>
+                <th className="h6">Attempts</th>
+                <th className="h6">Complete</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {leaderboard.map((entry: LeaderboardEntryType) => (
+                <tr key={entry.profileId}>
+                  <td className="p2">
+                    <div className="tooltip" key={entry.profileId} style={{ maxWidth: "70px", zIndex: 1 }}>
+                      <span className="tooltip-content" style={{ width: "115px", left: "50px" }}>
+                        {entry.name}
+                      </span>
+                      <div className="truncate">{entry.name}</div>
+                    </div>
+                  </td>
+                  <td className="p2">
+                    {entry.cluesCollected} of {totalClues}
+                  </td>
+                  <td className="p2">{entry.answerAttempts}</td>
+                  <td className="p2">{entry.challengeDone ? "Yes" : "No"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
     </div>
   );
 
   const getSettingsContent = () => (
     <div className="container items-center justify-start grid gap-4">
-      {theme === "custom" && (
-        <>
-          <div>
-            <label>Title</label>
-            <input
-              className="input"
-              placeholder="My Scavenger Hunt"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setChallengeTitle(event.target.value);
-              }}
-              value={challengeTitle}
-            />
-          </div>
+      <div>
+        <label>Title</label>
+        <input
+          className="input"
+          placeholder="My Scavenger Hunt"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setChallengeTitle(event.target.value);
+          }}
+          value={challengeTitle}
+        />
+      </div>
 
-          <div>
-            <label>Challenge Image URL</label>
-            <input
-              className="input"
-              placeholder="https://example.com/challenge-image.png"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setChallengeImgUrl(event.target.value);
-              }}
-              value={challengeImgUrl}
+      <div>
+        <label>Challenge Image URL</label>
+        <input
+          className="input"
+          placeholder="https://example.com/challenge-image.png"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setChallengeImgUrl(event.target.value);
+          }}
+          value={challengeImgUrl}
+        />
+        {challengeImgUrl && (
+          <div className="mt-2 mb-2">
+            <p className="p2 pb-2">Preview:</p>
+            <img
+              src={challengeImgUrl}
+              alt="Challenge preview"
+              className="m-auto"
+              style={{ maxWidth: "200px", maxHeight: "200px", objectFit: "contain" }}
             />
-            {challengeImgUrl && (
-              <div className="mt-2 mb-2">
-                <p className="p2 pb-2">Preview:</p>
-                <img
-                  src={challengeImgUrl}
-                  alt="Challenge preview"
-                  className="m-auto"
-                  style={{ maxWidth: "200px", maxHeight: "200px", objectFit: "contain" }}
-                />
-              </div>
-            )}
           </div>
-        </>
-      )}
+        )}
+      </div>
 
       <p>
         This is the final challenge question that the participants need to solve. Enter a question, and answer (non case

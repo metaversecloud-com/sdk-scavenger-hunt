@@ -7,11 +7,13 @@ export const updateLeaderboard = async ({
   keyAssetId,
   cluesCount,
   challengeDone,
+  answerAttempts,
 }: {
   credentials: Credentials;
   keyAssetId: string;
   cluesCount: number;
   challengeDone: boolean;
+  answerAttempts: number;
 }): Promise<void | Error> => {
   try {
     const { displayName, profileId, urlSlug } = credentials;
@@ -20,7 +22,7 @@ export const updateLeaderboard = async ({
       credentials: { ...credentials, assetId: keyAssetId },
     });
     await keyAsset.fetchDataObject();
-    const resultString = `${displayName}|${cluesCount}|${challengeDone}`;
+    const resultString = `${displayName}|${cluesCount}|${challengeDone}|${answerAttempts}`;
 
     if ((keyAsset.dataObject as { leaderboard?: Record<string, string> })?.leaderboard) {
       await keyAsset.updateDataObject(

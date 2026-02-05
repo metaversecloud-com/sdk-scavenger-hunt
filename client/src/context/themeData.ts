@@ -63,7 +63,6 @@ export const themeData: ThemeData = {
   },
   "custom": {
     title: "Custom",
-    challengeTitleImgUrl: "",
     numberOfAssetsAvailableInAdminSection: 0,
   },
 };

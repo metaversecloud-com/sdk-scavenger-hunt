@@ -140,7 +140,10 @@ export const Home = () => {
       .catch((error) => setErrorMessage(dispatch, error));
   };
 
-  const imgUrl = challenge?.imgUrl || `https://sdk-scavenger-hunt.s3.amazonaws.com/${theme}/IMG_Start.png`;
+  const imgUrl =
+    challenge?.imgUrl ||
+    themeData?.[theme || ""]?.challengeTitleImgUrl ||
+    `https://sdk-scavenger-hunt.s3.us-east-1.amazonaws.com/IMG_Start.png`;
 
   const getBadgesContent = () => {
     if (!badges || Object.keys(badges).length === 0) {
@@ -158,7 +161,7 @@ export const Home = () => {
           const style: React.CSSProperties = { width: "90px", filter: hasBadge ? "none" : "grayscale(1)" };
           return (
             <div className="tooltip" key={badge.name}>
-              <span className="tooltip-content" style={{ width: "125px", left: "60px" }}>
+              <span className="tooltip-content" style={{ width: "115px" }}>
                 {name} {badge.description && `- ${badge.description}`}
               </span>
               <img src={badge.icon} alt={name} style={style} />
@@ -172,12 +175,11 @@ export const Home = () => {
   const getChallengeContent = () => (
     <>
       <div className="container px-6 justify-start">
-        <div className="mt-6" style={{ textAlign: "center", margin: "0 auto" }}>
-          <img
-            style={{ width: "130px", borderRadius: "10%", textAlign: "center", margin: "0 auto" }}
-            src={themeData?.[theme || ""]?.challengeTitleImgUrl || imgUrl}
-          />
-        </div>
+        {imgUrl && (
+          <div className="mt-6" style={{ textAlign: "center", margin: "0 auto" }}>
+            <img style={{ width: "130px", borderRadius: "10%", textAlign: "center", margin: "0 auto" }} src={imgUrl} />
+          </div>
+        )}
         <div className="pl-4" style={{ textAlign: "center", margin: "0 auto" }}>
           <h3 style={{ marginBottom: "0px" }}>{challenge?.title || themeData?.[theme || ""]?.title}</h3>
           <div>

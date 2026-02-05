@@ -54,6 +54,7 @@ export type LeaderboardEntryType = {
   name: string;
   cluesCollected: number;
   challengeDone: boolean;
+  answerAttempts: number;
   profileId: string;
 };
 
@@ -95,7 +96,7 @@ export type ActionType = {
 
 export interface ThemeInfo {
   title: string;
-  challengeTitleImgUrl: string;
+  challengeTitleImgUrl?: string;
   numberOfAssetsAvailableInAdminSection?: number;
 }
 

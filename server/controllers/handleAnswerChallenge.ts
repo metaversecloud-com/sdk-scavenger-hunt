@@ -145,6 +145,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       keyAssetId: assetId,
       cluesCount: Object.keys(clues).length,
       challengeDone: true,
+      answerAttempts,
     });
     if (updateLeaderboardResponse instanceof Error) throw updateLeaderboardResponse;
 
