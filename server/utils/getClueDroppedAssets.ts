@@ -40,6 +40,6 @@ export const getClueDroppedAssets = async ({
 
     return clues;
   } catch (error) {
-    return standardizeError(error);
+    throw standardizeError(error);
   }
 };

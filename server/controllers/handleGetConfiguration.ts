@@ -5,7 +5,7 @@ import { errorHandler, getCredentials, getWorldDataObject, Visitor } from "../ut
 export const handleGetConfiguration = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { sceneDropId, urlSlug, visitorId } = credentials;
+    const { urlSlug, visitorId } = credentials;
 
     const { dataObject } = await getWorldDataObject({ credentials });
     const { challenge, clues, theme } = dataObject as WorldDataObjectType;

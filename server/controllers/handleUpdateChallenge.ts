@@ -17,10 +17,7 @@ export const handleUpdateChallenge = async (req: Request, res: Response) => {
       correctAnswers,
     } = req.body;
 
-    const getWorldDataObjectResponse = await getWorldDataObject({ credentials });
-    if (getWorldDataObjectResponse instanceof Error) throw getWorldDataObjectResponse;
-
-    const { world } = getWorldDataObjectResponse;
+    const { world } = await getWorldDataObject({ credentials });
 
     const lowerCaseAnswer = answer ? answer.toLowerCase() : undefined;
 

@@ -17,9 +17,12 @@ export const handleRemoveClue = async (req: Request, res: Response) => {
     const clues = dataObject.clues;
     delete clues[clue.id];
 
-    await world.updateDataObject({
-      [`scenes.${sceneDropId}.clues`]: clues,
-    });
+    await world.updateDataObject(
+      {
+        [`scenes.${sceneDropId}.clues`]: clues,
+      },
+      {},
+    );
 
     const droppedAsset = DroppedAsset.create(clue.id, urlSlug, { credentials });
     await droppedAsset.deleteDroppedAsset();

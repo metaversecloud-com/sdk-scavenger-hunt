@@ -4,32 +4,29 @@ import {
   errorHandler,
   getBadges,
   getCredentials,
-  getProfile,
   getUserChallenge,
   getVisitorBadges,
   getWorldDataObject,
   Visitor,
 } from "../utils/index.js";
 import { WorldDataObjectType } from "../types.js";
+import { VisitorInterface } from "@rtsdk/topia";
 
 export const handleGetChallenge = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { sceneDropId, visitorId, urlSlug } = credentials;
+    const { visitorId, urlSlug } = credentials;
 
-    const [{ isAdmin }, badges] = await Promise.all([getProfile(credentials), getBadges(credentials)]);
-    const getWorldDataObjectResponse = await getWorldDataObject({ credentials });
-    if (getWorldDataObjectResponse instanceof Error) throw getWorldDataObjectResponse;
+    const visitor: VisitorInterface = await Visitor.get(visitorId, urlSlug, { credentials });
 
-    const { dataObject } = getWorldDataObjectResponse;
+    const [{ dataObject }, badges, visitorInventory, userChallenge] = await Promise.all([
+      getWorldDataObject({ credentials }),
+      getBadges(credentials),
+      getVisitorBadges(visitor),
+      getUserChallenge(credentials),
+    ]);
+
     const { challenge, clues, theme } = dataObject as WorldDataObjectType;
-
-    const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
-    const visitorInventory = await getVisitorBadges(visitor);
-
-    const userChallengeResponse = await getUserChallenge(credentials);
-    if (userChallengeResponse instanceof Error) throw userChallengeResponse;
-    const userChallenge = userChallengeResponse;
 
     let cluesFound = 0,
       hasCompletedClues = false,
@@ -42,7 +39,7 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
 
     // Fetch leaderboard for admins
     let leaderboard: { name: string; cluesCollected: number; challengeDone: boolean; profileId: string }[] = [];
-    if (isAdmin) {
+    if (visitor.isAdmin) {
       const keyAsset = await DroppedAsset.create(credentials.assetId, urlSlug, { credentials });
       await keyAsset.fetchDataObject();
       const leaderboardData = (keyAsset.dataObject as { leaderboard?: Record<string, string> })?.leaderboard;
@@ -77,7 +74,7 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
       cluesFound,
       hasCompletedClues,
       hasCompletedChallenge,
-      isAdmin,
+      isAdmin: visitor.isAdmin,
       leaderboard,
       theme,
       totalClues,

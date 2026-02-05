@@ -4,7 +4,6 @@ export * from "./errorHandler.js";
 export * from "./getBadges.js";
 export * from "./getClueDroppedAssets.js";
 export * from "./getCredentials.js";
-export * from "./getProfile.js";
 export * from "./getVisitorBadges.js";
 export * from "./getVisitorProgress.js";
 export * from "./getWorldDataObject.js";

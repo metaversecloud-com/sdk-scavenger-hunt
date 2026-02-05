@@ -1,20 +1,12 @@
 import { Request, Response } from "express";
-import {
-  DroppedAsset,
-  errorHandler,
-  getClueDroppedAssets,
-  getCredentials,
-  getWorldDataObject,
-  Asset,
-  Visitor,
-} from "../utils/index.js";
+import { DroppedAsset, errorHandler, getCredentials, getWorldDataObject, Asset, Visitor } from "../utils/index.js";
 import { ClueType, WorldDataObjectType } from "../types.js";
 import { DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
 
 export const handleAddNewClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, sceneDropId, urlSlug, visitorId } = credentials;
+    const { sceneDropId, urlSlug, visitorId } = credentials;
 
     const protocol = process.env.INSTANCE_PROTOCOL;
     const host = req.hostname;
@@ -23,13 +15,8 @@ export const handleAddNewClue = async (req: Request, res: Response) => {
 
     const visitor: VisitorInterface = await Visitor.get(visitorId, urlSlug, { credentials });
 
-    const getWorldDataObjectResponse = await getWorldDataObject({ credentials });
-    if (getWorldDataObjectResponse instanceof Error) throw getWorldDataObjectResponse;
-    const { world, dataObject } = getWorldDataObjectResponse;
-
+    const { world, dataObject } = await getWorldDataObject({ credentials });
     const { clues, theme } = dataObject as WorldDataObjectType;
-
-    const keyAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });
 
     const { moveTo } = visitor;
     const position = {

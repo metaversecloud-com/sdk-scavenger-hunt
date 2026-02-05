@@ -38,6 +38,6 @@ export const getUserChallenge = async (credentials: Credentials) => {
 
     return visitor.dataObject[`${urlSlug}_${sceneDropId}`];
   } catch (error) {
-    return standardizeError(error);
+    throw standardizeError(error);
   }
 };
