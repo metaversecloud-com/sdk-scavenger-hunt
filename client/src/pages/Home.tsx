@@ -157,8 +157,10 @@ export const Home = () => {
           const hasBadge = visitorInventory?.badges && Object.keys(visitorInventory.badges).includes(name);
           const style: React.CSSProperties = { width: "90px", filter: hasBadge ? "none" : "grayscale(1)" };
           return (
-            <div className="tooltip" key={badge.id}>
-              <span className="tooltip-content">{name}</span>
+            <div className="tooltip" key={badge.name}>
+              <span className="tooltip-content" style={{ width: "125px", left: "60px" }}>
+                {name} {badge.description && `- ${badge.description}`}
+              </span>
               <img src={badge.icon} alt={name} style={style} />
             </div>
           );
