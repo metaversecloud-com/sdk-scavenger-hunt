@@ -28,12 +28,12 @@ export const handleResetClues = async (req: Request, res: Response) => {
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
     await world.updateDataObject(
       { [`scenes.${sceneDropId}.clues`]: clues },
-      { lock: { lockId, releaseLock: true } },
       {
         analytics: [
           { analyticName: `${theme}-resets`, urlSlug },
           { analyticName: `resets`, urlSlug },
         ],
+        lock: { lockId, releaseLock: true },
       },
     );
 

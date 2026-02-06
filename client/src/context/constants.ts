@@ -82,4 +82,13 @@ export const initialState = {
   hasSetupBackend: false,
   profileId: "",
   theme: "",
+  isAdmin: false,
+  error: "",
+  challenge: {},
+  clues: {},
+  emotes: [],
+  cluesFound: 0,
+  totalClues: 0,
+  hasCompletedClues: false,
+  hasCompletedChallenge: false,
 };

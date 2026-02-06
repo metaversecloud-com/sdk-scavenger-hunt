@@ -59,9 +59,9 @@ const App = () => {
   );
 
   const setupBackend = async () => {
-    const setupResult = await setupBackendAPI(interactiveParams);
-    setHasSetupBackend(setupResult.success);
-    if (!setupResult.success) navigate("*");
+    const setupResponse = await setupBackendAPI(interactiveParams);
+    setHasSetupBackend(setupResponse.success);
+    if (!setupResponse.success) navigate("*");
     else setHasInitBackendAPI(true);
   };
 
@@ -80,6 +80,7 @@ const App = () => {
 
   return (
     <Routes>
+      <Route path="/" element={<Home />} />
       <Route path="challenge" element={<Home />} />
       <Route path="clue" element={<Clue />} />
       <Route path="*" element={<Error />} />

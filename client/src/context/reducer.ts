@@ -6,6 +6,10 @@ import {
   SET_THEME,
   SET_IS_ADMIN,
   SET_ERROR,
+  SET_CHALLENGE,
+  SET_CONFIG,
+  SET_CLUES,
+  SET_PROGRESS,
 } from "./types";
 
 const globalReducer = (state: InitialState, action: ActionType) => {
@@ -26,7 +30,6 @@ const globalReducer = (state: InitialState, action: ActionType) => {
     case SET_THEME: {
       return {
         ...state,
-        ...payload,
         theme: payload?.theme,
         error: "",
       };
@@ -34,8 +37,7 @@ const globalReducer = (state: InitialState, action: ActionType) => {
     case SET_IS_ADMIN: {
       return {
         ...state,
-        ...payload,
-        theme: payload?.isAdmin,
+        isAdmin: payload?.isAdmin,
         error: "",
       };
     }
@@ -44,6 +46,44 @@ const globalReducer = (state: InitialState, action: ActionType) => {
         ...state,
         error: payload?.error,
       };
+    case SET_CHALLENGE: {
+      return {
+        ...state,
+        challenge: payload?.challenge,
+        error: "",
+      };
+    }
+    case SET_CONFIG: {
+      return {
+        ...state,
+        badges: payload?.badges ?? state.badges,
+        challenge: payload?.challenge ?? state.challenge,
+        clues: payload?.clues ?? state.clues,
+        emotes: payload?.emotes ?? state.emotes,
+        leaderboard: payload?.leaderboard ?? state.leaderboard,
+        theme: payload?.theme ?? state.theme,
+        isAdmin: payload?.isAdmin ?? state.isAdmin,
+        visitorInventory: payload?.visitorInventory ?? state.visitorInventory,
+        error: "",
+      };
+    }
+    case SET_CLUES: {
+      return {
+        ...state,
+        clues: payload?.clues ?? state.clues,
+        error: "",
+      };
+    }
+    case SET_PROGRESS: {
+      return {
+        ...state,
+        cluesFound: payload?.cluesFound ?? state.cluesFound,
+        totalClues: payload?.totalClues ?? state.totalClues,
+        hasCompletedClues: payload?.hasCompletedClues ?? state.hasCompletedClues,
+        hasCompletedChallenge: payload?.hasCompletedChallenge ?? state.hasCompletedChallenge,
+        error: "",
+      };
+    }
     default: {
       throw new Error(`Unhandled action type: ${type}`);
     }

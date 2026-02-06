@@ -9,6 +9,7 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
     const { assetId, imgUrl, contentUrl, mediaType, linkBehavior, text } = req.body;
 
     const { world } = await getWorldDataObject({ credentials });
+
     const droppedAsset = await DroppedAsset.create(assetId, urlSlug, { credentials });
 
     const protocol = process.env.INSTANCE_PROTOCOL;

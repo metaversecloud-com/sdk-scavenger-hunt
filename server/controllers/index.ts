@@ -3,7 +3,6 @@ export * from "./handleAnswerChallenge.js";
 export * from "./handleGetChallenge.js";
 export * from "./handleGetClue.js";
 export * from "./handleGetConfiguration.js";
-export * from "./handleGetProgress.js";
 export * from "./handleMoveToClueAsset.js";
 export * from "./handleRemoveClue.js";
 export * from "./handleResetClues.js";

@@ -9,7 +9,6 @@ import { backendAPI } from "@/utils/backendAPI";
 // context
 import { GlobalDispatchContext } from "@/context/GlobalContext";
 import { SET_THEME } from "@/context/types";
-import { TOPIA_WORKERS_URL } from "@/context/constants";
 import { setErrorMessage } from "@/utils/setErrorMessage";
 
 export const Clue = () => {
@@ -59,65 +58,65 @@ export const Clue = () => {
           className="mx-auto rounded-xl mb-4"
           style={{ maxWidth: "100%", maxHeight: "150px" }}
           src={imgUrl}
-          alt="Clue"
+          alt="Item"
         />
         {isModal ? (
           <>
             <h4>
-              Congratulations! You have found a clue! Completed {cluesFound} of {totalClues}.
+              You discovered an item. Progress: {cluesFound} of {totalClues} completed.
             </h4>
           </>
         ) : (
           <>
             <h2 className="pb-2">Congratulations!</h2>
             <h4>
-              You have found a clue!
+              You discovered an item.
               <br />
-              Completed {cluesFound} of {totalClues}
+              Progress: {cluesFound} of {totalClues} completed.
             </h4>
           </>
         )}
       </div>
       <div>
-        {(contentUrl || TOPIA_WORKERS_URL) &&
+        <p className="pb-2" style={{ whiteSpace: "pre-line" }}>
+          {text}
+        </p>
+        {contentUrl &&
           (mediaType === "video" ? (
             <iframe
               src={contentUrl}
               style={{
                 margin: "auto",
-                height: "240px",
+                width: "100%",
+                aspectRatio: "16/9",
               }}
               allowFullScreen
-              title="Clue Video"
+              title="Item Video"
             ></iframe>
           ) : mediaType === "website" ? (
             <iframe
               src={contentUrl}
               style={{
                 margin: "auto",
-                height: "440px",
                 width: "100%",
+                height: "440px",
+                border: "none",
               }}
-              title="Clue Website"
+              title="Item Website"
             ></iframe>
           ) : (
             <img
               className="mx-auto rounded-xl"
               style={{ maxWidth: "100%", maxHeight: "200px" }}
-              src={contentUrl || TOPIA_WORKERS_URL}
+              src={contentUrl}
               alt="Content Image"
             />
           ))}
-        <p className="pt-2" style={{ whiteSpace: "pre-line" }}>
-          {text}
-        </p>
       </div>
       {cluesFound === totalClues ? (
-        <div className="mb-8 mt-10">
+        <div className="my-6">
           <hr />
-          <p className="text-success pb-4 pt-4">
-            You have unlocked the final challenge question! Please return to the first sign to continue.
-          </p>
+          <p className="text-success pb-4 pt-4">Final challenge unlocked. Head back to the checkpoint to proceed.</p>
           <hr />
         </div>
       ) : null}

@@ -1,5 +1,5 @@
 import { Credentials } from "../types.js";
-import { errorHandler } from "./errorHandler.js";
+import { standardizeError } from "./standardizeError.js";
 import { Visitor } from "./topiaInit.js";
 
 export const getUserChallenge = async (credentials: Credentials) => {
@@ -10,30 +10,34 @@ export const getUserChallenge = async (credentials: Credentials) => {
     const dataObject = await visitor.fetchDataObject();
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
-    const payload = { challengeDone: false, cluesFound: [] };
+    let payload = { challengeDone: false, cluesFound: [] };
 
     if (!dataObject) {
       await visitor.setDataObject(
         {
-          [`${urlSlug}-${sceneDropId}`]: payload,
+          [`${urlSlug}_${sceneDropId}`]: payload,
         },
         { lock: { lockId, releaseLock: true } },
       );
       return payload;
-    } else if (!dataObject[`${urlSlug}-${sceneDropId}`]) {
+    } else if (dataObject[`${urlSlug}-${sceneDropId}`] && !dataObject[`${urlSlug}_${sceneDropId}`]) {
+      // migrate old data format to new format
+      payload = dataObject[`${urlSlug}-${sceneDropId}`];
+      const data = visitor.dataObject;
+      data[`${urlSlug}_${sceneDropId}`] = payload;
+      delete data[`${urlSlug}-${sceneDropId}`];
+      await visitor.updateDataObject(data, { lock: { lockId, releaseLock: true } });
+      return payload;
+    } else if (!dataObject[`${urlSlug}_${sceneDropId}`]) {
       await visitor.updateDataObject(
-        { [`${urlSlug}-${sceneDropId}`]: payload },
+        { [`${urlSlug}_${sceneDropId}`]: payload },
         { lock: { lockId, releaseLock: true } },
       );
       return payload;
     }
 
-    return visitor.dataObject[`${urlSlug}-${sceneDropId}`];
+    return visitor.dataObject[`${urlSlug}_${sceneDropId}`];
   } catch (error) {
-    return errorHandler({
-      error,
-      functionName: "getUserChallenge",
-      message: "Error getting user challenge data.",
-    });
+    throw standardizeError(error);
   }
 };
