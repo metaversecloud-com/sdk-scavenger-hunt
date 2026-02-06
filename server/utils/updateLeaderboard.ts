@@ -14,7 +14,7 @@ export const updateLeaderboard = async ({
   cluesCount: number;
   challengeDone: boolean;
   answerAttempts: number;
-}): Promise<void | Error> => {
+}): Promise<void> => {
   try {
     const { displayName, profileId, urlSlug } = credentials;
 

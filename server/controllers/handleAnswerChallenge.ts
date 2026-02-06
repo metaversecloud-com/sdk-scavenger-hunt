@@ -27,9 +27,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     const visitor = await Visitor.create(visitorId, urlSlug, { credentials });
     const visitorInventory = await getVisitorBadges(visitor);
 
-    const userChallengeResponse = await getUserChallenge(credentials);
-    if (userChallengeResponse instanceof Error) throw userChallengeResponse;
-    const userChallenge = userChallengeResponse;
+    const userChallenge = await getUserChallenge(credentials);
 
     // Get current answer attempts and increment
     const visitorChallengeKey = `${urlSlug}_${sceneDropId}`;
@@ -140,14 +138,13 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
         ),
     ]);
 
-    const updateLeaderboardResponse = await updateLeaderboard({
+    await updateLeaderboard({
       credentials,
       keyAssetId: assetId,
       cluesCount: Object.keys(clues).length,
       challengeDone: true,
       answerAttempts,
     });
-    if (updateLeaderboardResponse instanceof Error) throw updateLeaderboardResponse;
 
     addNewRowToGoogleSheets({
       identityId: req?.query?.identityId,
