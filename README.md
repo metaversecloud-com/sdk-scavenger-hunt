@@ -1,56 +1,43 @@
-# The opinionated Topia Boilerplate
+# Scavenger Hunt
 
-# Getting Started
+## Introduction / Summary
 
-This boilerplate is meant to give you a simple starting point to build new features in Topia using our Javascript SDK.
+Scavenger Hunt is an interactive clue-finding game where players follow a series of clues to complete challenges within a Topia world. Admins can configure challenges with images, text clues, and themes.
 
-# NOTES
+## Built With
 
-- This repository uses (NPM Workspaces)[https://docs.npmjs.com/cli/v7/using-npm/workspaces]
-- We use Typescript
-- Express for Server app
-- Vite based React client app
+### Client
 
-## Implementation Notes
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-- This application leverages `sceneDropId` to manage dropped assets and defaults to "ScavengerHunt" if one is not found.
-- The key asset should always have the unique name "ScavengerHunt" regardless of how many instances are placed in world.
-- If the instance of the application should allow users to drop a leaf upon completion then an asset with the unique name "ScavengerHuntBuildableAsset" must be included in the scene.
+### Server
 
-## Initial Setup
+![Node.js](https://img.shields.io/badge/node.js-%2343853D.svg?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/express-%23000000.svg?style=for-the-badge&logo=express&logoColor=white)
 
-### Install
+## Key Features
 
-Run `npm install` or `yarn install` on the root directory.
+- Follow clues to complete challenges
+- Multiple themes supported (e.g., "robot")
+- Challenge completion tracking
+- Optional reward system (drop a leaf upon completion)
 
-Notes:
+## Implementation Requirements
 
-1. Root package.json is for general/shared dependencies.
-2. Client and Server package.json files are for app specific dependencies.
-3. We DO want to keep the ts-config files seperate, given that we might have different needs for client and server.
+### Required Assets with Unique Names
 
-### Run in Docker
+| Unique Name | Description |
+|-------------|-------------|
+| `ScavengerHunt` | Key asset that manages the scavenger hunt. Required for all instances. |
+| `ScavengerHuntBuildableAsset` | Optional. Include this asset in the scene if users should be able to drop a leaf upon completion. |
+| `ScavengerHunt_{theme}_clue` | Clue assets with theme variants (e.g., `ScavengerHunt_robot_clue`) |
 
-1. For local development run `docker-compose up`. This runs the client(3001) and server(3000) on seperate ports. You can access them seperately. They are also setup with auto-build on save.
-2. To build an image for delivery run `docker build . -t [add a name]:v[version_number]`. This will generate an image that you can push out to ECR for deployment.
+### Data Object Structure
 
-## Add your .env environmental variables
-
-For the server you need to setup environment variables. Copy the `.env-exmaple` file and rename it `.env`.
-
-```json
-API_URL=http://localhost:3001
-INSTANCE_DOMAIN=api.topia.io
-PUBLIC_KEY=yourkey
-PRIVATE_KEY=enteryoursecret
-```
-
-**Developer Note: DO NOT use API_KEY unless absolutely necessary. ASK IN SLACK BEFORE USING**
-
-[Topia Dev Account Dashboard](https://dev.topia.io/t/dashboard/integrations)
-[Topia Production Account Dashboard](https://topia.io/t/dashboard/integrations)
-
-Example of what to put inside of each droppedAsset dataObject
+The dropped asset data object should include:
 
 ```json
 {
@@ -62,21 +49,46 @@ Example of what to put inside of each droppedAsset dataObject
   "theme": "robot",
   "clues": [
     {
-      "contentUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/65546505c732cb3fd47036ad_download%2520(15)-p-800.png",
+      "contentUrl": "https://...",
       "text": "Clue 1"
-    },
-    {
-      "contentUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554650b477b93838a94d5c5_ANALYTICS%20APPROVED%20IMAGE.png",
-      "text": "Clue 2"
-    },
-    {
-      "contentUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554652ab384111406b994f1_why%2520image-p-800.png",
-      "text": "Clue 3"
-    },
-    {
-      "contentUrl": "https://assets-global.website-files.com/6536cb67a381b2b8c0317b9a/6554652ab384111406b994f1_why%2520image-p-800.png",
-      "text": "Clue 4"
     }
   ]
 }
 ```
+
+## Developers
+
+### Getting Started
+
+Run `npm install` on the root directory.
+
+Notes:
+1. Root package.json is for general/shared dependencies
+2. Client and Server package.json files are for app specific dependencies
+3. Uses NPM Workspaces
+
+### Run in Docker
+
+1. For local development: `docker-compose up`
+2. For production build: `docker build . -t [name]:v[version]`
+
+### Add your .env environmental variables
+
+Copy `.env-example` to `.env`:
+
+```
+API_URL=http://localhost:3001
+INSTANCE_DOMAIN=api.topia.io
+INTERACTIVE_KEY=xxxxxxxxxxxxx
+INTERACTIVE_SECRET=xxxxxxxxxxxxxx
+```
+
+### Where to find INTERACTIVE_KEY and INTERACTIVE_SECRET
+
+[Topia Dev Account Dashboard](https://dev.topia.io/t/dashboard/integrations)
+
+[Topia Production Account Dashboard](https://topia.io/t/dashboard/integrations)
+
+### Helpful links
+
+- [SDK Developer docs](https://metaversecloud-com.github.io/mc-sdk-js/index.html)
