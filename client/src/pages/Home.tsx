@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from "react";
+import { useSearchParams } from "react-router-dom";
 
 // components
 import { PageContainer } from "@/components";
@@ -26,6 +27,9 @@ export const Home = () => {
     visitorInventory,
   } = useContext(GlobalStateContext);
 
+  const [searchParams] = useSearchParams();
+  const forceRefreshInventory = searchParams.get("forceRefreshInventory") === "true";
+
   const [answer, setAnswer] = useState("");
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [incorrectAnswer, setIncorrectAnswer] = useState(-1);
@@ -47,7 +51,7 @@ export const Home = () => {
 
   const getChallenge = async () => {
     await backendAPI
-      .get(`/challenge`)
+      .get(`/challenge`, { params: { forceRefreshInventory } })
       .then((response) => {
         const {
           badges,

@@ -16,12 +16,13 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { visitorId, urlSlug } = credentials;
+    const forceRefreshInventory = req.query.forceRefreshInventory === "true";
 
     const visitor: VisitorInterface = await Visitor.get(visitorId, urlSlug, { credentials });
 
     const [{ dataObject }, badges, visitorInventory, userChallenge] = await Promise.all([
       getWorldDataObject({ credentials }),
-      getBadges(credentials),
+      getBadges(credentials, forceRefreshInventory),
       getVisitorBadges(visitor),
       getUserChallenge(credentials),
     ]);
