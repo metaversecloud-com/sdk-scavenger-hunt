@@ -7,8 +7,8 @@ interface CachedInventory {
   timestamp: number;
 }
 
-// Cache duration: 24 hours in milliseconds
-const CACHE_DURATION_MS = 24 * 60 * 60 * 1000;
+// Cache duration: 6 hours in milliseconds
+const CACHE_DURATION_MS = 6 * 60 * 60 * 1000;
 
 // In-memory cache
 let inventoryCache: CachedInventory | null = null;

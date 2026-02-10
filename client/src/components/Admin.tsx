@@ -266,25 +266,19 @@ export const Admin = () => {
       ) : (
         <>
           <div className="grid grid-cols-2 gap-4 text-center">
+            <div className="card col-span-2 success">
+              <h2>{leaderboard.filter((entry) => entry.challengeDone).length}</h2>
+              <p className="p2">Completions</p>
+            </div>
             <div className="card">
               <h2>{leaderboard.length}</h2>
               <p className="p2">Total Participants</p>
             </div>
             <div className="card">
-              <h2>{leaderboard.filter((entry) => entry.challengeDone).length}</h2>
-              <p className="p2">Completions</p>
-            </div>
-            <div className="card">
               <h2>
-                {(leaderboard.reduce((sum, entry) => sum + entry.cluesCollected, 0) / leaderboard.length).toFixed(1)}
+                {(leaderboard.reduce((sum, entry) => sum + entry.cluesCollected, 0) / leaderboard.length).toFixed()}
               </h2>
               <p className="p2">Average # Found</p>
-            </div>
-            <div className="card">
-              <h2>
-                {(leaderboard.reduce((sum, entry) => sum + entry.answerAttempts, 0) / leaderboard.length).toFixed(1)}
-              </h2>
-              <p className="p2">Average Attempts</p>
             </div>
           </div>
           <table className="table" style={{ position: "relative" }}>
