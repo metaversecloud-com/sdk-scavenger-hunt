@@ -1,7 +1,7 @@
 {
   "name": "sdk-scanvenger-hunt",
   "author": "metaversecloud.com | topia.io",
-  "version": "2.0.1",
+  "version": "1.0.1",
   "description": "Scavenger Hunt",
   "type": "module",
   "main": "./server/index.js",
