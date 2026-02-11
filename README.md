@@ -29,11 +29,11 @@ Scavenger Hunt is an interactive clue-finding game where players follow a series
 
 ### Required Assets with Unique Names
 
-| Unique Name | Description |
-|-------------|-------------|
-| `ScavengerHunt` | Key asset that manages the scavenger hunt. Required for all instances. |
+| Unique Name                   | Description                                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------------------------- |
+| `ScavengerHunt`               | Key asset that manages the scavenger hunt. Required for all instances.                            |
 | `ScavengerHuntBuildableAsset` | Optional. Include this asset in the scene if users should be able to drop a leaf upon completion. |
-| `ScavengerHunt_{theme}_clue` | Clue assets with theme variants (e.g., `ScavengerHunt_robot_clue`) |
+| `ScavengerHunt_{theme}_clue`  | Clue assets with theme variants (e.g., `ScavengerHunt_robot_clue`)                                |
 
 ### Data Object Structure
 
@@ -56,6 +56,18 @@ The dropped asset data object should include:
 }
 ```
 
+## Environment Variables
+
+Create a `.env` file in the root directory. See `.env-example` for a template.
+
+| Variable               | Description                                                                        | Required |
+| ---------------------- | ---------------------------------------------------------------------------------- | -------- |
+| `NODE_ENV`             | Node environment                                                                   | No       |
+| `SKIP_PREFLIGHT_CHECK` | Skip CRA preflight check                                                           | No       |
+| `INSTANCE_DOMAIN`      | Topia API domain (`api.topia.io` for production, `api-stage.topia.io` for staging) | Yes      |
+| `INTERACTIVE_KEY`      | Topia interactive app key                                                          | Yes      |
+| `INTERACTIVE_SECRET`   | Topia interactive app secret                                                       | Yes      |
+
 ## Developers
 
 ### Getting Started
@@ -63,6 +75,7 @@ The dropped asset data object should include:
 Run `npm install` on the root directory.
 
 Notes:
+
 1. Root package.json is for general/shared dependencies
 2. Client and Server package.json files are for app specific dependencies
 3. Uses NPM Workspaces
@@ -74,14 +87,7 @@ Notes:
 
 ### Add your .env environmental variables
 
-Copy `.env-example` to `.env`:
-
-```
-API_URL=http://localhost:3001
-INSTANCE_DOMAIN=api.topia.io
-INTERACTIVE_KEY=xxxxxxxxxxxxx
-INTERACTIVE_SECRET=xxxxxxxxxxxxxx
-```
+See [Environment Variables](#environment-variables) above.
 
 ### Where to find INTERACTIVE_KEY and INTERACTIVE_SECRET
 

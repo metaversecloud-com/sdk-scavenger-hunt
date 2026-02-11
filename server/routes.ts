@@ -33,7 +33,6 @@ router.get("/system/health", (req, res) => {
       SHOWCASE_WORLDS_URLS: ["https://topia.io/scavenger-hunt-prod"],
       INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN ? process.env.INSTANCE_DOMAIN : "NOT SET",
       INTERACTIVE_KEY: process.env.INTERACTIVE_KEY ? process.env.INTERACTIVE_KEY : "NOT SET",
-      API_URL: process.env.API_URL ? process.env.API_URL : "NOT SET",
       SKIP_PREFLIGHT_CHECK: process.env.SKIP_PREFLIGHT_CHECK ? process.env.SKIP_PREFLIGHT_CHECK : "NOT SET",
       INTERACTIVE_SECRET: process.env.INTERACTIVE_SECRET ? "SET" : "NOT SET",
       IMG_ASSET_ID: process.env.IMG_ASSET_ID ? process.env.IMG_ASSET_ID : "NOT SET",
