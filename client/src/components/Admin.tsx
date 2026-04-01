@@ -41,6 +41,7 @@ export const Admin = () => {
   const [correctAnswers, setCorrectAnswers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [areButtonsDisabled, setAreButtonsDisabled] = useState(false);
+  const [validationError, setValidationError] = useState("");
   const [showEditClueModal, setShowEditClueModal] = useState(false);
   const [selectedClue, setSelectedClue] = useState<ClueType | null>(null);
   const [areClueButtonsDisabled, setAreClueButtonsDisabled] = useState(false);
@@ -89,6 +90,15 @@ export const Admin = () => {
   }, [dispatch]);
 
   const onSave = async () => {
+    if (questionType === "text" && !answer.trim()) {
+      setValidationError("Please provide an answer.");
+      return;
+    }
+    if (questionType !== "text" && correctAnswers.length === 0) {
+      setValidationError("Please select at least one correct answer.");
+      return;
+    }
+    setValidationError("");
     setAreButtonsDisabled(true);
     backendAPI
       .post(`/update-challenge`, {
@@ -467,6 +477,7 @@ export const Admin = () => {
       <button className="btn" onClick={onSave} disabled={areButtonsDisabled}>
         Save
       </button>
+      {validationError && <p className="text-error">{validationError}</p>}
 
       <div className="mt-10">
         <h4>Items</h4>
