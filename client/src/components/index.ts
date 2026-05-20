@@ -3,5 +3,7 @@ export * from "./Admin";
 export * from "./AdminIconButton";
 export * from "./ConfirmationModal";
 export * from "./EditClueModal";
+export * from "./ImagePickerModal";
+export * from "./ImageUrlField";
 export * from "./Loading";
 export * from "./PageContainer";

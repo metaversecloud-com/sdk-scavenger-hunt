@@ -11,6 +11,7 @@ export * from "./getRandomPointInCircle.js";
 export * from "./getUserChallenge.js";
 export * from "./getVersion.js";
 export * from "./inventoryCache.js";
+export * from "./s3.js";
 export * from "./standardizeError.js";
 export * from "./topiaInit.js";
 export * from "./updateLeaderboard.js";

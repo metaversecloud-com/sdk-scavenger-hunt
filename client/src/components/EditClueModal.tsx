@@ -1,5 +1,8 @@
 import { useState, useContext } from "react";
 
+// components
+import { ImageUrlField } from "@/components";
+
 // utils
 import { backendAPI } from "@/utils/backendAPI";
 import { setErrorMessage } from "@/utils/setErrorMessage";
@@ -88,14 +91,22 @@ export const EditClueModal = ({
           style={{ minHeight: "100px" }}
         />
 
-        <label className="text-left">Item Media URL</label>
-        <input
-          className="input mb-4"
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setContentUrl(event.target.value);
-          }}
-          value={contentUrl}
-        />
+        {mediaType === "image" ? (
+          <div className="mb-4">
+            <ImageUrlField label="Item Media" value={contentUrl || ""} onChange={setContentUrl} />
+          </div>
+        ) : (
+          <>
+            <label className="text-left">Item Media</label>
+            <input
+              className="input mb-4"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setContentUrl(event.target.value);
+              }}
+              value={contentUrl || ""}
+            />
+          </>
+        )}
 
         <label className="text-left mb-2">
           Media Type
@@ -133,29 +144,8 @@ export const EditClueModal = ({
         </label>
 
         <div style={{ marginTop: "24px" }}>
-          <h4>Asset Image</h4>
           {isCustomTheme ? (
-            <>
-              <p className="pb-3">Enter a URL for the item image.</p>
-              <input
-                className="input mb-4"
-                placeholder="https://example.com/image.png"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setSelectedImage(event.target.value);
-                }}
-                value={selectedImage}
-              />
-              {selectedImage && (
-                <div className="mb-4">
-                  <p className="p2 pb-2 text-left">Preview:</p>
-                  <img
-                    src={selectedImage}
-                    alt="Preview"
-                    style={{ maxWidth: "200px", maxHeight: "200px", objectFit: "contain" }}
-                  />
-                </div>
-              )}
-            </>
+            <ImageUrlField label="Item Image" value={selectedImage} onChange={setSelectedImage} />
           ) : (
             <>
               <p className="pb-3">Pick an image for this Item.</p>

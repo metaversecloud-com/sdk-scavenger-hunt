@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 
 // components
-import { ConfirmationModal, EditClueModal, Loading } from "@/components";
+import { ConfirmationModal, EditClueModal, ImageUrlField, Loading } from "@/components";
 
 // utils
 import { backendAPI } from "@/utils/backendAPI";
@@ -339,28 +339,7 @@ export const Admin = () => {
         />
       </div>
 
-      <div>
-        <label>Challenge Image URL</label>
-        <input
-          className="input"
-          placeholder="https://example.com/challenge-image.png"
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setChallengeImgUrl(event.target.value);
-          }}
-          value={challengeImgUrl}
-        />
-        {challengeImgUrl && (
-          <div className="mt-2 mb-2">
-            <p className="p2 pb-2">Preview:</p>
-            <img
-              src={challengeImgUrl}
-              alt="Challenge preview"
-              className="m-auto"
-              style={{ maxWidth: "200px", maxHeight: "200px", objectFit: "contain" }}
-            />
-          </div>
-        )}
-      </div>
+      <ImageUrlField label="Challenge Image" value={challengeImgUrl} onChange={setChallengeImgUrl} />
 
       <p>
         This is the final challenge question that the participants need to solve. Enter a question, and answer (non case
