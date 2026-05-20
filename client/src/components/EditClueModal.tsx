@@ -122,12 +122,14 @@ export const EditClueModal = ({
             <option value="website">Website Embed</option>
           </select>
         </label>
-
-        <p className=" text-left">📹 Heads up!</p>
-        <p className="p2 pb-4 text-left">
-          To make your video play inside the app, be sure to use an embed link, not the regular share link.
-        </p>
-
+        {mediaType === "video" && (
+          <>
+            <p className=" text-left">📹 Heads up!</p>
+            <p className="p2 pb-4 text-left">
+              To make your video play inside the app, be sure to use an embed link, not the regular share link.
+            </p>
+          </>
+        )}
         <label className="text-left">
           Link Behavior
           <select

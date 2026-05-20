@@ -7,9 +7,9 @@ import {
   handleGetClue,
   handleListUploads,
   handleResetClues,
-  handleSignUpload,
   handleUpdateChallenge,
   handleUpdateClue,
+  handleUploadImage,
   handleMoveToClueAsset,
   handleAddNewClue,
   handleRemoveClue,
@@ -61,8 +61,8 @@ router.post("/reset-clues", handleResetClues);
 router.post("/walk-up-to-clue-asset", handleMoveToClueAsset);
 router.post("/add-new-clue", handleAddNewClue);
 
-// Image uploads (S3 presigned POST + list + admin-owned delete)
-router.post("/uploads/sign", handleSignUpload);
+// Image uploads — base64 in, server-side PutObject; list; admin-owned delete.
+router.post("/uploads", handleUploadImage);
 router.get("/uploads", handleListUploads);
 router.delete("/uploads", handleDeleteUpload);
 

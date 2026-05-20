@@ -1,4 +1,4 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 // ──────────────────────────────────────────────────────────────────────────
 //  S3 SHARED UTILITIES
@@ -90,3 +90,31 @@ export const isOwnedByProfile = (key: string, profileId: string): boolean => {
 // Public S3 URL for a stored object.
 export const publicUrlForKey = (key: string): string =>
   `https://${getBucket()}.s3.amazonaws.com/${encodeURI(key)}`;
+
+// Decode a `data:image/png;base64,…` URL (or a bare base64 string) into a
+// Buffer. Throws if the payload isn't recognizable base64.
+export const decodeBase64Image = (data: string): Buffer => {
+  const comma = data.indexOf(",");
+  const base64 = comma >= 0 ? data.slice(comma + 1) : data;
+  return Buffer.from(base64, "base64");
+};
+
+// Upload a decoded image Buffer to S3 under `key`. Mirrors the upload-from-
+// server pattern used by sdk-bulletin-board-app/server/utils/uploadToS3.ts —
+// the server holds the AWS credentials and the bucket can stay private, so
+// no bucket CORS / public bucket policy is required.
+export const uploadImageToS3 = async (
+  buffer: Buffer,
+  key: string,
+  contentType: AllowedImageContentType,
+): Promise<{ key: string; publicUrl: string }> => {
+  await getS3Client().send(
+    new PutObjectCommand({
+      Bucket: getBucket(),
+      Key: key,
+      Body: buffer,
+      ContentType: contentType,
+    }),
+  );
+  return { key, publicUrl: publicUrlForKey(key) };
+};

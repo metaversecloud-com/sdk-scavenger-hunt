@@ -125,6 +125,14 @@ export const ImagePickerModal = ({
     }
   };
 
+  const readFileAsDataUrl = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error || new Error("Could not read file"));
+      reader.readAsDataURL(file);
+    });
+
   const uploadFile = async (file: File) => {
     const check = isAllowedFile(file);
     if (!check.ok) {
@@ -135,39 +143,25 @@ export const ImagePickerModal = ({
     setBusy(true);
     setUploadProgress(0);
     try {
-      const signRes = await backendAPI.post("/uploads/sign", {
-        filename: file.name,
-        contentType: file.type,
-        size: file.size,
-      });
-      const { url, fields, publicUrl } = signRes.data as {
-        url: string;
-        fields: Record<string, string>;
-        publicUrl: string;
-      };
-
-      const form = new FormData();
-      for (const [k, v] of Object.entries(fields)) form.append(k, v);
-      form.append("file", file);
-
-      await new Promise<void>((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", url);
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) setUploadProgress(Math.round((e.loaded / e.total) * 100));
-        };
-        xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) resolve();
-          else reject(new Error(`Upload failed (${xhr.status})`));
-        };
-        xhr.onerror = () => reject(new Error("Upload failed"));
-        xhr.send(form);
-      });
-
+      const data = await readFileAsDataUrl(file);
+      const res = await backendAPI.post(
+        "/uploads",
+        { filename: file.name, contentType: file.type, data },
+        {
+          onUploadProgress: (e) => {
+            if (e.total) setUploadProgress(Math.round((e.loaded / e.total) * 100));
+          },
+        },
+      );
+      const { publicUrl } = res.data as { publicUrl: string };
       onChange(publicUrl);
       await fetchList();
     } catch (err) {
-      setUploadError((err as Error).message || "Upload failed");
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        (err as Error).message ||
+        "Upload failed";
+      setUploadError(message);
     } finally {
       setBusy(false);
       setUploadProgress(null);

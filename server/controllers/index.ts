@@ -9,6 +9,6 @@ export * from "./handleMoveToClueAsset.js";
 export * from "./handleRemoveClue.js";
 export * from "./handleResetClues.js";
 export * from "./handleRestartChallenge.js";
-export * from "./handleSignUpload.js";
 export * from "./handleUpdateChallenge.js";
 export * from "./handleUpdateClue.js";
+export * from "./handleUploadImage.js";
