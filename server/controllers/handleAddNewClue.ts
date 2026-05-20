@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DroppedAsset, errorHandler, getCredentials, getWorldDataObject, Asset, Visitor } from "../utils/index.js";
+import { DroppedAsset, errorHandler, getCredentials, getConfig, Asset, Visitor } from "../utils/index.js";
 import { ClueType, WorldDataObjectType } from "../types.js";
 import { DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
 
@@ -15,7 +15,7 @@ export const handleAddNewClue = async (req: Request, res: Response) => {
 
     const visitor: VisitorInterface = await Visitor.get(visitorId, urlSlug, { credentials });
 
-    const { world, dataObject } = await getWorldDataObject({ credentials });
+    const { dataObject, keyAsset } = await getConfig({ credentials });
     const { clues, theme } = dataObject as WorldDataObjectType;
 
     const { moveTo } = visitor;
@@ -54,8 +54,8 @@ export const handleAddNewClue = async (req: Request, res: Response) => {
     await spawnedDroppedAsset.setDataObject(clueData, {});
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
-    await world.updateDataObject(
-      { [`scenes.${sceneDropId}.clues.${spawnedDroppedAsset.id}`]: clueData },
+    await keyAsset.updateDataObject(
+      { [`clues.${spawnedDroppedAsset.id}`]: clueData },
       { lock: { lockId, releaseLock: true } },
     );
 

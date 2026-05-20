@@ -20,14 +20,9 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 export const S3_REGION = "us-east-1";
 export const USER_UPLOADS_PREFIX = "userUploads/";
 
-export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5 MB
+export const MAX_UPLOAD_BYTES = 2 * 1024 * 1024; // 2 MB
 
-export const ALLOWED_IMAGE_CONTENT_TYPES = [
-  "image/png",
-  "image/jpeg",
-  "image/webp",
-  "image/gif",
-] as const;
+export const ALLOWED_IMAGE_CONTENT_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"] as const;
 export type AllowedImageContentType = (typeof ALLOWED_IMAGE_CONTENT_TYPES)[number];
 
 export const EXTENSION_BY_CONTENT_TYPE: Record<AllowedImageContentType, string> = {
@@ -89,7 +84,10 @@ export const sanitizeFilename = (raw: string, fallbackContentType?: AllowedImage
   let name = dot > 0 ? base.slice(0, dot) : base;
   let ext = dot > 0 ? base.slice(dot + 1).toLowerCase() : "";
 
-  name = name.replace(/[^A-Za-z0-9._-]+/g, "-").replace(/-+/g, "-").replace(/^-+|-+$/g, "");
+  name = name
+    .replace(/[^A-Za-z0-9._-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
   if (!name) name = "image";
   if (name.length > 64) name = name.slice(0, 64);
 
@@ -108,11 +106,8 @@ export const userUploadsPrefix = (interactivePublicKey: string): string =>
 
 // Build the full S3 key for an upload owned by a specific profileId,
 // nested under this app's interactivePublicKey.
-export const buildUploadKey = (
-  interactivePublicKey: string,
-  profileId: string,
-  sanitizedFilename: string,
-): string => `${userUploadsPrefix(interactivePublicKey)}${profileId}_${sanitizedFilename}`;
+export const buildUploadKey = (interactivePublicKey: string, profileId: string, sanitizedFilename: string): string =>
+  `${userUploadsPrefix(interactivePublicKey)}${profileId}_${sanitizedFilename}`;
 
 // Parse interactivePublicKey + owner + display name out of a stored key.
 // Returns null when the key doesn't match the expected
@@ -137,22 +132,13 @@ export const parseUploadKey = (
 
 // Only the file's owner inside the same interactivePublicKey branch may
 // mutate it. Both segments must match.
-export const isOwnedByProfile = (
-  key: string,
-  profileId: string,
-  interactivePublicKey: string,
-): boolean => {
+export const isOwnedByProfile = (key: string, profileId: string, interactivePublicKey: string): boolean => {
   const parsed = parseUploadKey(key);
-  return (
-    !!parsed &&
-    parsed.ownerProfileId === profileId &&
-    parsed.interactivePublicKey === interactivePublicKey
-  );
+  return !!parsed && parsed.ownerProfileId === profileId && parsed.interactivePublicKey === interactivePublicKey;
 };
 
 // Public S3 URL for a stored object.
-export const publicUrlForKey = (key: string): string =>
-  `https://${getBucket()}.s3.amazonaws.com/${encodeURI(key)}`;
+export const publicUrlForKey = (key: string): string => `https://${getBucket()}.s3.amazonaws.com/${encodeURI(key)}`;
 
 // Decode a `data:image/png;base64,…` URL (or a bare base64 string) into a
 // Buffer. Throws if the payload isn't recognizable base64.

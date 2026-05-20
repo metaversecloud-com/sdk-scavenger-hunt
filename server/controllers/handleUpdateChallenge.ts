@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
-import { errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
+import { errorHandler, getCredentials, getConfig } from "../utils/index.js";
 
+// Challenge config + buildableAssetUniqueName now live on the **key asset's**
+// data object (canonical). Legacy world-level `scenes.{sceneDropId}.challenge`
+// values still work via the read-side overlay in `getConfig`, but
+// every new save lands here on the key asset.
 export const handleUpdateChallenge = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { profileId, sceneDropId, urlSlug } = credentials;
+    const { profileId, urlSlug } = credentials;
     const {
       answer,
       buildableAssetUniqueName,
@@ -17,22 +21,22 @@ export const handleUpdateChallenge = async (req: Request, res: Response) => {
       correctAnswers,
     } = req.body;
 
-    const { world } = await getWorldDataObject({ credentials });
+    const { keyAsset } = await getConfig({ credentials });
 
     const lowerCaseAnswer = answer ? answer.toLowerCase() : undefined;
 
-    await world.updateDataObject(
+    await keyAsset.updateDataObject(
       {
-        [`scenes.${sceneDropId}.buildableAssetUniqueName`]: buildableAssetUniqueName,
-        [`scenes.${sceneDropId}.challenge.answer`]: lowerCaseAnswer,
-        [`scenes.${sceneDropId}.challenge.imgUrl`]: imgUrl,
-        [`scenes.${sceneDropId}.challenge.title`]: title,
-        [`scenes.${sceneDropId}.challenge.text`]: text,
-        [`scenes.${sceneDropId}.challenge.selectedEmote`]: selectedEmote,
-        [`scenes.${sceneDropId}.challenge.questionType`]: questionType,
-        [`scenes.${sceneDropId}.challenge.options`]: options,
-        [`scenes.${sceneDropId}.challenge.correctAnswers`]: correctAnswers,
-        [`scenes.${sceneDropId}.challenge.lastUpdated`]: new Date().toISOString(),
+        "challenge.answer": lowerCaseAnswer,
+        "challenge.imgUrl": imgUrl,
+        "challenge.title": title,
+        "challenge.text": text,
+        "challenge.selectedEmote": selectedEmote,
+        "challenge.questionType": questionType,
+        "challenge.options": options,
+        "challenge.correctAnswers": correctAnswers,
+        "challenge.lastUpdated": new Date().toISOString(),
+        buildableAssetUniqueName,
       },
       { analytics: [{ analyticName: `challengeUpdates`, uniqueKey: profileId, profileId, urlSlug }] },
     );

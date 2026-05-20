@@ -6,7 +6,7 @@ import {
   getUserChallenge,
   getVisitorBadges,
   getVisitorProgress,
-  getWorldDataObject,
+  getConfig,
   updateLeaderboard,
   Visitor,
 } from "../utils/index.js";
@@ -20,7 +20,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
 
     const { answer, selectedAnswers } = req.body;
 
-    const { dataObject } = await getWorldDataObject({ credentials });
+    const { dataObject } = await getConfig({ credentials });
     const { challenge, clues, theme } = dataObject as WorldDataObjectType;
 
     // Create visitor and fetch inventory/data for badge tracking

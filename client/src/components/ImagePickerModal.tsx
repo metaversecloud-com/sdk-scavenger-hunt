@@ -145,7 +145,7 @@ export const ImagePickerModal = ({
       );
       const { publicUrl } = res.data as { publicUrl: string };
       onChange(publicUrl);
-      await fetchList();
+      onClose();
     } catch (err) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||

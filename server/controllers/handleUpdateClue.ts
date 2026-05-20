@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import { DroppedAsset, errorHandler, getCredentials, getWorldDataObject } from "../utils/index.js";
+import { DroppedAsset, errorHandler, getCredentials, getConfig } from "../utils/index.js";
 import { ClueType } from "../types.js";
 
 export const handleUpdateClue = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { profileId, sceneDropId, urlSlug } = credentials;
+    const { profileId, urlSlug } = credentials;
     const { assetId, imgUrl, contentUrl, mediaType, linkBehavior, text } = req.body;
 
-    const { world } = await getWorldDataObject({ credentials });
+    const { keyAsset } = await getConfig({ credentials });
 
     const droppedAsset = await DroppedAsset.create(assetId, urlSlug, { credentials });
 
@@ -22,10 +22,8 @@ export const handleUpdateClue = async (req: Request, res: Response) => {
     await Promise.all([
       droppedAsset.updateWebImageLayers("", imgUrl),
       droppedAsset.updateDataObject(clueData),
-      world.updateDataObject(
-        {
-          [`scenes.${sceneDropId}.clues.${assetId}`]: clueData,
-        },
+      keyAsset.updateDataObject(
+        { [`clues.${assetId}`]: clueData },
         { analytics: [{ analyticName: `clueUpdates`, uniqueKey: profileId, profileId, urlSlug }] },
       ),
       droppedAsset.updateClickType({

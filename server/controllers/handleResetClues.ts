@@ -1,23 +1,15 @@
 import { Request, Response } from "express";
-import {
-  DroppedAsset,
-  errorHandler,
-  getClueDroppedAssets,
-  getCredentials,
-  getWorldDataObject,
-} from "../utils/index.js";
+import { DroppedAsset, errorHandler, getClueDroppedAssets, getCredentials, getConfig } from "../utils/index.js";
 import { WorldDataObjectType } from "../types.js";
 import { DroppedAssetInterface } from "@rtsdk/topia";
 
 export const handleResetClues = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { assetId, sceneDropId, urlSlug } = credentials;
+    const { sceneDropId, urlSlug } = credentials;
 
-    const { world, dataObject } = await getWorldDataObject({ credentials });
+    const { world, dataObject, keyAsset } = await getConfig({ credentials });
     const { theme } = dataObject as WorldDataObjectType;
-
-    const keyAsset: DroppedAssetInterface = await DroppedAsset.get(assetId, urlSlug, { credentials });
 
     const clues = await getClueDroppedAssets({
       sceneDropId,
@@ -26,8 +18,8 @@ export const handleResetClues = async (req: Request, res: Response) => {
     });
 
     const lockId = `${sceneDropId}-${new Date(Math.round(new Date().getTime() / 60000) * 60000)}`;
-    await world.updateDataObject(
-      { [`scenes.${sceneDropId}.clues`]: clues },
+    await keyAsset.updateDataObject(
+      { clues },
       {
         analytics: [
           { analyticName: `${theme}-resets`, urlSlug },

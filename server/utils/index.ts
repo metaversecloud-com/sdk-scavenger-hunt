@@ -6,7 +6,7 @@ export * from "./getClueDroppedAssets.js";
 export * from "./getCredentials.js";
 export * from "./getVisitorBadges.js";
 export * from "./getVisitorProgress.js";
-export * from "./getWorldDataObject.js";
+export * from "./getConfig.js";
 export * from "./getRandomPointInCircle.js";
 export * from "./getUserChallenge.js";
 export * from "./getVersion.js";
