@@ -1,24 +1,25 @@
 import { Request, Response } from "express";
 import { ListObjectsV2Command } from "@aws-sdk/client-s3";
 import {
-  USER_UPLOADS_PREFIX,
   errorHandler,
   getBucket,
   getCredentials,
   getS3Client,
   parseUploadKey,
   publicUrlForKey,
+  userUploadsPrefix,
 } from "../utils/index.js";
 
 // GET /uploads
-// Returns every image under userUploads/ with owner + display-name metadata.
-// The client filters by name + optionally by ownership; the server doesn't
-// pre-filter so admins can browse images uploaded by others (but can only
-// delete their own — enforced by handleDeleteUpload).
+// Returns only images uploaded by the calling admin, under
+// userUploads/{interactivePublicKey}/, with display-name metadata. Other
+// admins' uploads are filtered out server-side — admins can never see or
+// reference images they didn't upload themselves.
 export const handleListUploads = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const myProfileId = credentials.profileId;
+    const { interactivePublicKey } = credentials;
 
     const client = getS3Client();
     const items: {
@@ -39,7 +40,7 @@ export const handleListUploads = async (req: Request, res: Response) => {
       const out = await client.send(
         new ListObjectsV2Command({
           Bucket: getBucket(),
-          Prefix: USER_UPLOADS_PREFIX,
+          Prefix: userUploadsPrefix(interactivePublicKey),
           ContinuationToken: continuationToken,
         }),
       );
@@ -47,12 +48,13 @@ export const handleListUploads = async (req: Request, res: Response) => {
         if (!obj.Key) continue;
         const parsed = parseUploadKey(obj.Key);
         if (!parsed) continue; // skip orphan keys that don't match our naming convention
+        if (parsed.ownerProfileId !== myProfileId) continue; // private to the uploader
         items.push({
           key: obj.Key,
           url: publicUrlForKey(obj.Key),
           fileName: parsed.fileName,
           ownerProfileId: parsed.ownerProfileId,
-          ownedByMe: parsed.ownerProfileId === myProfileId,
+          ownedByMe: true,
           size: obj.Size ?? 0,
           lastModified: obj.LastModified ? obj.LastModified.toISOString() : null,
         });

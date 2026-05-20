@@ -18,13 +18,13 @@ import {
 export const handleDeleteUpload = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { profileId } = credentials;
+    const { profileId, interactivePublicKey } = credentials;
     const { key } = req.body as { key?: string };
 
     if (!key || typeof key !== "string" || !key.startsWith(USER_UPLOADS_PREFIX)) {
       return res.status(400).json({ success: false, message: "Invalid upload key" });
     }
-    if (!isOwnedByProfile(key, profileId)) {
+    if (!isOwnedByProfile(key, profileId, interactivePublicKey)) {
       return res.status(403).json({ success: false, message: "You can only delete your own uploads" });
     }
 

@@ -5,20 +5,6 @@ import { ConfirmationModal, Loading } from "@/components";
 import { ActionType } from "@/context/types";
 import { backendAPI } from "@/utils/backendAPI";
 import { setErrorMessage } from "@/utils/setErrorMessage";
-
-// ──────────────────────────────────────────────────────────────────────────
-//  IMAGE PICKER MODAL
-// ──────────────────────────────────────────────────────────────────────────
-//  All image-editing affordances live here: paste a URL, upload to S3, or
-//  browse previously-uploaded images. Each option funnels through `onChange`
-//  so the parent state is always in sync — the modal stays open after a
-//  selection so the admin can keep editing, and closes on its own Close
-//  button (or Escape).
-//
-//  Rendered via createPortal so it lifts above whatever parent modal opened
-//  it, regardless of nested stacking contexts.
-// ──────────────────────────────────────────────────────────────────────────
-
 interface UploadItem {
   key: string;
   url: string;
@@ -47,6 +33,14 @@ const formatBytes = (bytes: number): string => {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 };
 
+// Split "my-photo.png" → { name: "my-photo", ext: "png" } so the tile can
+// show the filename without its extension and surface the type separately.
+const splitFileName = (fileName: string): { name: string; ext: string } => {
+  const dot = fileName.lastIndexOf(".");
+  if (dot <= 0) return { name: fileName, ext: "" };
+  return { name: fileName.slice(0, dot), ext: fileName.slice(dot + 1).toLowerCase() };
+};
+
 const isAllowedFile = (file: File): { ok: boolean; reason?: string } => {
   if (!ALLOWED_MIME.includes(file.type)) {
     return { ok: false, reason: "Only PNG, JPG, WebP, and GIF images are allowed." };
@@ -68,7 +62,6 @@ export const ImagePickerModal = ({
   const [tab, setTab] = useState<"browse" | "upload">(initialTab);
   const [items, setItems] = useState<UploadItem[] | null>(null);
   const [filterText, setFilterText] = useState("");
-  const [onlyMine, setOnlyMine] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<UploadItem | null>(null);
   const [busy, setBusy] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -102,12 +95,9 @@ export const ImagePickerModal = ({
   const filteredItems = useMemo(() => {
     if (!items) return [];
     const needle = filterText.trim().toLowerCase();
-    return items.filter((it) => {
-      if (onlyMine && !it.ownedByMe) return false;
-      if (needle && !it.fileName.toLowerCase().includes(needle)) return false;
-      return true;
-    });
-  }, [items, filterText, onlyMine]);
+    if (!needle) return items;
+    return items.filter((it) => it.fileName.toLowerCase().includes(needle));
+  }, [items, filterText]);
 
   const handleDelete = async () => {
     if (!pendingDelete) return;
@@ -212,21 +202,14 @@ export const ImagePickerModal = ({
 
         {tab === "browse" && (
           <div className="mt-3" style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
-            <div className="flex items-center" style={{ gap: 8 }}>
-              <input
-                className="input"
-                type="text"
-                placeholder="Filter by name…"
-                value={filterText}
-                onChange={(e) => setFilterText(e.target.value)}
-                aria-label="Filter images by name"
-                style={{ flex: 1 }}
-              />
-              <label className="flex items-center" style={{ gap: 6, whiteSpace: "nowrap" }}>
-                <input type="checkbox" checked={onlyMine} onChange={(e) => setOnlyMine(e.target.checked)} />
-                Only mine
-              </label>
-            </div>
+            <input
+              className="input"
+              type="text"
+              placeholder="Filter by name…"
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+              aria-label="Filter images by name"
+            />
 
             {items === null ? (
               <Loading />
@@ -237,69 +220,34 @@ export const ImagePickerModal = ({
                   : "No images match that filter."}
               </p>
             ) : (
-              <div
-                className="mt-3"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
-                  gap: 12,
-                  overflowY: "auto",
-                  paddingRight: 4,
-                }}
-              >
+              <div className="mt-3 grid gap-3 text-left">
                 {filteredItems.map((item) => {
                   const isSelected = item.url === value;
+                  const { name, ext } = splitFileName(item.fileName);
                   return (
                     <div
                       key={item.key}
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        border: `2px solid ${isSelected ? "#1b3dcd" : "var(--paper-line, #e6decf)"}`,
-                        borderRadius: 10,
-                        overflow: "hidden",
-                        background: "#fff",
-                      }}
+                      className={`card small ${isSelected && "success"} min-w-[0] cursor-pointer`}
+                      onClick={() => onChange(item.url)}
+                      aria-label={`Use ${item.fileName}`}
+                      aria-pressed={isSelected}
                     >
-                      <button
-                        type="button"
-                        onClick={() => onChange(item.url)}
-                        aria-label={`Use ${item.fileName}`}
-                        aria-pressed={isSelected}
-                        style={{
-                          position: "relative",
-                          padding: 0,
-                          border: "none",
-                          background: "#f5f5f5",
-                          aspectRatio: "1 / 1",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <img
-                          src={item.url}
-                          alt={item.fileName}
-                          loading="lazy"
-                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                        />
-                      </button>
-                      <div style={{ padding: "6px 8px", display: "flex", flexDirection: "column", gap: 4 }}>
-                        <span
-                          title={item.fileName}
-                          style={{
-                            fontSize: 12,
-                            fontWeight: 600,
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {item.fileName}
-                        </span>
-                        <div className="flex items-center justify-between" style={{ fontSize: 11, opacity: 0.7 }}>
-                          <span>{formatBytes(item.size)}</span>
-                          {item.ownedByMe ? (
+                      <div className="card-image">
+                        <img className="m-auto" src={item.url} alt={item.fileName} loading="lazy" />
+                      </div>
+                      <div className="card-details overflow-hidden">
+                        <h4 className="card-title truncate" title={item.fileName} style={{ maxWidth: "100%" }}>
+                          {name}
+                        </h4>
+
+                        <p className="card-description p2">
+                          {ext && `Type: ${ext}`}
+                          <br />
+                          Size: {formatBytes(item.size)}
+                        </p>
+                        <div className="card-actions">
+                          {item.ownedByMe && (
                             <button
-                              type="button"
                               className="btn btn-icon"
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -307,17 +255,9 @@ export const ImagePickerModal = ({
                               }}
                               aria-label={`Delete ${item.fileName}`}
                               title="Delete this upload"
-                              style={{ width: 26, height: 26, minHeight: 26, padding: 0 }}
                             >
-                              <img
-                                src="https://sdk-style.s3.amazonaws.com/icons/delete.svg"
-                                alt=""
-                                aria-hidden="true"
-                                style={{ width: 14, height: 14 }}
-                              />
+                              <img src="https://sdk-style.s3.amazonaws.com/icons/delete.svg" />
                             </button>
-                          ) : (
-                            <span title="Uploaded by another admin">—</span>
                           )}
                         </div>
                       </div>

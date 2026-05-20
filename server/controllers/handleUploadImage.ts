@@ -23,7 +23,7 @@ import {
 export const handleUploadImage = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
-    const { profileId } = credentials;
+    const { profileId, interactivePublicKey } = credentials;
     const { filename, contentType, data } = req.body as {
       filename?: string;
       contentType?: string;
@@ -55,7 +55,7 @@ export const handleUploadImage = async (req: Request, res: Response) => {
     }
 
     const safeName = sanitizeFilename(filename, contentType as AllowedImageContentType);
-    const key = buildUploadKey(profileId, safeName);
+    const key = buildUploadKey(interactivePublicKey, profileId, safeName);
 
     const { publicUrl } = await uploadImageToS3(buffer, key, contentType as AllowedImageContentType);
 
