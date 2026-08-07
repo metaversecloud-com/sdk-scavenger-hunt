@@ -26,4 +26,4 @@ patches:
 images:
   - name: svghunt0
     newName: 368076259134.dkr.ecr.us-east-1.amazonaws.com/sdk-example
-    digest: sha256:c0387944014e3e2c40b266772584c368ad86d41e33142b4a732e3155f8cc5d66
+    digest: sha256:bb47bb55356daab43af08b2c27504c3ecd286d92b36479604b8152928669de3b
