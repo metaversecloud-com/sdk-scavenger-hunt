@@ -68,7 +68,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       .grantExpression(emote)
       .then((response) => {
         if (response.success === true) {
-          analytics.push({ analyticName: `${theme}-1-emoteUnlocked` });
+          analytics.push({ analyticName: `${theme}-1-emoteUnlocked`, profileId, urlSlug, uniqueKey: profileId });
           text = "You unlocked a new emote!";
         }
       })
