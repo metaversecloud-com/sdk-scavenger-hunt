@@ -1,12 +1,15 @@
 import express from "express";
 import {
   handleAnswerChallenge,
+  handleDeleteUpload,
   handleGetChallenge,
   handleGetConfiguration,
   handleGetClue,
+  handleListUploads,
   handleResetClues,
   handleUpdateChallenge,
   handleUpdateClue,
+  handleUploadImage,
   handleMoveToClueAsset,
   handleAddNewClue,
   handleRemoveClue,
@@ -36,6 +39,7 @@ router.get("/system/health", (req, res) => {
       SKIP_PREFLIGHT_CHECK: process.env.SKIP_PREFLIGHT_CHECK ? process.env.SKIP_PREFLIGHT_CHECK : "NOT SET",
       INTERACTIVE_SECRET: process.env.INTERACTIVE_SECRET ? "SET" : "NOT SET",
       IMG_ASSET_ID: process.env.IMG_ASSET_ID ? process.env.IMG_ASSET_ID : "NOT SET",
+      S3_BUCKET: process.env.S3_BUCKET ? process.env.S3_BUCKET : "NOT SET",
       GOOGLESHEETS_CLIENT_EMAIL: process.env.GOOGLESHEETS_CLIENT_EMAIL ? "SET" : "NOT SET",
       GOOGLESHEETS_SHEET_ID: process.env.GOOGLESHEETS_SHEET_ID ? "SET" : "NOT SET",
       GOOGLESHEETS_PRIVATE_KEY: process.env.GOOGLESHEETS_PRIVATE_KEY ? "SET" : "NOT SET",
@@ -56,5 +60,10 @@ router.post("/remove-clue", handleRemoveClue);
 router.post("/reset-clues", handleResetClues);
 router.post("/walk-up-to-clue-asset", handleMoveToClueAsset);
 router.post("/add-new-clue", handleAddNewClue);
+
+// Image uploads — base64 in, server-side PutObject; list; admin-owned delete.
+router.post("/uploads", handleUploadImage);
+router.get("/uploads", handleListUploads);
+router.delete("/uploads", handleDeleteUpload);
 
 export default router;

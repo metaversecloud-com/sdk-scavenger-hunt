@@ -7,7 +7,7 @@ import {
   getUserChallenge,
   getVisitorBadges,
   getVisitorProgress,
-  getWorldDataObject,
+  getConfig,
   updateLeaderboard,
 } from "../utils/index.js";
 import { DroppedAsset, Visitor } from "../utils/topiaInit.js";
@@ -17,7 +17,7 @@ export const handleGetClue = async (req: Request, res: Response) => {
     const credentials = getCredentials(req.query);
     const { assetId, profileId, sceneDropId, urlSlug, visitorId } = credentials;
 
-    const { keyAssetId, world, dataObject } = await getWorldDataObject({ credentials });
+    const { keyAssetId, world, dataObject } = await getConfig({ credentials });
     const { clues, theme } = dataObject as WorldDataObjectType;
 
     const clue: ClueType = clues?.[assetId];

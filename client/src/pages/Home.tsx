@@ -191,95 +191,105 @@ export const Home = () => {
           </div>
         </div>
       </div>
-      {hasCompletedChallenge ? (
+      {!totalClues || totalClues === 0 ? (
         <div className="container py-6 flex text-center">
-          <h5>Nice one! You completed the challenge!</h5>
+          <h5>This challenge hasn't been configured yet. Please check back later!</h5>
         </div>
       ) : (
-        <div className="container py-6 items-center justify-start">
-          {hasCompletedClues ? (
-            <div className="flex flex-col">
-              <h3>Nice Job! </h3>
-              <p>
-                {theme === "robot"
-                  ? "Answer the final question and unlock a new emote!"
-                  : "Answer the final question and see what happens!"}
-              </p>
-              <div className="mt-8">
-                <p>{challenge?.text}</p>
-              </div>
-              <div className="mt-2">
-                {!challenge?.questionType || challenge.questionType === "text" ? (
-                  <>
-                    <label>Answer</label>
-                    <input
-                      className="input"
-                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                        setAnswer(event.target.value);
-                      }}
-                      value={answer}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <label>
-                      {challenge.questionType === "multiple_choice"
-                        ? "Select the correct answer:"
-                        : "Select all that apply:"}
-                    </label>
-                    <div className="mt-2">
-                      {challenge.options &&
-                        Object.keys(challenge.options).map((key) => (
-                          <div key={key} className="flex items-center mb-2">
-                            {challenge.questionType === "multiple_choice" ? (
-                              <input
-                                type="radio"
-                                name="challengeAnswer"
-                                checked={selectedAnswers.includes(key)}
-                                onChange={() => setSelectedAnswers([key])}
-                                className="mr-2"
-                                style={{ width: "20px", height: "20px" }}
-                              />
-                            ) : (
-                              <input
-                                type="checkbox"
-                                checked={selectedAnswers.includes(key)}
-                                onChange={() =>
-                                  setSelectedAnswers((prev) =>
-                                    prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
-                                  )
-                                }
-                                className="mr-2"
-                                style={{ width: "20px", height: "20px" }}
-                              />
-                            )}
-                            <span>{challenge.options![key]}</span>
-                          </div>
-                        ))}
-                    </div>
-                  </>
-                )}
-                <div className="mt-2">
-                  <button className="btn" onClick={completeChallenge} disabled={answering}>
-                    Submit
-                  </button>
-                </div>
-                {incorrectAnswer >= 0 && <p className="pt-4 text-error">{incorrectAnswerRotation[incorrectAnswer]}</p>}
-              </div>
+        <>
+          {hasCompletedChallenge ? (
+            <div className="container py-6 flex text-center">
+              <h5>Nice one! You completed the challenge!</h5>
             </div>
           ) : (
-            <div className="flex flex-col">
-              <p>
-                Explore the world to find all of the items! Once you've found all of the items, come back here to answer
-                the question and unlock a new emote!
-              </p>
-              <br />
-              <h4 className="text-center">
-                Completed {cluesFound} of {totalClues}
-              </h4>
+            <div className="container py-6 items-center justify-start">
+              {hasCompletedClues ? (
+                <div className="flex flex-col">
+                  <h3>Nice Job! </h3>
+                  <p>
+                    {theme === "robot"
+                      ? "Answer the final question and unlock a new emote!"
+                      : "Answer the final question and see what happens!"}
+                  </p>
+                  <div className="mt-8">
+                    <p>{challenge?.text}</p>
+                  </div>
+                  <div className="mt-2">
+                    {!challenge?.questionType || challenge.questionType === "text" ? (
+                      <>
+                        <label>Answer</label>
+                        <input
+                          className="input"
+                          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            setAnswer(event.target.value);
+                          }}
+                          value={answer}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <label>
+                          {challenge.questionType === "multiple_choice"
+                            ? "Select the correct answer:"
+                            : "Select all that apply:"}
+                        </label>
+                        <div className="mt-2">
+                          {challenge.options &&
+                            Object.keys(challenge.options).map((key) => (
+                              <div key={key} className="flex items-center mb-2">
+                                {challenge.questionType === "multiple_choice" ? (
+                                  <input
+                                    type="radio"
+                                    name="challengeAnswer"
+                                    checked={selectedAnswers.includes(key)}
+                                    onChange={() => setSelectedAnswers([key])}
+                                    className="mr-2"
+                                    style={{ width: "20px", height: "20px" }}
+                                  />
+                                ) : (
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedAnswers.includes(key)}
+                                    onChange={() =>
+                                      setSelectedAnswers((prev) =>
+                                        prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
+                                      )
+                                    }
+                                    className="mr-2"
+                                    style={{ width: "20px", height: "20px" }}
+                                  />
+                                )}
+                                <span>{challenge.options![key]}</span>
+                              </div>
+                            ))}
+                        </div>
+                      </>
+                    )}
+                    <div className="mt-2">
+                      <button className="btn" onClick={completeChallenge} disabled={answering}>
+                        Submit
+                      </button>
+                    </div>
+                    {incorrectAnswer >= 0 && (
+                      <p className="pt-4 text-error">{incorrectAnswerRotation[incorrectAnswer]}</p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col">
+                  <p>
+                    Explore the world to find all of the items! Once you've found all of the items, come back here to
+                    answer the question and unlock a new emote!
+                  </p>
+                  <br />
+                  <h4 className="text-center">
+                    Completed {cluesFound} of {totalClues}
+                  </h4>
+                </div>
+              )}
             </div>
           )}
-        </div>
+        </>
       )}
       {(cluesFound || 0) > 0 && (
         <>

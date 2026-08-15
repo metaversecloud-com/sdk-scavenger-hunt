@@ -6,7 +6,7 @@ import {
   getUserChallenge,
   getVisitorBadges,
   getVisitorProgress,
-  getWorldDataObject,
+  getConfig,
   updateLeaderboard,
   Visitor,
 } from "../utils/index.js";
@@ -20,7 +20,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
 
     const { answer, selectedAnswers } = req.body;
 
-    const { dataObject } = await getWorldDataObject({ credentials });
+    const { dataObject } = await getConfig({ credentials });
     const { challenge, clues, theme } = dataObject as WorldDataObjectType;
 
     // Create visitor and fetch inventory/data for badge tracking
@@ -68,7 +68,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
       .grantExpression(emote)
       .then((response) => {
         if (response.success === true) {
-          analytics.push({ analyticName: `${theme}-1-emoteUnlocked` });
+          analytics.push({ analyticName: `${theme}-1-emoteUnlocked`, profileId, urlSlug, uniqueKey: profileId });
           text = "You unlocked a new emote!";
         }
       })

@@ -6,7 +6,7 @@ import {
   getCredentials,
   getUserChallenge,
   getVisitorBadges,
-  getWorldDataObject,
+  getConfig,
   Visitor,
 } from "../utils/index.js";
 import { WorldDataObjectType } from "../types.js";
@@ -21,7 +21,7 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
     const visitor: VisitorInterface = await Visitor.get(visitorId, urlSlug, { credentials });
 
     const [{ dataObject }, badges, visitorInventory, userChallenge] = await Promise.all([
-      getWorldDataObject({ credentials }),
+      getConfig({ credentials }),
       getBadges(credentials, forceRefreshInventory),
       getVisitorBadges(visitor),
       getUserChallenge(credentials),

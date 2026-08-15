@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { WorldDataObjectType, Expression } from "../types.js";
-import { errorHandler, getCredentials, getWorldDataObject, Visitor } from "../utils/index.js";
+import { errorHandler, getCredentials, getConfig, Visitor } from "../utils/index.js";
 
 export const handleGetConfiguration = async (req: Request, res: Response) => {
   try {
     const credentials = getCredentials(req.query);
     const { urlSlug, visitorId } = credentials;
 
-    const { dataObject } = await getWorldDataObject({ credentials });
+    const { dataObject } = await getConfig({ credentials });
     const { challenge, clues, theme } = dataObject as WorldDataObjectType;
 
     for (const clueId in clues) {
