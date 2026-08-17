@@ -33,6 +33,7 @@ router.get("/system/health", (req, res) => {
     envs: {
       NODE_ENV: process.env.NODE_ENV,
       COMMIT_HASH: process.env.COMMIT_HASH ? process.env.COMMIT_HASH : "NOT SET",
+      BUILD_TIME: process.env.BUILD_TIME ?? "NOT SET",
       SHOWCASE_WORLDS_URLS: ["https://topia.io/scavenger-hunt-prod"],
       INSTANCE_DOMAIN: process.env.INSTANCE_DOMAIN ? process.env.INSTANCE_DOMAIN : "NOT SET",
       INTERACTIVE_KEY: process.env.INTERACTIVE_KEY ? process.env.INTERACTIVE_KEY : "NOT SET",
