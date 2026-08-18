@@ -159,14 +159,56 @@ export const getConfig = async ({ credentials }: { credentials: Credentials }) =
       cluesIsObject &&
       cluesEntries.length > 0 &&
       cluesEntries.some(([key, clue]) => !clue?.id || key !== clue.id);
+    // Empty object is treated the same as missing — nothing to lose, and
+    // legit clue deletion goes through handleResetClues (which re-derives
+    // from the scene) so `clues: {}` in the wild is always a stale state.
+    const cluesEmpty = cluesIsObject && cluesEntries.length === 0;
 
-    const needsCluesDerivation = !existingClues || Array.isArray(existingClues) || cluesMalformed;
+    const needsCluesDerivation =
+      !existingClues || Array.isArray(existingClues) || cluesMalformed || cluesEmpty;
     if (needsCluesDerivation) {
-      const derivedClues = await getClueDroppedAssets({
+      // First pass: themed uniqueName fetch — the fast path for hunts that
+      // followed the `{keyAsset.uniqueName}_{theme}_clue` convention.
+      const derivedClues: Record<string, ClueType> = await getClueDroppedAssets({
         sceneDropId,
-        uniqueName: `ScavengerHunt_${keyAssetData.theme}_clue`,
+        uniqueName: `${keyAsset.uniqueName}_${keyAssetData.theme}_clue`,
         world,
       });
+
+      // Fallback: very old hunts dropped clue assets with a different (or
+      // no) uniqueName, so the themed fetch returns empty. Scan every asset
+      // in the scene and identify legacy clue assets by their distinctive
+      // data-object shape — each carries a full copy of the hunt's `clues`
+      // array. Only runs once per scene (subsequent loads hit the fast
+      // path once we persist below).
+      if (Object.keys(derivedClues).length === 0) {
+        const allSceneAssets: DroppedAssetInterface[] = await world.fetchDroppedAssetsBySceneDropId({ sceneDropId });
+        // Firebase-style push IDs sort lexically to creation order — gives us
+        // a deterministic positional match against the legacy `clues` array.
+        const candidates = allSceneAssets
+          .filter((a) => a.id !== keyAssetId)
+          .sort((a, b) => (a.id || "").localeCompare(b.id || ""));
+
+        for (const asset of candidates) {
+          await asset.fetchDataObject();
+          const d = (asset.dataObject || {}) as Partial<ClueType> & { clues?: unknown; isVideo?: boolean };
+          const legacyArray = Array.isArray(d.clues) ? (d.clues as Partial<ClueType>[]) : null;
+          // Skip assets that don't look like legacy clue assets.
+          if (!legacyArray && !d.contentUrl && !d.contentImgUrl && !d.text) continue;
+
+          const idx = Object.keys(derivedClues).length;
+          const legacyEntry = legacyArray?.[idx];
+          derivedClues[asset.id] = {
+            id: asset.id,
+            imgUrl: d.imgUrl || asset.topLayerURL || asset.bottomLayerURL || "",
+            text: d.text || legacyEntry?.text || `Clue ${idx + 1}`,
+            contentUrl:
+              d.contentUrl || d.contentImgUrl || legacyEntry?.contentUrl || legacyEntry?.contentImgUrl || "",
+            mediaType: d.mediaType || (d.isVideo ? "video" : "image"),
+            linkBehavior: d.linkBehavior || "drawer",
+          };
+        }
+      }
 
       if (Array.isArray(existingClues)) {
         const derivedIds = Object.keys(derivedClues);
@@ -181,9 +223,8 @@ export const getConfig = async ({ credentials }: { credentials: Credentials }) =
       }
 
       // Only overwrite when derivation produced at least as many entries as
-      // we currently have — protects against wiping data when the scene's
-      // clue assets no longer match the theme uniqueName pattern (very old
-      // hunts whose clue assets predate the naming convention).
+      // we currently have — protects against wiping data when neither the
+      // themed fetch nor the scene-wide scan surface anything.
       const existingCount = Array.isArray(existingClues) ? existingClues.length : cluesEntries.length;
       const derivedCount = Object.keys(derivedClues).length;
       const canPersist = derivedCount >= existingCount || existingCount === 0;
