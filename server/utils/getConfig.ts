@@ -159,8 +159,13 @@ export const getConfig = async ({ credentials }: { credentials: Credentials }) =
       cluesIsObject &&
       cluesEntries.length > 0 &&
       cluesEntries.some(([key, clue]) => !clue?.id || key !== clue.id);
+    // Empty object is treated the same as missing — nothing to lose, and
+    // legit clue deletion goes through handleResetClues (which re-derives
+    // from the scene) so `clues: {}` in the wild is always a stale state.
+    const cluesEmpty = cluesIsObject && cluesEntries.length === 0;
 
-    const needsCluesDerivation = !existingClues || Array.isArray(existingClues) || cluesMalformed;
+    const needsCluesDerivation =
+      !existingClues || Array.isArray(existingClues) || cluesMalformed || cluesEmpty;
     if (needsCluesDerivation) {
       // First pass: themed uniqueName fetch — the fast path for hunts that
       // followed the `{keyAsset.uniqueName}_{theme}_clue` convention.
