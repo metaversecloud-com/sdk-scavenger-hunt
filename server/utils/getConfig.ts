@@ -181,6 +181,17 @@ export const getConfig = async ({ credentials }: { credentials: Credentials }) =
         ? "https://sdk-scavenger-hunt.s3.us-east-1.amazonaws.com/IMG_Start.png"
         : `https://sdk-scavenger-hunt.s3.amazonaws.com/${keyAssetData.theme}/IMG_Start.png`;
 
+    // Repair the legacy bare-filename challenge imgUrl. Older hunts stored
+    // `challenge.imgUrl: "IMG_Start.png"` — a placeholder that assumed the
+    // client would prefix the S3 base + theme. That prefixing no longer
+    // happens, so the raw string renders as a broken image. Rewrite to the
+    // themed URL and persist so this only runs once per key asset.
+    if (keyAssetData.challenge?.imgUrl === "IMG_Start.png") {
+      const repairedChallenge = { ...keyAssetData.challenge, imgUrl: fallbackImgUrl };
+      await keyAsset.updateDataObject({ challenge: repairedChallenge }, {});
+      keyAssetData = { ...keyAssetData, challenge: repairedChallenge };
+    }
+
     const dataObject: WorldDataObjectType = {
       sceneDropId,
       keyAssetId,
