@@ -1,6 +1,6 @@
 import { standardizeError } from "./standardizeError.js";
 import { DroppedAsset, World } from "./topiaInit.js";
-import { Credentials, KeyAssetDataObjectType, WorldDataObjectType, WorldSceneIndexType } from "../types.js";
+import { ClueType, Credentials, KeyAssetDataObjectType, WorldDataObjectType, WorldSceneIndexType } from "../types.js";
 import { DroppedAssetInterface, WorldInterface } from "@rtsdk/topia";
 import { getClueDroppedAssets } from "./getClueDroppedAssets.js";
 
@@ -134,16 +134,33 @@ export const getConfig = async ({ credentials }: { credentials: Credentials }) =
       throw "Key asset is missing required theme in its data object.";
     }
 
-    // Ensure `clues` is populated and in the current shape:
-    //   - Missing entirely (brand-new world, no migration to run) → derive
-    //     from the scene's dropped assets.
-    //   - Stored as a positional array (very old hunts: `[{ contentImgUrl,
-    //     text }, ...]` with no per-entry `id`) → re-derive keyed by asset
-    //     id and positionally backfill text/content from the legacy array so
-    //     nothing is lost. Otherwise `clues[assetId]` lookups in every
-    //     caller return undefined and clicking a clue asset throws.
+    // Ensure `clues` is populated and in the current shape. Re-derive from
+    // the scene's dropped assets whenever the stored value is:
+    //   - Missing entirely (brand-new world, no migration to run).
+    //   - A positional array (`[{ contentImgUrl, text }, ...]` with no
+    //     per-entry `id`) — very old hunts. Text/content is backfilled
+    //     positionally from the legacy array so nothing is lost.
+    //   - A malformed object — e.g. `{ "undefined": {...} }` from a partial
+    //     migration where `droppedAsset.id` was undefined at write time,
+    //     or any entry whose key doesn't match its own `id`. In this case
+    //     the scene has clue assets that carry the legacy content on their
+    //     own data objects, and `getClueDroppedAssets` already reads that.
+    //
+    // Without this, `clues[assetId]` lookups in every caller return
+    // undefined and the visitor sees "No clue asset found" or a truncated
+    // clue set.
     const existingClues = keyAssetData.clues as unknown;
-    const needsCluesDerivation = !existingClues || Array.isArray(existingClues);
+    const cluesIsObject =
+      !!existingClues && typeof existingClues === "object" && !Array.isArray(existingClues);
+    const cluesEntries: [string, Partial<ClueType>][] = cluesIsObject
+      ? Object.entries(existingClues as Record<string, Partial<ClueType>>)
+      : [];
+    const cluesMalformed =
+      cluesIsObject &&
+      cluesEntries.length > 0 &&
+      cluesEntries.some(([key, clue]) => !clue?.id || key !== clue.id);
+
+    const needsCluesDerivation = !existingClues || Array.isArray(existingClues) || cluesMalformed;
     if (needsCluesDerivation) {
       const derivedClues = await getClueDroppedAssets({
         sceneDropId,
@@ -163,11 +180,13 @@ export const getConfig = async ({ credentials }: { credentials: Credentials }) =
         });
       }
 
-      // Don't clobber a non-empty legacy array with an empty derived object
-      // (would happen if the scene has no dropped assets matching the theme
-      // uniqueName). Leave the legacy data in place for manual recovery.
-      const hasDerivedClues = Object.keys(derivedClues).length > 0;
-      const canPersist = hasDerivedClues || !Array.isArray(existingClues) || existingClues.length === 0;
+      // Only overwrite when derivation produced at least as many entries as
+      // we currently have — protects against wiping data when the scene's
+      // clue assets no longer match the theme uniqueName pattern (very old
+      // hunts whose clue assets predate the naming convention).
+      const existingCount = Array.isArray(existingClues) ? existingClues.length : cluesEntries.length;
+      const derivedCount = Object.keys(derivedClues).length;
+      const canPersist = derivedCount >= existingCount || existingCount === 0;
       if (canPersist) {
         await keyAsset.updateDataObject({ clues: derivedClues }, {});
         keyAssetData = { ...keyAssetData, clues: derivedClues };
