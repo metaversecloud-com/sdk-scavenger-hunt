@@ -26,5 +26,5 @@ patches:
 images:
   - name: svghunt0
     newName: 368076259134.dkr.ecr.us-east-1.amazonaws.com/sdk-example
-    digest: sha256:73f7bb4f9e4c28a3bb801a594c4c0b118a686d671243f9bfc7e1ebd713d5f815
+    digest: sha256:f7a70020049886dc42e00e1da9b7028234f32c42acde8bf2f12af35619eeb5c9
     newTag: sdk-scavenger-hunt
