@@ -134,17 +134,44 @@ export const getConfig = async ({ credentials }: { credentials: Credentials }) =
       throw "Key asset is missing required theme in its data object.";
     }
 
-    // Ensure `clues` is populated: if the key asset still doesn't have it
-    // (e.g. a brand-new world with no migration to run), derive it from the
-    // scene's dropped assets — same behavior the old bootstrap path had.
-    if (!keyAssetData.clues) {
+    // Ensure `clues` is populated and in the current shape:
+    //   - Missing entirely (brand-new world, no migration to run) → derive
+    //     from the scene's dropped assets.
+    //   - Stored as a positional array (very old hunts: `[{ contentImgUrl,
+    //     text }, ...]` with no per-entry `id`) → re-derive keyed by asset
+    //     id and positionally backfill text/content from the legacy array so
+    //     nothing is lost. Otherwise `clues[assetId]` lookups in every
+    //     caller return undefined and clicking a clue asset throws.
+    const existingClues = keyAssetData.clues as unknown;
+    const needsCluesDerivation = !existingClues || Array.isArray(existingClues);
+    if (needsCluesDerivation) {
       const derivedClues = await getClueDroppedAssets({
         sceneDropId,
         uniqueName: `ScavengerHunt_${keyAssetData.theme}_clue`,
         world,
       });
-      await keyAsset.updateDataObject({ clues: derivedClues }, {});
-      keyAssetData = { ...keyAssetData, clues: derivedClues };
+
+      if (Array.isArray(existingClues)) {
+        const derivedIds = Object.keys(derivedClues);
+        existingClues.forEach((legacy, i) => {
+          const id = derivedIds[i];
+          if (!id) return;
+          const target = derivedClues[id];
+          if (!target.text && legacy?.text) target.text = legacy.text;
+          const legacyContent = legacy?.contentUrl || legacy?.contentImgUrl;
+          if (!target.contentUrl && legacyContent) target.contentUrl = legacyContent;
+        });
+      }
+
+      // Don't clobber a non-empty legacy array with an empty derived object
+      // (would happen if the scene has no dropped assets matching the theme
+      // uniqueName). Leave the legacy data in place for manual recovery.
+      const hasDerivedClues = Object.keys(derivedClues).length > 0;
+      const canPersist = hasDerivedClues || !Array.isArray(existingClues) || existingClues.length === 0;
+      if (canPersist) {
+        await keyAsset.updateDataObject({ clues: derivedClues }, {});
+        keyAssetData = { ...keyAssetData, clues: derivedClues };
+      }
     }
 
     // Merged view returned to callers — every field they used to read from
