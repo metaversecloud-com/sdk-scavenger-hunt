@@ -11,8 +11,9 @@ export type BadgeRecord = {
 };
 
 /**
- * Get all active badges from ecosystem inventory
- * Uses cached inventory items for performance
+ * Get all active badges from ecosystem inventory.
+ * Uses cached inventory items for performance — INACTIVE items are already
+ * filtered at the cache layer, so we only need to check type + name here.
  */
 export const getBadges = async (credentials: Credentials, forceRefresh = false): Promise<BadgeRecord> => {
   const inventoryItems = await getCachedInventoryItems({ credentials, forceRefresh });
@@ -20,8 +21,8 @@ export const getBadges = async (credentials: Credentials, forceRefresh = false):
   const badges: BadgeRecord = {};
 
   for (const item of inventoryItems) {
-    const { id, name, image_path, description, type, status } = item;
-    if (name && type === "BADGE" && status === "ACTIVE") {
+    const { id, name, image_path, description, type } = item;
+    if (name && type === "BADGE") {
       badges[name] = {
         id,
         name,
