@@ -9,7 +9,7 @@ import {
   getConfig,
   Visitor,
 } from "../utils/index.js";
-import { WorldDataObjectType } from "../types.js";
+import { HuntConfigType } from "../types.js";
 import { VisitorInterface } from "@rtsdk/topia";
 
 export const handleGetChallenge = async (req: Request, res: Response) => {
@@ -27,7 +27,7 @@ export const handleGetChallenge = async (req: Request, res: Response) => {
       getUserChallenge(credentials),
     ]);
 
-    const { challenge, clues, theme } = dataObject as WorldDataObjectType;
+    const { challenge, clues, theme } = dataObject as HuntConfigType;
 
     let cluesFound = 0,
       hasCompletedClues = false,

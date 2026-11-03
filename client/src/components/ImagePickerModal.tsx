@@ -220,7 +220,7 @@ export const ImagePickerModal = ({
                   : "No images match that filter."}
               </p>
             ) : (
-              <div className="mt-3 grid gap-3 text-left">
+              <div className="mt-3 grid gap-3 text-left overflow-y-auto">
                 {filteredItems.map((item) => {
                   const isSelected = item.url === value;
                   const { name, ext } = splitFileName(item.fileName);

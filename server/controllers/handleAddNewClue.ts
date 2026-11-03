@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { DroppedAsset, errorHandler, getCredentials, getConfig, Asset, Visitor } from "../utils/index.js";
-import { ClueType, WorldDataObjectType } from "../types.js";
+import { ClueType, HuntConfigType } from "../types.js";
 import { DroppedAssetInterface, VisitorInterface } from "@rtsdk/topia";
 
 export const handleAddNewClue = async (req: Request, res: Response) => {
@@ -16,7 +16,7 @@ export const handleAddNewClue = async (req: Request, res: Response) => {
     const visitor: VisitorInterface = await Visitor.get(visitorId, urlSlug, { credentials });
 
     const { dataObject, keyAsset } = await getConfig({ credentials });
-    const { clues, theme } = dataObject as WorldDataObjectType;
+    const { clues, theme } = dataObject as HuntConfigType;
 
     const { moveTo } = visitor;
     const position = {
