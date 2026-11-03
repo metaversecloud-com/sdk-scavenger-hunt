@@ -1,6 +1,6 @@
 import { standardizeError } from "./standardizeError.js";
 import { DroppedAsset, World } from "./topiaInit.js";
-import { ClueType, Credentials, KeyAssetDataObjectType, WorldDataObjectType, WorldSceneIndexType } from "../types.js";
+import { ClueType, Credentials, KeyAssetDataObjectType, HuntConfigType, WorldSceneIndexType } from "../types.js";
 import { DroppedAssetInterface, WorldInterface } from "@rtsdk/topia";
 import { getClueDroppedAssets } from "./getClueDroppedAssets.js";
 
@@ -16,7 +16,7 @@ import { getClueDroppedAssets } from "./getClueDroppedAssets.js";
 interface IWorld extends WorldInterface {
   dataObject: {
     scenes?: {
-      [sceneDropId: string]: Partial<WorldDataObjectType>;
+      [sceneDropId: string]: Partial<HuntConfigType>;
     };
     [sceneDropId: string]: unknown;
   };
@@ -252,7 +252,7 @@ export const getConfig = async ({ credentials }: { credentials: Credentials }) =
       keyAssetData = { ...keyAssetData, challenge: repairedChallenge };
     }
 
-    const dataObject: WorldDataObjectType = {
+    const dataObject: HuntConfigType = {
       sceneDropId,
       keyAssetId,
       theme: keyAssetData.theme,

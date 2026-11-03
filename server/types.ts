@@ -57,7 +57,7 @@ export type KeyAssetDataObjectType = {
 // move, this is sourced almost entirely from the key asset's data object,
 // with a legacy fallback to world's `scenes.{sceneDropId}` for un-migrated
 // worlds.
-export type WorldDataObjectType = {
+export type HuntConfigType = {
   sceneDropId: string;
   keyAssetId: string;
   buildableAssetUniqueName?: string;

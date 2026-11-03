@@ -10,7 +10,7 @@ import {
   updateLeaderboard,
   Visitor,
 } from "../utils/index.js";
-import { WorldDataObjectType } from "../types.js";
+import { HuntConfigType } from "../types.js";
 import { addNewRowToGoogleSheets } from "../utils/addNewRowToGoogleSheets.js";
 
 export const handleAnswerChallenge = async (req: Request, res: Response) => {
@@ -21,7 +21,7 @@ export const handleAnswerChallenge = async (req: Request, res: Response) => {
     const { answer, selectedAnswers } = req.body;
 
     const { dataObject } = await getConfig({ credentials });
-    const { challenge, clues, theme } = dataObject as WorldDataObjectType;
+    const { challenge, clues, theme } = dataObject as HuntConfigType;
 
     // Create visitor and fetch inventory/data for badge tracking
     const visitor = await Visitor.create(visitorId, urlSlug, { credentials });

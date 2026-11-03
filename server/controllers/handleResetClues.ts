@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { DroppedAsset, errorHandler, getClueDroppedAssets, getCredentials, getConfig } from "../utils/index.js";
-import { WorldDataObjectType } from "../types.js";
+import { HuntConfigType } from "../types.js";
 import { DroppedAssetInterface } from "@rtsdk/topia";
 
 export const handleResetClues = async (req: Request, res: Response) => {
@@ -9,7 +9,7 @@ export const handleResetClues = async (req: Request, res: Response) => {
     const { sceneDropId, urlSlug } = credentials;
 
     const { world, dataObject, keyAsset } = await getConfig({ credentials });
-    const { theme } = dataObject as WorldDataObjectType;
+    const { theme } = dataObject as HuntConfigType;
 
     const clues = await getClueDroppedAssets({
       sceneDropId,

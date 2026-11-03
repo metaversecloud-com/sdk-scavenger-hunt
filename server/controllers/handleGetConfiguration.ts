@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { WorldDataObjectType, Expression } from "../types.js";
+import { HuntConfigType, Expression } from "../types.js";
 import { errorHandler, getCredentials, getConfig, Visitor } from "../utils/index.js";
 
 export const handleGetConfiguration = async (req: Request, res: Response) => {
@@ -8,7 +8,7 @@ export const handleGetConfiguration = async (req: Request, res: Response) => {
     const { urlSlug, visitorId } = credentials;
 
     const { dataObject } = await getConfig({ credentials });
-    const { challenge, clues, theme } = dataObject as WorldDataObjectType;
+    const { challenge, clues, theme } = dataObject as HuntConfigType;
 
     for (const clueId in clues) {
       if (clues[clueId].isVideo === true && !clues[clueId].mediaType) clues[clueId].mediaType = "video";
