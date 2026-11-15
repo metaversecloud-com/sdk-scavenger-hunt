@@ -1,0 +1,50 @@
+[
+  {
+    "id": "badge-1",
+    "name": "Spark of Discovery",
+    "type": "BADGE",
+    "status": "ACTIVE",
+    "description": "Spark of Discovery badge",
+    "image_path": "https://example.invalid/badges/1.png"
+  },
+  {
+    "id": "badge-2",
+    "name": "Traveler",
+    "type": "BADGE",
+    "status": "ACTIVE",
+    "description": "Traveler badge",
+    "image_path": "https://example.invalid/badges/2.png"
+  },
+  {
+    "id": "badge-3",
+    "name": "Scout",
+    "type": "BADGE",
+    "status": "ACTIVE",
+    "description": "Scout badge",
+    "image_path": "https://example.invalid/badges/3.png"
+  },
+  {
+    "id": "badge-4",
+    "name": "Quick Thinker",
+    "type": "BADGE",
+    "status": "ACTIVE",
+    "description": "Quick Thinker badge",
+    "image_path": "https://example.invalid/badges/4.png"
+  },
+  {
+    "id": "badge-5",
+    "name": "Curious Mind",
+    "type": "BADGE",
+    "status": "ACTIVE",
+    "description": "Curious Mind badge",
+    "image_path": "https://example.invalid/badges/5.png"
+  },
+  {
+    "id": "badge-retired",
+    "name": "Retired Badge",
+    "type": "BADGE",
+    "status": "INACTIVE",
+    "description": "",
+    "image_path": ""
+  }
+]

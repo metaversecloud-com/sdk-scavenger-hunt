@@ -81,7 +81,7 @@ test.describe("finding items", () => {
 
     expect((await world.progress())?.cluesFound).toEqual(["clue-2"]);
     expect(await world.events("particles")).toEqual([
-      expect.objectContaining({ name: "disco_float", position: { x: 1100, y: 200 } }),
+      expect.objectContaining({ particleName: "disco_float", position: { x: 1100, y: 200 } }),
     ]);
     expect(await world.events("grant-item")).toEqual([expect.objectContaining({ name: "Spark of Discovery" })]);
     expect(await world.events("fire-toast")).toContainEqual(expect.objectContaining({ title: "Badge Earned!" }));
@@ -115,9 +115,9 @@ test.describe("finding items", () => {
     await expect(page.getByText("Progress: 3 of 3 completed.")).toBeVisible();
     await expect(page.getByText("Final challenge unlocked. Head back to the checkpoint to proceed.")).toBeVisible();
     await expect
-      .poll(async () => (await world.events("particles")).map((e) => e.name).sort())
+      .poll(async () => (await world.events("particles")).map((e) => e.particleName).sort())
       .toEqual(["disco_float", "partyPopper_float"]);
-    expect((await world.events("particles")).find((e) => e.name === "partyPopper_float")).toMatchObject({
+    expect((await world.events("particles")).find((e) => e.particleName === "partyPopper_float")).toMatchObject({
       followPlayerId: 42,
     });
 
@@ -205,7 +205,7 @@ test.describe("final challenge", () => {
     await expect(page.getByText("Nice one! You completed the challenge!")).toBeVisible();
     expect(await world.progress()).toEqual({ challengeDone: true, cluesFound: ALL_FOUND, answerAttempts: 1 });
     expect(await world.events("grant-expression")).toEqual([expect.objectContaining({ expressionId: "expr-robot-1" })]);
-    expect(await world.events("particles")).toContainEqual(expect.objectContaining({ name: "explosion_float" }));
+    expect(await world.events("particles")).toContainEqual(expect.objectContaining({ particleName: "explosion_float" }));
     expect(await world.events("fire-toast")).toContainEqual(
       expect.objectContaining({ title: "Congratulations", text: "You unlocked a new emote!" }),
     );
