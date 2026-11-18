@@ -1,6 +1,7 @@
 # This is for production/aws build only
 
-FROM node:20.10-alpine3.19
+ARG NODE_VERSION=24
+FROM node:${NODE_VERSION}-alpine
 WORKDIR /usr/app
 ARG REF
 ARG COMMIT_HASH
